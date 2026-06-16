@@ -34,6 +34,7 @@ import NotificationsPage from './pages/notifications/Notifications';
 import ResearchPage from './pages/research/Research';
 import LegacyArchivePage from './pages/legacy/LegacyArchive';
 import StartupEcosystemPage from './pages/startups/StartupEcosystem';
+import OnboardingPage from './pages/onboarding/Onboarding';
 import NotFoundPage from './pages/NotFound';
 
 const ProtectedRoute = ({ children, roles }: { children: React.ReactElement; roles?: string[] }) => {
@@ -61,6 +62,9 @@ export default function App() {
         <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
       </Route>
+
+      {/* Onboarding (outside main layout) */}
+      <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
 
       {/* Main App Routes */}
       <Route element={<Layout />}>

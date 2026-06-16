@@ -4,7 +4,7 @@ import { body } from 'express-validator';
 import {
   register, login, logout, getMe, verifyEmail,
   forgotPassword, resetPassword, refreshToken,
-  googleCallback, updatePassword,
+  googleCallback, updatePassword, completeOnboarding,
 } from '../controllers/auth.controller';
 import { protect } from '../middleware/auth';
 import { authLimiter } from '../middleware/rateLimiter';
@@ -47,5 +47,6 @@ router.use(protect);
 router.get('/me', getMe);
 router.post('/logout', logout);
 router.put('/update-password', updatePassword);
+router.post('/complete-onboarding', completeOnboarding);
 
 export default router;

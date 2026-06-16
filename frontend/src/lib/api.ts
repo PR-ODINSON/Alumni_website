@@ -58,6 +58,7 @@ export const authApi = {
   forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
   resetPassword: (token: string, password: string) => api.post(`/auth/reset-password/${token}`, { password }),
   verifyEmail: (token: string) => api.get(`/auth/verify-email/${token}`),
+  completeOnboarding: (data: any) => api.post('/auth/complete-onboarding', data),
 };
 
 export const alumniApi = {

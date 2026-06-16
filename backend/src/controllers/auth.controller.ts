@@ -240,6 +240,69 @@ export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
   res.json({ success: true, user, profile });
 });
 
+export const completeOnboarding = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  const { role, department, batch, degreeType, currentYear, currentSemester, linkedin, github, bio, avatar } = req.body;
+
+  if (!['student', 'alumni', 'faculty'].includes(role)) {
+    return next(new AppError('Invalid role. Must be student, alumni, or faculty.', 400));
+  }
+
+  const user = await User.findById(req.user._id);
+  if (!user) return next(new AppError('User not found.', 404));
+
+  user.role = role;
+  user.isProfileComplete = true;
+  if (bio) user.bio = bio;
+  if (avatar) user.avatar = avatar;
+
+  const social: Record<string, string> = (user.socialLinks as any)?.toObject ? (user.socialLinks as any).toObject() : { ...(user.socialLinks || {}) };
+  if (linkedin) social.linkedin = linkedin;
+  if (github) social.github = github;
+  user.socialLinks = social;
+
+  await user.save({ validateBeforeSave: false });
+
+  // Create role-specific profile
+  if (role === 'alumni' && department && batch) {
+    const existing = await Alumni.findOne({ user: user._id });
+    if (!existing) {
+      const batchNum = parseInt(batch);
+      const yearsForDegree = degreeType === 'M.Tech' || degreeType === 'MBA' ? 2 : degreeType === 'PhD' ? 5 : 4;
+      await Alumni.create({
+        user: user._id,
+        batch: batchNum,
+        graduationYear: batchNum + yearsForDegree,
+        department,
+        program: department,
+        degreeType: degreeType || 'B.Tech',
+      });
+    }
+  } else if (role === 'student' && department && batch) {
+    const existing = await Student.findOne({ user: user._id });
+    if (!existing) {
+      await Student.create({
+        user: user._id,
+        batch: parseInt(batch),
+        department,
+        program: department,
+        degreeType: degreeType || 'B.Tech',
+        currentYear: currentYear || 1,
+        currentSemester: currentSemester || 1,
+      });
+    }
+  }
+
+  // Issue new tokens with updated role
+  const newAccessToken = generateAccessToken(user._id.toString(), user.role);
+  const newRefreshToken = generateRefreshToken(user._id.toString());
+  user.refreshToken = newRefreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  const updatedUser = await User.findById(user._id);
+
+  res.json({ success: true, user: updatedUser, accessToken: newAccessToken, refreshToken: newRefreshToken });
+});
+
 export const updatePassword = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
   const { currentPassword, newPassword } = req.body;
   const user = await User.findById(req.user._id).select('+password');

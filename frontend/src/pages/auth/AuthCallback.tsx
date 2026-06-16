@@ -24,9 +24,14 @@ export default function AuthCallbackPage() {
 
     api.get('/auth/me', { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
-        setAuth(res.data.user, token, refresh);
-        toast.success(`Welcome, ${res.data.user.firstName}!`);
-        navigate('/feed');
+        const user = res.data.user;
+        setAuth(user, token, refresh);
+        if (!user.isProfileComplete) {
+          navigate('/onboarding');
+        } else {
+          toast.success(`Welcome back, ${user.firstName}!`);
+          navigate('/feed');
+        }
       })
       .catch(() => {
         toast.error('Failed to load your account. Please try again.');
