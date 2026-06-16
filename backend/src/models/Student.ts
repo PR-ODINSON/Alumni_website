@@ -152,7 +152,6 @@ const StudentSchema = new Schema<IStudent>(
   { timestamps: true }
 );
 
-StudentSchema.index({ user: 1 });
 StudentSchema.index({ batch: 1 });
 StudentSchema.index({ department: 1 });
 StudentSchema.index({ openToWork: 1 });

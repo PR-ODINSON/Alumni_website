@@ -26,11 +26,15 @@ export const configurePassport = (): void => {
               }
               await user.save();
             } else {
+              const displayParts = (profile.displayName || email.split('@')[0]).split(' ');
+              const firstName = profile.name?.givenName || displayParts[0];
+              const lastName = profile.name?.familyName || displayParts.slice(1).join(' ') || firstName;
+
               user = await User.create({
                 googleId: profile.id,
                 email,
-                firstName: profile.name?.givenName || '',
-                lastName: profile.name?.familyName || '',
+                firstName,
+                lastName,
                 avatar: profile.photos?.[0]?.value || '',
                 isEmailVerified: true,
                 role: 'alumni',

@@ -4,6 +4,7 @@ import http from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import passport from 'passport';
 import { Server as SocketServer } from 'socket.io';
 
 import { connectDB } from './config/database';
@@ -45,6 +46,7 @@ connectDB();
 
 // Configure Passport
 configurePassport();
+app.use(passport.initialize());
 
 // Security Middleware
 app.use(helmet({

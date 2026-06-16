@@ -76,6 +76,20 @@ const seedDatabase = async () => {
     });
     await adminUser.save();
 
+    const alumniUser = new User({
+      firstName: 'Alumni',
+      lastName: 'Test',
+      email: 'alumni@iitram.ac.in',
+      password: 'alumnipassword',
+      role: 'alumni',
+      isVerified: true,
+      isEmailVerified: true,
+      isProfileComplete: true,
+      isActive: true,
+      avatar: 'https://ui-avatars.com/api/?name=Alumni+Test&background=3b1bf2&color=fff'
+    });
+    await alumniUser.save();
+
     // Create Alumni Profiles
     console.log('Seeding Alumni Profiles...');
     await Alumni.create({
@@ -112,6 +126,24 @@ const seedDatabase = async () => {
       mentorAvailability: 'available',
       verificationStatus: 'verified',
       skills: ['Embedded C', 'IoT', 'Hardware Design']
+    });
+
+    await Alumni.create({
+      user: alumniUser._id,
+      batch: 2021,
+      graduationYear: 2021,
+      department: 'Civil Engineering',
+      program: 'B.Tech',
+      degreeType: 'B.Tech',
+      currentCompany: 'L&T',
+      currentDesignation: 'Civil Engineer',
+      currentIndustry: 'Construction',
+      employmentStatus: 'employed',
+      isMentor: false,
+      mentorAreas: [],
+      mentorAvailability: 'unavailable',
+      verificationStatus: 'verified',
+      skills: ['AutoCAD', 'Structural Analysis']
     });
 
     // Create Posts

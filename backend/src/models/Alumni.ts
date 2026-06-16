@@ -228,7 +228,6 @@ const AlumniSchema = new Schema<IAlumni>(
 );
 
 // Indexes
-AlumniSchema.index({ user: 1 });
 AlumniSchema.index({ batch: 1 });
 AlumniSchema.index({ department: 1 });
 AlumniSchema.index({ currentIndustry: 1 });

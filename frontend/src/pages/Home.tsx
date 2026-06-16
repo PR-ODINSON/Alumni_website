@@ -54,159 +54,82 @@ export default function HomePage() {
   return (
     <div className="overflow-x-hidden">
       {/* HERO */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-950 via-iitram-950 to-slate-900">
-        {/* Background layers */}
-        <motion.div style={{ y: heroY }} className="absolute inset-0">
-          <img 
-            src="/images/home-hero.png" 
-            alt="IITRAM Alumni Community" 
-            className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-transparent" />
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
-              radial-gradient(ellipse at 15% 50%, rgba(52,112,244,0.15) 0%, transparent 60%),
-              radial-gradient(ellipse at 85% 20%, rgba(234,179,8,0.10) 0%, transparent 50%)
-            `
-          }} />
-        </motion.div>
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-sky-50 via-white to-sky-50/50 pt-20">
+        {/* Background Decorative */}
+        <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-blue-100/50 to-transparent rounded-b-[100%]" />
+        
+        {/* Floating clouds/elements */}
+        <div className="absolute top-1/4 left-10 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute top-1/3 right-10 w-48 h-48 bg-teal-400/10 rounded-full blur-3xl animate-float" />
 
-        {/* Decorative orbs */}
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-iitram-500/10 rounded-full blur-3xl animate-pulse-soft" />
-        <div className="absolute bottom-1/3 left-1/4 w-64 h-64 bg-gold-500/8 rounded-full blur-3xl" />
+        <motion.div style={{ opacity: heroOpacity, y: heroY }} className="relative z-10 w-full max-w-5xl mx-auto px-6 text-center mt-12 md:mt-0">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            <span className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-sm font-medium mb-6 animate-fade-in">
+              IITRAM Alumni Community — Est. 2013
+            </span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-serif text-slate-900 tracking-tight leading-tight mb-6">
+              Beyond Graduation Starts <br className="hidden md:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">
+                Your Real Growth
+              </span>
+            </h1>
+            
+            <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+              Connect with {stats?.totalAlumni?.toLocaleString() || '5,000+'} alumni worldwide. 
+              Find mentors, discover opportunities, and shape the IITRAM legacy together.
+            </p>
 
-        <motion.div style={{ opacity: heroOpacity }} className="relative z-10 w-full">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-32">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              {/* Left content */}
-              <div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full mb-8 backdrop-blur-sm"
-                >
-                  <div className="w-2 h-2 rounded-full bg-gold-400 animate-pulse" />
-                  <span className="text-sm text-slate-300 font-medium">IITRAM Alumni Community — Est. 2013</span>
-                </motion.div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              {isAuthenticated ? (
+                <Link to="/alumni" className="btn btn-primary btn-lg shadow-lg shadow-blue-500/30 hover:-translate-y-1">
+                  Explore Network
+                </Link>
+              ) : (
+                <div className="inline-flex bg-white p-2 rounded-full shadow-soft border border-slate-100">
+                  <Link to="/register" className="btn btn-primary btn-lg shadow-md hover:-translate-y-0.5">
+                    Explore Community
+                  </Link>
+                  <Link to="/login" className="btn btn-ghost btn-lg text-slate-600 hover:text-slate-900 px-8">
+                    Login
+                  </Link>
+                </div>
+              )}
+            </div>
+          </motion.div>
 
-                <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1, duration: 0.7 }}
-                  className="text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] text-white mb-8"
-                >
-                  Your Alumni<br />
-                  <span className="relative">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-iitram-300 via-blue-300 to-gold-400">
-                      Network
-                    </span>
-                    <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" fill="none">
-                      <path d="M2 8C60 4 120 2 150 3C180 4 240 6 298 8" stroke="url(#underline-gradient)" strokeWidth="3" strokeLinecap="round"/>
-                      <defs>
-                        <linearGradient id="underline-gradient" x1="0" y1="0" x2="300" y2="0">
-                          <stop offset="0%" stopColor="#6badf5" />
-                          <stop offset="100%" stopColor="#eab308" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                  </span>
-                  {' '}Awaits
-                </motion.h1>
-
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
-                  className="text-xl text-slate-400 leading-relaxed mb-10 max-w-lg"
-                >
-                  Connect with {stats?.totalAlumni?.toLocaleString() || '5,000+'} alumni across industries worldwide.
-                  Find mentors, discover opportunities, and shape the IITRAM legacy.
-                </motion.p>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  className="flex flex-wrap gap-4"
-                >
-                  {isAuthenticated ? (
-                    <Link to="/alumni" className="btn btn-primary btn-lg group">
-                      Explore Network
-                      <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  ) : (
-                    <>
-                      <Link to="/register" className="btn btn-primary btn-lg group">
-                        Join the Network
-                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                      </Link>
-                      <Link to="/login" className="btn btn-lg border border-white/20 text-white hover:bg-white/10">
-                        Sign In
-                      </Link>
-                    </>
-                  )}
-                </motion.div>
-
-                {/* Trust indicators */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 0.6 }}
-                  className="flex flex-wrap gap-6 mt-12 pt-8 border-t border-white/10"
-                >
+          {/* Hero Image Section - Emulating the students cutout */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="mt-16 relative max-w-5xl mx-auto"
+          >
+             <div className="relative rounded-3xl overflow-hidden shadow-soft-xl bg-white border border-slate-100 p-2 lg:p-3">
+                <img 
+                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+                  alt="IITRAM Community" 
+                  className="w-full h-[350px] md:h-[500px] object-cover rounded-2xl"
+                />
+                
+                {/* Floating stats card over image */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 md:gap-8 backdrop-blur-xl bg-white/95 p-5 md:p-6 rounded-2xl shadow-2xl border border-white/50 w-[90%] md:w-auto justify-center items-center">
                   {[
-                    { value: stats?.totalAlumni || '5K+', label: 'Alumni' },
-                    { value: stats?.totalJobs || '2K+', label: 'Jobs' },
-                    { value: stats?.activeMentorships || '300+', label: 'Active Mentorships' },
-                    { value: '30+', label: 'Countries' },
+                    { value: stats?.totalAlumni || '5,000+', label: 'Alumni' },
+                    { value: stats?.totalJobs || '86%', label: 'Placement' },
+                    { value: stats?.activeMentorships || '300+', label: 'Mentors' },
                   ].map(({ value, label }) => (
-                    <div key={label}>
-                      <p className="text-2xl font-bold text-white">{typeof value === 'number' ? value.toLocaleString() : value}</p>
-                      <p className="text-xs text-slate-500">{label}</p>
+                    <div key={label} className="text-center px-2 md:px-6">
+                      <p className="text-2xl md:text-3xl font-bold font-serif text-slate-900">{typeof value === 'number' ? value.toLocaleString() : value}</p>
+                      <p className="text-xs md:text-sm text-slate-500 font-medium uppercase tracking-wider mt-1">{label}</p>
                     </div>
                   ))}
-                </motion.div>
-              </div>
-
-              {/* Right - Feature highlights */}
-              <motion.div
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="grid grid-cols-2 gap-4"
-              >
-                {[
-                  { icon: Users, title: 'Alumni Directory', desc: 'Find and connect with IITRAM graduates worldwide', color: 'from-blue-600/20 to-iitram-600/20', border: 'border-blue-500/20', href: '/alumni' },
-                  { icon: Briefcase, title: 'Jobs & Referrals', desc: 'Exclusive opportunities from your network', color: 'from-emerald-600/20 to-teal-600/20', border: 'border-emerald-500/20', href: '/jobs' },
-                  { icon: Lightbulb, title: 'Mentorship Hub', desc: 'Learn from experienced IITRAM alumni', color: 'from-gold-600/20 to-amber-600/20', border: 'border-gold-500/20', href: '/mentorship' },
-                  { icon: Globe, title: 'World Map', desc: 'See where IITRAM alumni are making impact', color: 'from-purple-600/20 to-violet-600/20', border: 'border-purple-500/20', href: '/analytics' },
-                ].map(({ icon: Icon, title, desc, color, border, href }, i) => (
-                  <Link
-                    key={title}
-                    to={href}
-                    className={`group p-5 rounded-2xl bg-gradient-to-br ${color} border ${border} backdrop-blur-sm hover:scale-[1.02] transition-all duration-300 cursor-pointer`}
-                  >
-                    <Icon size={24} className="text-white/80 mb-3 group-hover:text-white transition-colors" />
-                    <h3 className="font-semibold text-white text-sm mb-1">{title}</h3>
-                    <p className="text-slate-400 text-xs leading-relaxed">{desc}</p>
-                  </Link>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-          <span className="text-slate-500 text-xs tracking-widest uppercase">Scroll</span>
-          <div className="w-5 h-8 border border-white/20 rounded-full flex items-start justify-center p-1">
-            <div className="w-1 h-2 bg-white/40 rounded-full" />
-          </div>
+                </div>
+             </div>
+          </motion.div>
         </motion.div>
       </section>
 
@@ -433,7 +356,7 @@ export default function HomePage() {
 
       {/* DISTINGUISHED ALUMNI */}
       {featured.length > 0 && (
-        <section className="py-24 bg-slate-950 text-white">
+        <section className="py-24 bg-slate-50 text-slate-900">
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <motion.div
               variants={fadeUp}
@@ -443,12 +366,12 @@ export default function HomePage() {
               className="flex items-end justify-between mb-12"
             >
               <div>
-                <span className="inline-flex items-center gap-2 px-3 py-1 bg-gold-500/10 border border-gold-500/20 rounded-full text-gold-400 text-xs font-medium mb-4">
+                <span className="inline-flex items-center gap-2 px-3 py-1 bg-gold-100 border border-gold-200 rounded-full text-gold-700 text-xs font-medium mb-4">
                   <Award size={12} /> Distinguished Alumni
                 </span>
-                <h2 className="text-4xl font-bold text-white">IITRAM's<br />Finest</h2>
+                <h2 className="text-4xl font-bold text-slate-900 font-serif">IITRAM's<br />Finest</h2>
               </div>
-              <Link to="/alumni" className="btn border border-white/20 text-white hover:bg-white/10 group">
+              <Link to="/alumni" className="btn btn-outline group">
                 View All
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>
@@ -466,17 +389,17 @@ export default function HomePage() {
                 >
                   <Link
                     to={`/alumni/${alumnus.user._id}`}
-                    className="group block p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/8 hover:border-white/20 transition-all"
+                    className="group block p-6 rounded-3xl bg-white border border-slate-100 shadow-soft hover:shadow-soft-lg hover:-translate-y-1 transition-all"
                   >
                     <div className="flex items-center gap-4 mb-4">
                       <img
                         src={alumnus.user?.avatar || `https://ui-avatars.com/api/?name=${alumnus.user?.firstName}&background=1d2f88&color=fff`}
-                        className="w-14 h-14 rounded-full object-cover ring-2 ring-gold-500/30"
+                        className="w-14 h-14 rounded-full object-cover ring-2 ring-slate-100"
                         alt=""
                       />
                       <div>
-                        <p className="font-semibold text-white">{alumnus.user?.firstName} {alumnus.user?.lastName}</p>
-                        <p className="text-sm text-slate-400">{alumnus.currentDesignation}</p>
+                        <p className="font-bold text-slate-900">{alumnus.user?.firstName} {alumnus.user?.lastName}</p>
+                        <p className="text-sm font-medium text-blue-600">{alumnus.currentDesignation}</p>
                         <p className="text-xs text-slate-500">{alumnus.currentCompany}</p>
                       </div>
                     </div>
@@ -487,7 +410,7 @@ export default function HomePage() {
                     {alumnus.skills?.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-3">
                         {alumnus.skills.slice(0, 3).map((skill: string) => (
-                          <span key={skill} className="text-2xs px-2 py-0.5 bg-white/10 text-slate-300 rounded-full">
+                          <span key={skill} className="text-2xs px-2.5 py-1 bg-slate-50 text-slate-600 rounded-full border border-slate-100">
                             {skill}
                           </span>
                         ))}

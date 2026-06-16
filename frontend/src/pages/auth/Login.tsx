@@ -1,9 +1,9 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { authApi } from '../../lib/api';
 import { useAuthStore } from '../../stores/authStore';
@@ -19,6 +19,13 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const { setAuth } = useAuthStore();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('error') === 'google_auth_failed') {
+      toast.error('Google sign-in failed. Please try again.');
+    }
+  }, []);
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
