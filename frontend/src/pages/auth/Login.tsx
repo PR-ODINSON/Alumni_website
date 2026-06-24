@@ -45,14 +45,14 @@ export default function LoginPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome back</h1>
-        <p className="text-slate-500">Sign in to your IITRAM Alumni account</p>
+        <h1 className="text-3xl font-bold font-display text-slate-900 mb-2 tracking-tight">Welcome Back</h1>
+        <p className="text-sm text-slate-500">Sign in to your IITRAM Alumni account</p>
       </div>
 
       {/* Google OAuth */}
       <a
         href={`${import.meta.env.VITE_API_URL?.replace('/api', '')}/api/auth/google`}
-        className="flex items-center justify-center gap-3 w-full py-3 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-sm transition-all mb-6 shadow-sm"
+        className="flex items-center justify-center gap-3 w-full py-3 px-4 rounded-xl border border-slate-200/80 bg-white/95 hover:bg-slate-50 text-slate-700 font-semibold text-sm transition-all mb-6 shadow-sm hover:border-slate-300"
       >
         <svg viewBox="0 0 24 24" className="w-5 h-5">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -65,10 +65,10 @@ export default function LoginPage() {
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-slate-200" />
+          <div className="w-full border-t border-slate-200/60" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-white px-4 text-xs text-slate-400">or continue with email</span>
+          <span className="bg-white/80 border border-slate-100 px-4 py-0.5 rounded-full text-xs text-slate-400 font-semibold shadow-2xs">or continue with email</span>
         </div>
       </div>
 
@@ -87,7 +87,7 @@ export default function LoginPage() {
         <div>
           <div className="flex items-center justify-between mb-1.5">
             <label className="block text-sm font-medium text-slate-700">Password</label>
-            <Link to="/forgot-password" className="text-xs text-iitram-600 hover:text-iitram-700">
+            <Link to="/forgot-password" className="text-xs text-iitram-500 hover:text-iitram-600 font-semibold">
               Forgot password?
             </Link>
           </div>
@@ -112,7 +112,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn btn-primary w-full py-3 text-base"
+          className="btn btn-primary w-full py-3 text-base rounded-xl font-semibold shadow-lg shadow-iitram-500/10"
         >
           {isSubmitting ? (
             <><Loader2 size={18} className="animate-spin" /> Signing in...</>
@@ -122,9 +122,9 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <p className="text-center text-sm text-slate-500 mt-6">
+      <p className="text-center text-sm text-slate-500 mt-6 font-medium">
         Don't have an account?{' '}
-        <Link to="/register" className="font-semibold text-iitram-700 hover:text-iitram-800">
+        <Link to="/register" className="font-bold text-iitram-500 hover:text-iitram-600">
           Create account
         </Link>
       </p>

@@ -1,16 +1,11 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
 import { Link, useSearchParams } from 'react-router-dom';
-import {
-  Search, Briefcase, MapPin, Clock, Bookmark, BookmarkCheck,
-  Filter, Building, ExternalLink, Users, Star, Plus, ChevronRight,
-  Globe, ArrowUpRight, Zap,
-} from 'lucide-react';
+import { Search, Briefcase, Bookmark, Plus, Zap } from 'lucide-react';
 import { jobApi } from '../../lib/api';
 import { useAuthStore } from '../../stores/authStore';
-import { formatDate, formatSalary, getJobTypeBadgeColor, getLocationTypeBadge, INDUSTRIES } from '../../lib/utils';
-import toast from 'react-hot-toast';
+import { INDUSTRIES } from '../../lib/utils';
+import JobCard from './components/JobCard';
 
 export default function JobsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,31 +35,26 @@ export default function JobsPage() {
   });
 
   const jobs = data?.data?.data || [];
-  const pagination = data?.data?.pagination;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="relative bg-slate-900 border-b border-slate-800 text-white">
-        <div className="absolute inset-0">
-          <img src="/images/career-platform.png" alt="Jobs & Opportunities" className="w-full h-full object-cover opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/80 to-transparent" />
-        </div>
-        <div className="relative z-10 page-container py-12 md:py-16">
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
+      <div className="relative bg-white rounded-xl border border-slate-200 p-5 md:p-6 mt-4 mb-6 shadow-xs text-slate-900 overflow-hidden font-sans">
+        <div className="relative z-10">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-5">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Jobs & Opportunities</h1>
-              <p className="text-slate-300 text-lg">Exclusive positions shared by the IITRAM alumni network</p>
+              <h1 className="text-2xl font-bold tracking-tight mb-0.5 font-display">Jobs & Opportunities</h1>
+              <p className="text-slate-500 text-xs font-semibold">Exclusive positions shared by the IITRAM alumni network</p>
             </div>
             {isAuthenticated && (user?.role === 'alumni' || user?.role === 'admin') && (
-              <Link to="/jobs/post" className="btn bg-white text-iitram-800 hover:bg-slate-100 font-semibold shrink-0">
-                <Plus size={16} /> Post a Job
+              <Link to="/jobs/post" className="btn btn-primary shadow-xs hover:-translate-y-0.5 transition-all shrink-0 py-2 px-4 text-xs font-bold rounded-lg cursor-pointer">
+                <Plus size={14} /> Post a Job
               </Link>
             )}
           </div>
-
+ 
           {/* Tabs */}
-          <div className="flex gap-1 mb-6">
+          <div className="flex gap-1.5 mb-5">
             {[
               { label: 'Browse Jobs', value: 'browse' },
               ...(isAuthenticated ? [
@@ -81,23 +71,23 @@ export default function JobsPage() {
               </button>
             ))}
           </div>
-
+ 
           {tab === 'browse' && (
             <div className="flex gap-3 flex-wrap">
               <div className="flex-1 min-w-64 relative">
-                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                   placeholder="Search jobs, companies, skills..."
-                  className="input pl-10 h-11"
+                  className="input pl-9 h-10 text-xs"
                 />
               </div>
               <select
                 value={filters.jobType}
                 onChange={(e) => setFilters(f => ({ ...f, jobType: e.target.value }))}
-                className="input h-11 w-40"
+                className="input h-10 w-40 text-xs py-1 px-2.5"
               >
                 <option value="">All Types</option>
                 <option value="full-time">Full Time</option>
@@ -124,21 +114,21 @@ export default function JobsPage() {
                 <option value="">All Industries</option>
                 {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
               </select>
-              <label className="flex items-center gap-2 px-3 h-11 rounded-lg border border-slate-200 cursor-pointer hover:border-iitram-300 transition-colors text-sm text-slate-600">
+              <label className="flex items-center gap-2 px-3 h-11 rounded-lg border border-slate-200 cursor-pointer bg-white/60 hover:border-brand-500/40 hover:bg-white/80 transition-colors text-sm text-slate-600">
                 <input
                   type="checkbox"
                   checked={filters.isReferralAvailable}
                   onChange={(e) => setFilters(f => ({ ...f, isReferralAvailable: e.target.checked }))}
-                  className="w-4 h-4 rounded"
+                  className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 focus:outline-none"
                 />
-                <Zap size={14} className="text-gold-500" /> Referral Available
+                <Zap size={14} className="text-amber-500" /> Referral Available
               </label>
             </div>
           )}
         </div>
       </div>
 
-      <div className="page-container py-8">
+      <div className="py-4">
         {tab === 'browse' && (
           <>
             {isLoading ? (
@@ -156,7 +146,7 @@ export default function JobsPage() {
               </div>
             ) : jobs.length === 0 ? (
               <div className="card p-16 text-center">
-                <Briefcase size={40} className="text-slate-300 mx-auto mb-4" />
+                <Briefcase size={40} className="text-slate-350 mx-auto mb-4" />
                 <p className="text-slate-500">No jobs found matching your criteria</p>
               </div>
             ) : (
@@ -173,7 +163,7 @@ export default function JobsPage() {
           <div className="space-y-4">
             {savedJobsData?.data?.data?.length === 0 ? (
               <div className="card p-16 text-center">
-                <Bookmark size={40} className="text-slate-300 mx-auto mb-4" />
+                <Bookmark size={40} className="text-slate-355 mx-auto mb-4" />
                 <p className="text-slate-500">No saved jobs yet</p>
                 <button onClick={() => setSearchParams({ tab: 'browse' })} className="btn btn-primary mt-4">Browse Jobs</button>
               </div>
@@ -189,7 +179,7 @@ export default function JobsPage() {
           <div className="space-y-4">
             {applicationsData?.data?.data?.length === 0 ? (
               <div className="card p-16 text-center">
-                <Briefcase size={40} className="text-slate-300 mx-auto mb-4" />
+                <Briefcase size={40} className="text-slate-350 mx-auto mb-4" />
                 <p className="text-slate-500">No applications yet</p>
               </div>
             ) : (
@@ -201,111 +191,5 @@ export default function JobsPage() {
         )}
       </div>
     </div>
-  );
-}
-
-function JobCard({ job, index }: { job: any; index: number }) {
-  const { isAuthenticated, user } = useAuthStore();
-  const queryClient = useQueryClient();
-  const [saved, setSaved] = useState(job.savedBy?.includes(user?._id));
-
-  const saveMutation = useMutation({
-    mutationFn: () => jobApi.saveJob(job._id),
-    onMutate: () => setSaved(!saved),
-    onError: () => { setSaved(!saved); toast.error('Failed to save job'); },
-  });
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.03 }}
-      className="card-hover p-5"
-    >
-      <div className="flex items-start gap-4">
-        {/* Company Logo */}
-        <div className="w-12 h-12 rounded-xl border border-slate-100 bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
-          {job.companyLogo ? (
-            <img src={job.companyLogo} className="w-full h-full object-contain" alt="" />
-          ) : (
-            <Building size={20} className="text-slate-400" />
-          )}
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <Link to={`/jobs/${job._id}`} className="font-semibold text-slate-900 hover:text-iitram-700 transition-colors">
-                  {job.title}
-                </Link>
-                {job.isFeatured && (
-                  <span className="badge badge-gold"><Star size={10} /> Featured</span>
-                )}
-                {job.isReferralAvailable && (
-                  <span className="badge badge-success"><Zap size={10} /> Referral</span>
-                )}
-              </div>
-              <div className="flex items-center gap-3 mt-1 flex-wrap">
-                <span className="text-sm text-slate-600 font-medium">{job.company}</span>
-                <span className="text-slate-300">·</span>
-                <span className="flex items-center gap-1 text-xs text-slate-500">
-                  <MapPin size={11} /> {job.location}
-                </span>
-                <span className={`badge border ${getJobTypeBadgeColor(job.jobType)} capitalize text-xs`}>
-                  {job.jobType}
-                </span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${getLocationTypeBadge(job.locationType)} capitalize`}>
-                  {job.locationType}
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {isAuthenticated && (
-                <button
-                  onClick={() => saveMutation.mutate()}
-                  className={`p-2 rounded-lg transition-colors ${saved ? 'text-iitram-600 bg-iitram-50' : 'text-slate-400 hover:bg-slate-100'}`}
-                >
-                  {saved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-                </button>
-              )}
-              <Link to={`/jobs/${job._id}`} className="btn btn-primary btn-sm">
-                View <ChevronRight size={14} />
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 mt-3 flex-wrap">
-            <span className="text-xs text-slate-500 flex items-center gap-1">
-              <Clock size={11} /> {formatDate(job.createdAt)}
-            </span>
-            {!job.salary?.isHidden && (job.salary?.min || job.salary?.max) && (
-              <span className="text-xs font-medium text-emerald-700">
-                {formatSalary(job.salary.min, job.salary.max, job.salary.currency, job.salary.period)}
-              </span>
-            )}
-            {job.applicationDeadline && (
-              <span className="text-xs text-red-500">Deadline: {formatDate(job.applicationDeadline)}</span>
-            )}
-            {job.skills?.length > 0 && (
-              <div className="flex gap-1">
-                {job.skills.slice(0, 3).map((s: string) => (
-                  <span key={s} className="text-2xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full">{s}</span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="mt-2 flex items-center gap-2 text-xs text-slate-400">
-            <img
-              src={job.postedBy?.avatar || `https://ui-avatars.com/api/?name=${job.postedBy?.firstName}&background=1d2f88&color=fff`}
-              className="w-4 h-4 rounded-full"
-              alt=""
-            />
-            Posted by {job.postedBy?.firstName} {job.postedBy?.lastName}
-          </div>
-        </div>
-      </div>
-    </motion.div>
   );
 }

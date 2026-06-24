@@ -39,22 +39,20 @@ export default function EventsPage() {
   const events = data?.data?.data || [];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="relative bg-slate-900 border-b border-slate-800 text-white overflow-hidden">
-        <div className="absolute inset-0">
-          <img src="/images/events-hero.png" alt="Events" className="w-full h-full object-cover opacity-20" />
-          <div className="absolute inset-0 iitram-gradient opacity-90" />
-          <div className="absolute inset-0 pattern-dots opacity-30 mix-blend-overlay" />
-        </div>
-        <div className="relative z-10 page-container py-12 md:py-16">
+      <div className="relative bg-white/70 backdrop-blur-md rounded-[1.75rem] border border-white/50 p-6 md:p-8 mt-4 mb-6 shadow-soft text-slate-900 overflow-hidden">
+        {/* Subtle gradient decorative glow */}
+        <div className="absolute -top-10 -right-10 w-48 h-48 bg-brand-500/10 rounded-full blur-2xl pointer-events-none" />
+        
+        <div className="relative z-10">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Events</h1>
-              <p className="text-slate-300 text-lg">Alumni meets, workshops, webinars and more</p>
+              <h1 className="text-3xl font-bold tracking-tight mb-2">Events</h1>
+              <p className="text-slate-500 text-base md:text-lg">Alumni meets, workshops, webinars and more</p>
             </div>
             {isAuthenticated && (user?.role === 'alumni' || user?.role === 'faculty' || user?.role === 'admin') && (
-              <Link to="/events/create" className="btn bg-white text-iitram-800 hover:bg-slate-100 font-semibold shrink-0">
+              <Link to="/events/create" className="btn btn-primary shadow-md hover:-translate-y-0.5 transition-all shrink-0">
                 <Plus size={16} /> Create Event
               </Link>
             )}
@@ -99,7 +97,7 @@ export default function EventsPage() {
         </div>
       </div>
 
-      <div className="page-container py-8">
+      <div className="py-4">
         {/* Featured Event */}
         {events.filter((e: any) => e.isFeatured)[0] && (
           <FeaturedEvent event={events.filter((e: any) => e.isFeatured)[0]} />
@@ -165,7 +163,7 @@ function FeaturedEvent({ event }: { event: any }) {
 function EventCard({ event, index }: { event: any; index: number }) {
   const eventTypeColors: Record<string, string> = {
     reunion: 'from-violet-700 to-purple-600',
-    webinar: 'from-blue-700 to-iitram-600',
+    webinar: 'from-brand-700 to-brand-600',
     workshop: 'from-accent-700 to-accent-600',
     'guest-lecture': 'from-amber-700 to-gold-600',
     conference: 'from-slate-700 to-slate-600',
@@ -203,7 +201,7 @@ function EventCard({ event, index }: { event: any; index: number }) {
 
       <div className="p-5">
         <Link to={`/events/${event._id}`} className="group/link">
-          <h3 className="font-semibold text-slate-900 mb-2 line-clamp-2 group-hover/link:text-iitram-700 transition-colors">
+          <h3 className="font-semibold text-slate-900 mb-2 line-clamp-2 group-hover/link:text-brand-600 transition-colors">
             {event.title}
           </h3>
         </Link>

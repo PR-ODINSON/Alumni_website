@@ -64,7 +64,7 @@ export function formatSalary(min?: number, max?: number, currency = 'INR', perio
 export function getJobTypeBadgeColor(type: string): string {
   const map: Record<string, string> = {
     'full-time': 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    'part-time': 'bg-blue-50 text-blue-700 border-blue-100',
+    'part-time': 'bg-brand-50 text-brand-700 border-brand-100',
     'internship': 'bg-purple-50 text-purple-700 border-purple-100',
     'contract': 'bg-amber-50 text-amber-700 border-amber-100',
     'freelance': 'bg-orange-50 text-orange-700 border-orange-100',

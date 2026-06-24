@@ -10,5 +10,5 @@ export default function ProfilePage() {
   if (!targetId) return null;
 
   // Reuse alumni profile page with the user's own ID
-  return <AlumniProfilePage />;
+  return <AlumniProfilePage userId={targetId} />;
 }

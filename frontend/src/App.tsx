@@ -72,6 +72,7 @@ export default function App() {
         <Route path="/alumni" element={<AlumniDirectoryPage />} />
         <Route path="/alumni/:userId" element={<AlumniProfilePage />} />
         <Route path="/students" element={<StudentDirectoryPage />} />
+        <Route path="/students/:userId" element={<ProfilePage />} />
         <Route path="/feed" element={<ProtectedRoute><FeedPage /></ProtectedRoute>} />
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/jobs/:jobId" element={<JobDetailPage />} />

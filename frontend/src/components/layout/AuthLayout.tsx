@@ -11,124 +11,95 @@ const stats = [
 
 export default function AuthLayout() {
   return (
-    <div className="min-h-screen flex">
-      {/* Left Panel */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 bg-gradient-to-br from-slate-900 via-iitram-950 to-slate-900 text-white relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 20% 50%, rgba(52, 112, 244, 0.3) 0%, transparent 50%), 
-                              radial-gradient(circle at 80% 20%, rgba(234, 179, 8, 0.2) 0%, transparent 50%),
-                              radial-gradient(circle at 50% 80%, rgba(52, 112, 244, 0.2) 0%, transparent 50%)`
-          }} />
-          <div className="absolute inset-0 pattern-grid opacity-30" />
-        </div>
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-0 md:p-6 lg:p-8 font-sans">
+      {/* Main Professional Split Card */}
+      <div className="w-full max-w-6xl bg-white border border-slate-200 shadow-xl rounded-none md:rounded-2xl overflow-hidden grid lg:grid-cols-12 min-h-screen md:min-h-[700px] lg:h-[760px] relative z-10">
+        
+        {/* Left Side - Solid Deep Navy Sidebar */}
+        <div className="hidden lg:flex lg:col-span-5 bg-[#001f54] text-white relative flex-col justify-between p-10 xl:p-12 overflow-y-auto scrollbar-none">
+          <div className="relative z-10 flex flex-col h-full justify-between gap-8">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center border border-white/20">
+                <GraduationCap size={20} className="text-white" />
+              </div>
+              <div>
+                <span className="text-lg font-bold font-display text-white tracking-wide">IITRAM Alumni</span>
+                <p className="text-[10px] text-slate-300 font-semibold">Career & Community</p>
+              </div>
+            </Link>
 
-        {/* Floating elements */}
-        <div className="absolute top-20 right-20 w-64 h-64 bg-iitram-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-gold-500/5 rounded-full blur-3xl" />
-
-        <div className="relative z-10 flex flex-col p-12 xl:p-16 w-full">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 mb-auto">
-            <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center">
-              <GraduationCap size={22} className="text-white" />
-            </div>
-            <div>
-              <span className="text-xl font-bold text-white">IITRAM Alumni</span>
-              <p className="text-xs text-slate-400">Career & Community Platform</p>
-            </div>
-          </Link>
-
-          {/* Main content */}
-          <div className="my-12">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-            >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gold-500/10 border border-gold-500/20 rounded-full mb-6">
-                <span className="w-1.5 h-1.5 bg-gold-400 rounded-full animate-pulse" />
-                <span className="text-gold-400 text-xs font-medium">Institute of Infrastructure, Technology, Research and Management</span>
+            {/* Middle Section */}
+            <div className="my-auto">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 border border-white/15 rounded-full mb-4">
+                <span className="w-1.5 h-1.5 bg-brand-400 rounded-full animate-pulse" />
+                <span className="text-slate-200 text-[10px] font-bold tracking-wide">IITRAM Ahmedabad</span>
               </div>
 
-              <h1 className="text-4xl xl:text-5xl font-bold leading-tight text-white mb-6">
+              <h1 className="text-3xl xl:text-4xl font-bold font-display leading-tight text-white mb-4">
                 Where Alumni<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-iitram-300 to-gold-400">
+                <span className="text-white font-extrabold">
                   Shape Futures
                 </span>
               </h1>
 
-              <p className="text-slate-400 text-lg leading-relaxed max-w-md">
-                Connect with fellow graduates, discover opportunities, find mentors, and contribute to the IITRAM legacy.
+              <p className="text-slate-300 text-xs leading-relaxed max-w-xs mb-8">
+                Connect with graduates, find mentors, and contribute to the legacy.
               </p>
-            </motion.div>
 
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="grid grid-cols-2 gap-4 mt-10"
-            >
-              {stats.map(({ icon: Icon, value, label }) => (
-                <div key={label} className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
-                  <div className="w-9 h-9 rounded-lg bg-iitram-500/20 flex items-center justify-center">
-                    <Icon size={18} className="text-iitram-300" />
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-3">
+                {stats.map(({ icon: Icon, value, label }) => (
+                  <div key={label} className="p-3 bg-white/5 rounded-xl border border-white/10 flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                      <Icon size={14} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-base font-bold text-white leading-none font-display">{value}</p>
+                      <p className="text-[9px] text-slate-300 mt-1 font-semibold">{label}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xl font-bold text-white leading-none">{value}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{label}</p>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Testimonial */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm"
-          >
-            <p className="text-slate-300 text-sm leading-relaxed italic">
-              "The IITRAM Alumni Network helped me find my first job abroad and connected me with a mentor who transformed my career trajectory."
-            </p>
-            <div className="flex items-center gap-3 mt-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-iitram-400 to-gold-500" />
-              <div>
-                <p className="text-white text-xs font-semibold">Rahul Sharma</p>
-                <p className="text-slate-500 text-2xs">B.Tech Civil 2019 · Software Engineer, Google</p>
+                ))}
               </div>
             </div>
-          </motion.div>
-        </div>
-      </div>
 
-      {/* Right Panel */}
-      <div className="w-full lg:w-1/2 xl:w-2/5 flex flex-col bg-white">
-        <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 xl:px-16 py-8">
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {/* Mobile logo */}
-            <Link to="/" className="flex items-center gap-2 mb-8 lg:hidden">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-iitram-700 to-iitram-500 flex items-center justify-center">
-                <GraduationCap size={16} className="text-white" />
+            {/* Testimonial Quote */}
+            <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+              <p className="text-slate-200 text-xs leading-relaxed italic">
+                "The IITRAM Alumni Network helped me find my first job abroad and connected me with a mentor who transformed my career trajectory."
+              </p>
+              <div className="flex items-center gap-2 mt-3">
+                <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-extrabold text-white">RS</div>
+                <div>
+                  <p className="text-white text-[11px] font-bold leading-none">Rahul Sharma</p>
+                  <p className="text-slate-400 text-[9px] mt-0.5 font-semibold">B.Tech Civil 2019 · Google</p>
+                </div>
               </div>
-              <span className="font-bold text-slate-900">IITRAM Alumni</span>
-            </Link>
-
-            <Outlet />
-          </motion.div>
+            </div>
+          </div>
         </div>
 
-        <div className="px-6 sm:px-12 py-4 text-center text-xs text-slate-400">
-          © {new Date().getFullYear()} IITRAM Alumni Platform · Ahmedabad, India
+        {/* Right Side - Form Card Area */}
+        <div className="col-span-12 lg:col-span-7 flex flex-col justify-between overflow-y-auto scrollbar-none h-full bg-white">
+          <div className="flex-1 flex flex-col justify-center py-5 px-6 sm:px-10">
+            <div className="w-full max-w-md mx-auto">
+              {/* Mobile logo */}
+              <Link to="/" className="flex lg:hidden items-center gap-2.5 mb-4 justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#001f54] flex items-center justify-center shadow-sm">
+                  <GraduationCap size={16} className="text-white" />
+                </div>
+                <span className="font-bold font-display text-slate-900">IITRAM Alumni</span>
+              </Link>
+
+              <Outlet />
+            </div>
+          </div>
+
+          <div className="pb-3 text-center text-[10px] text-slate-400 font-semibold">
+            © {new Date().getFullYear()} IITRAM Alumni Platform · Ahmedabad, India
+          </div>
         </div>
+
       </div>
     </div>
   );

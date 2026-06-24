@@ -11,112 +11,9 @@ import { useAuthStore } from '../../stores/authStore';
 import { formatRelativeTime, cn } from '../../lib/utils';
 import Avatar from '../../components/ui/Avatar';
 
-const DEPARTMENTS = [
-  'Civil Engineering', 'Mechanical Engineering', 'Electrical Engineering',
-  'Computer Science', 'Chemical Engineering', 'Infrastructure Engineering',
-  'Environmental Engineering', 'Architecture',
-];
-
-const YEARS = [2024, 2025, 2026, 2027, 2028];
-
-function StudentCard({ student }: { student: any }) {
-  const user = student.user || {};
-  const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
-
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-    >
-      <Link to={`/students/${user._id}`} className="block group">
-        <div className="card-hover p-5 flex items-start gap-4 h-full">
-          <Avatar
-            src={user.avatar}
-            initials={`${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`}
-            size="lg"
-          />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="font-semibold text-slate-900 group-hover:text-iitram-700 transition-colors truncate">
-                {fullName || 'IITRAM Student'}
-              </h3>
-              <div className="flex items-center gap-1 shrink-0">
-                {student.openToWork && (
-                  <span className="badge-success text-xs">Open to Work</span>
-                )}
-                {student.seekingMentor && (
-                  <span className="badge-primary text-xs">Seeking Mentor</span>
-                )}
-              </div>
-            </div>
-
-            <p className="text-sm text-slate-500 mt-0.5 flex items-center gap-1">
-              <GraduationCap size={13} />
-              <span>{student.department} · Batch {student.batch}</span>
-            </p>
-
-            {user.location?.city && (
-              <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-                <MapPin size={11} />
-                {user.location.city}{user.location.country ? `, ${user.location.country}` : ''}
-              </p>
-            )}
-
-            {student.currentRole && (
-              <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                <Briefcase size={11} />
-                {student.currentRole}
-              </p>
-            )}
-
-            {user.bio && (
-              <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">{user.bio}</p>
-            )}
-
-            {student.skills?.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-3">
-                {student.skills.slice(0, 4).map((skill: string) => (
-                  <span key={skill} className="badge bg-slate-100 text-slate-600 text-xs">{skill}</span>
-                ))}
-                {student.skills.length > 4 && (
-                  <span className="badge bg-slate-100 text-slate-500 text-xs">+{student.skills.length - 4}</span>
-                )}
-              </div>
-            )}
-
-            {student.interests?.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                {student.interests.slice(0, 3).map((interest: string) => (
-                  <span key={interest} className="badge bg-iitram-50 text-iitram-600 text-xs">{interest}</span>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  );
-}
-
-function SkeletonCard() {
-  return (
-    <div className="card p-5 flex items-start gap-4">
-      <div className="skeleton w-12 h-12 rounded-full" />
-      <div className="flex-1 space-y-2">
-        <div className="skeleton h-4 w-36 rounded" />
-        <div className="skeleton h-3 w-48 rounded" />
-        <div className="skeleton h-3 w-32 rounded" />
-        <div className="flex gap-1 mt-3">
-          {[1,2,3].map(i => <div key={i} className="skeleton h-5 w-16 rounded-full" />)}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function StudentDirectory() {
+import StudentCard, { SkeletonCard } from './components/StudentCard';
+import StudentFilters from './components/StudentFilters';
+export default function StudentDirectory() {
   const { isAuthenticated } = useAuthStore();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -163,23 +60,26 @@ export default function StudentDirectory() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50">
+    <div className="pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="bg-white border-b border-slate-100">
-        <div className="page-container py-10">
-          <div className="flex items-center justify-between gap-4">
+      <div className="relative bg-white/70 backdrop-blur-md rounded-[1.75rem] border border-white/50 p-6 md:p-8 mt-4 mb-6 shadow-soft text-slate-900 overflow-hidden">
+        {/* Subtle gradient decorative glow */}
+        <div className="absolute -top-10 -right-10 w-48 h-48 bg-brand-500/10 rounded-full blur-2xl pointer-events-none" />
+        
+        <div className="relative z-10">
+          <div className="flex items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Student Directory</h1>
-              <p className="text-slate-500 mt-1">Connect with current IITRAM students</p>
+              <h1 className="text-3xl font-bold tracking-tight mb-2">Student Directory</h1>
+              <p className="text-slate-500 text-sm md:text-base">Connect with current IITRAM students</p>
             </div>
-            <div className="hidden sm:flex items-center gap-2 text-sm text-slate-500">
-              <Users size={16} />
+            <div className="hidden sm:flex items-center gap-2 text-sm text-slate-600 bg-slate-100/60 px-4 py-2 rounded-xl border border-slate-200/50">
+              <Users size={16} className="text-brand-500" />
               <span>{pagination?.total || 0} students</span>
             </div>
           </div>
 
           {/* Search + Filter bar */}
-          <div className="flex gap-3 mt-6">
+          <div className="flex gap-3">
             <div className="flex-1 relative">
               <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -194,13 +94,13 @@ export default function StudentDirectory() {
               onClick={() => setFiltersOpen(o => !o)}
               className={cn(
                 'btn-outline flex items-center gap-2',
-                activeFilterCount > 0 && 'border-iitram-400 text-iitram-700 bg-iitram-50'
+                activeFilterCount > 0 && 'border-brand-400 text-brand-700 bg-brand-50'
               )}
             >
               <Filter size={15} />
               <span className="hidden sm:inline">Filters</span>
               {activeFilterCount > 0 && (
-                <span className="w-5 h-5 rounded-full bg-iitram-700 text-white text-xs flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-brand-500 text-white text-xs flex items-center justify-center font-bold">
                   {activeFilterCount}
                 </span>
               )}
@@ -208,66 +108,14 @@ export default function StudentDirectory() {
           </div>
 
           {/* Filters panel */}
-          <AnimatePresence>
-            {filtersOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div>
-                    <label className="text-xs font-medium text-slate-500 mb-1.5 block">Department</label>
-                    <select
-                      value={filters.department}
-                      onChange={e => { setFilters(f => ({ ...f, department: e.target.value })); setPage(1); }}
-                      className="input text-sm"
-                    >
-                      <option value="">All Departments</option>
-                      {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-slate-500 mb-1.5 block">Batch Year</label>
-                    <select
-                      value={filters.batch}
-                      onChange={e => { setFilters(f => ({ ...f, batch: e.target.value })); setPage(1); }}
-                      className="input text-sm"
-                    >
-                      <option value="">All Batches</option>
-                      {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-                    </select>
-                  </div>
-                  <div className="flex flex-col gap-3 justify-end">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={filters.openToWork}
-                        onChange={e => { setFilters(f => ({ ...f, openToWork: e.target.checked })); setPage(1); }}
-                        className="w-4 h-4 rounded border-slate-300 text-iitram-600"
-                      />
-                      <span className="text-sm text-slate-700">Open to Work</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={filters.seekingMentor}
-                        onChange={e => { setFilters(f => ({ ...f, seekingMentor: e.target.checked })); setPage(1); }}
-                        className="w-4 h-4 rounded border-slate-300 text-iitram-600"
-                      />
-                      <span className="text-sm text-slate-700">Seeking Mentor</span>
-                    </label>
-                  </div>
-                  <div className="flex items-end">
-                    <button onClick={clearFilters} className="btn-ghost flex items-center gap-1 text-sm w-full justify-center">
-                      <X size={14} /> Clear Filters
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <StudentFilters
+            filters={filters}
+            setFilters={setFilters}
+            filtersOpen={filtersOpen}
+            clearFilters={clearFilters}
+            setPage={setPage}
+            activeFilterCount={activeFilterCount}
+          />
         </div>
       </div>
 
@@ -283,7 +131,7 @@ export default function StudentDirectory() {
             <h3 className="text-lg font-semibold text-slate-700">No students found</h3>
             <p className="text-slate-500 mt-1">Try adjusting your search or filters</p>
             {activeFilterCount > 0 && (
-              <button onClick={clearFilters} className="btn-primary mt-4">Clear Filters</button>
+              <button onClick={clearFilters} className="btn btn-primary mt-4">Clear Filters</button>
             )}
           </motion.div>
         ) : (
@@ -315,7 +163,7 @@ export default function StudentDirectory() {
                     onClick={() => setPage(p)}
                     className={cn(
                       'w-9 h-9 rounded-lg text-sm font-medium transition-all',
-                      p === page ? 'bg-iitram-700 text-white' : 'text-slate-600 hover:bg-slate-100'
+                      p === page ? 'bg-brand-500 text-white' : 'text-slate-600 hover:bg-slate-100'
                     )}
                   >
                     {p}

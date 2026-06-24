@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -208,8 +209,8 @@ export default function EditProfile() {
                     <Briefcase size={18} className="text-iitram-600" />
                     <h3 className="font-semibold text-slate-900">Career Timeline</h3>
                   </div>
-                  <p className="text-sm text-slate-500 mb-4">Manage your career entries from your alumni profile page.</p>
-                  <a href="/alumni/me" className="btn-primary btn-sm">Go to Alumni Profile</a>
+                  <p className="text-sm text-slate-500 mb-4">Manage your career entries from your profile page.</p>
+                  <Link to="/profile" className="btn-primary btn-sm">Go to Profile</Link>
                 </div>
               ) : (
                 <div className="card p-6">

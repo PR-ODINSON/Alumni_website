@@ -44,32 +44,54 @@ export const createPost = asyncHandler(async (req: AuthRequest, res: Response) =
 });
 
 export const getFeed = asyncHandler(async (req: AuthRequest, res: Response) => {
-  const { page = 1, limit = 20, postType, filter = 'all' } = req.query;
-  const skip = (Number(page) - 1) * Number(limit);
+  const { page = 1, cursor, limit = 20, postType, filter = 'all' } = req.query;
+  const limitNum = Number(limit);
 
   const query: any = { isPublished: true };
   if (postType) query.postType = postType;
   if (filter === 'announcements') query.isAnnouncement = true;
 
-  const [posts, total] = await Promise.all([
-    Post.find(query)
-      .populate('author', 'firstName lastName avatar role isVerified')
-      .populate({
-        path: 'comments',
-        options: { limit: 3, sort: { createdAt: -1 } },
-        populate: { path: 'author', select: 'firstName lastName avatar' },
-      })
-      .sort({ isPinned: -1, createdAt: -1 })
-      .skip(skip)
-      .limit(Number(limit))
-      .lean(),
-    Post.countDocuments(query),
-  ]);
+  // Use cursor-based pagination (distributed pointers for scalability)
+  if (cursor) {
+    query.createdAt = { $lt: new Date(Number(cursor)) };
+    query.isPinned = false; // Exclude pinned posts from subsequent pages
+  }
+
+  const postsQuery = Post.find(query)
+    .populate('author', 'firstName lastName avatar role isVerified')
+    .populate({
+      path: 'comments',
+      options: { limit: 3, sort: { createdAt: -1 } },
+      populate: { path: 'author', select: 'firstName lastName avatar' },
+    });
+
+  // If we are paging using cursor, we sort by createdAt. Otherwise we sort by isPinned and createdAt.
+  if (cursor) {
+    postsQuery.sort({ createdAt: -1 });
+  } else {
+    postsQuery.sort({ isPinned: -1, createdAt: -1 });
+  }
+
+  const posts = await postsQuery.limit(limitNum).lean();
+
+  const nextCursor = posts.length > 0 ? new Date(posts[posts.length - 1].createdAt).getTime() : null;
+  const hasMore = posts.length === limitNum;
+
+  // Backwards compatibility for total count
+  const total = await Post.countDocuments({ isPublished: true, ...(postType ? { postType } : {}), ...(filter === 'announcements' ? { isAnnouncement: true } : {}) });
 
   res.json({
     success: true,
     data: posts,
-    pagination: { total, page: Number(page), pages: Math.ceil(total / Number(limit)) },
+    nextCursor,
+    hasMore,
+    pagination: {
+      total,
+      page: Number(page),
+      pages: Math.ceil(total / limitNum),
+      hasMore,
+      nextCursor,
+    },
   });
 });
 

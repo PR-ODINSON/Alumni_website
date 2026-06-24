@@ -64,7 +64,7 @@ export default function AdminPage() {
   const statCards = dash ? [
     { label: 'Total Users', value: dash.totalUsers, icon: Users, color: 'text-iitram-700', bg: 'bg-iitram-50' },
     { label: 'Alumni', value: dash.totalAlumni, icon: Users, color: 'text-emerald-700', bg: 'bg-emerald-50' },
-    { label: 'Students', value: dash.totalStudents, icon: Users, color: 'text-blue-700', bg: 'bg-blue-50' },
+    { label: 'Students', value: dash.totalStudents, icon: Users, color: 'text-brand-700', bg: 'bg-brand-50' },
     { label: 'Pending Verifications', value: dash.pendingVerifications, icon: AlertCircle, color: 'text-amber-700', bg: 'bg-amber-50' },
     { label: 'Total Jobs', value: dash.totalJobs, icon: Briefcase, color: 'text-purple-700', bg: 'bg-purple-50' },
     { label: 'Total Events', value: dash.totalEvents, icon: Calendar, color: 'text-rose-700', bg: 'bg-rose-50' },

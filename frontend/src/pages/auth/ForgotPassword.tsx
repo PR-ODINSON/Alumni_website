@@ -40,8 +40,8 @@ export default function ForgotPasswordPage() {
       <Link to="/login" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 mb-8">
         <ArrowLeft size={16} /> Back to Sign In
       </Link>
-      <h1 className="text-3xl font-bold text-slate-900 mb-2">Reset password</h1>
-      <p className="text-slate-500 mb-8">Enter your email and we'll send a reset link.</p>
+      <h1 className="text-3xl font-bold font-display text-slate-900 mb-2 tracking-tight">Reset Password</h1>
+      <p className="text-sm text-slate-500 mb-8">Enter your email and we'll send a reset link.</p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1.5">Email Address</label>

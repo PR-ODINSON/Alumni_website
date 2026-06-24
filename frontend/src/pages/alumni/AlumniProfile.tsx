@@ -7,25 +7,39 @@ import {
   UserPlus, UserCheck, Calendar, ChevronRight, BookOpen,
   Rocket, Users, Eye, Edit, ExternalLink,
 } from 'lucide-react';
-import { alumniApi, connectionApi } from '../../lib/api';
+import { alumniApi, studentApi, connectionApi } from '../../lib/api';
 import { useAuthStore } from '../../stores/authStore';
 import { formatDate } from '../../lib/utils';
 import toast from 'react-hot-toast';
 
-export default function AlumniProfilePage() {
-  const { userId } = useParams<{ userId: string }>();
+export default function AlumniProfilePage({ userId: propUserId }: { userId?: string } = {}) {
+  const { userId: routeUserId } = useParams<{ userId: string }>();
+  const userId = propUserId || routeUserId;
   const { user: currentUser, isAuthenticated } = useAuthStore();
   const isOwn = currentUser?._id === userId;
 
   const { data, isLoading } = useQuery({
-    queryKey: ['alumni-profile', userId],
-    queryFn: () => alumniApi.getProfile(userId!),
+    queryKey: ['profile', userId],
+    queryFn: async () => {
+      if (!userId) throw new Error('User ID is required');
+      try {
+        const res = await alumniApi.getProfile(userId);
+        return { isAlumni: true, profile: res.data.data };
+      } catch (err: any) {
+        if (err.response?.status === 404) {
+          const res = await studentApi.getProfile(userId);
+          return { isAlumni: false, profile: res.data.data };
+        }
+        throw err;
+      }
+    },
+    enabled: !!userId,
   });
 
   const { data: connData } = useQuery({
     queryKey: ['connection-status', userId],
     queryFn: () => connectionApi.getStatus(userId!),
-    enabled: isAuthenticated && !isOwn,
+    enabled: isAuthenticated && !isOwn && !!userId,
   });
 
   const connectMutation = useMutation({
@@ -54,11 +68,39 @@ export default function AlumniProfilePage() {
     );
   }
 
-  const alumni = data?.data?.data;
-  if (!alumni) return <div className="py-24 text-center text-slate-400">Profile not found</div>;
+  const isAlumni = data?.isAlumni;
+  const profile = data?.profile;
 
-  const user = alumni.user;
+  if (!profile) return <div className="py-24 text-center text-slate-400">Profile not found</div>;
+
+  const user = profile.user || {};
   const connStatus = connData?.data?.data?.status;
+
+  // Map student internships and academic information to match alumni properties
+  const careerTimeline = isAlumni
+    ? (profile.careerTimeline || [])
+    : (profile.internships || []).map((entry: any) => ({
+        ...entry,
+        title: entry.role,
+        employmentType: 'internship',
+      }));
+
+  const educationHistory = isAlumni
+    ? (profile.educationHistory || [])
+    : [
+        {
+          degree: profile.degreeType || 'Student',
+          field: profile.program || profile.department || '',
+          institution: 'Indian Institute of Technology RAM (IITRAM)',
+          startYear: profile.batch ? profile.batch - 4 : new Date().getFullYear() - 4,
+          endYear: profile.batch || new Date().getFullYear(),
+          isCurrent: true,
+          grade: profile.cgpa ? `CGPA: ${profile.cgpa}` : undefined,
+        },
+      ];
+
+  const achievements = profile.achievements || [];
+  const publications = profile.publications || [];
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -70,7 +112,7 @@ export default function AlumniProfilePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-iitram-900/60 to-transparent" />
         <div className="absolute top-4 right-4 flex gap-2">
           {isOwn && (
-            <Link to="/profile" className="btn btn-sm bg-white/20 text-white border border-white/30 hover:bg-white/30">
+            <Link to="/profile/edit" className="btn btn-sm bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/25 shadow-sm transition-all duration-300">
               <Edit size={14} /> Edit Profile
             </Link>
           )}
@@ -79,7 +121,7 @@ export default function AlumniProfilePage() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Profile Header */}
-        <div className="card -mt-20 p-6 sm:p-8 mb-6">
+        <div className="card -mt-20 p-6 sm:p-8 mb-6 relative border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.06)] hover:-translate-y-1 transition-all duration-300">
           <div className="flex flex-col sm:flex-row gap-6">
             <div className="relative flex-shrink-0">
               {user.avatar ? (
@@ -90,10 +132,10 @@ export default function AlumniProfilePage() {
                 />
               ) : (
                 <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-iitram-700 to-iitram-500 ring-4 ring-white shadow-soft flex items-center justify-center">
-                  <span className="text-3xl font-bold text-white">{user.firstName[0]}{user.lastName[0]}</span>
+                  <span className="text-3xl font-bold text-white">{user.firstName?.[0] || ''}{user.lastName?.[0] || ''}</span>
                 </div>
               )}
-              {alumni.verificationStatus === 'verified' && (
+              {profile.verificationStatus === 'verified' && (
                 <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-iitram-600 rounded-full border-2 border-white flex items-center justify-center">
                   <svg viewBox="0 0 12 12" className="w-4 h-4"><path d="M10 3L5 8.5 2 5.5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>
@@ -105,29 +147,31 @@ export default function AlumniProfilePage() {
                 <div>
                   <div className="flex items-center gap-3 flex-wrap">
                     <h1 className="text-2xl font-bold text-slate-900">{user.firstName} {user.lastName}</h1>
-                    {alumni.isDistinguished && (
+                    {isAlumni && profile.isDistinguished && (
                       <span className="badge badge-gold">
                         <Award size={11} /> Distinguished Alumni
                       </span>
                     )}
-                    {alumni.isMentor && (
+                    {isAlumni && profile.isMentor && (
                       <span className="badge badge-success">
                         <Star size={11} /> Mentor
                       </span>
                     )}
                   </div>
                   <p className="text-slate-600 mt-1">
-                    {alumni.currentDesignation}{alumni.currentCompany ? ` at ${alumni.currentCompany}` : ''}
+                    {isAlumni 
+                      ? (profile.currentDesignation || 'IITRAM Alumni') + (profile.currentCompany ? ` at ${profile.currentCompany}` : '')
+                      : `Student · ${profile.degreeType} in ${profile.department}`}
                   </p>
                   <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-slate-500">
                     {user.location?.city && (
                       <span className="flex items-center gap-1"><MapPin size={13} /> {user.location.city}, {user.location.country}</span>
                     )}
-                    {alumni.currentIndustry && (
-                      <span className="flex items-center gap-1"><Briefcase size={13} /> {alumni.currentIndustry}</span>
+                    {isAlumni && profile.currentIndustry && (
+                      <span className="flex items-center gap-1"><Briefcase size={13} /> {profile.currentIndustry}</span>
                     )}
-                    <span className="flex items-center gap-1"><GraduationCap size={13} /> {alumni.degreeType} · {alumni.department} · Batch {alumni.batch}</span>
-                    <span className="flex items-center gap-1"><Eye size={13} /> {alumni.profileViews} views</span>
+                    <span className="flex items-center gap-1"><GraduationCap size={13} /> {profile.degreeType} · {profile.department} · Batch {profile.batch}</span>
+                    <span className="flex items-center gap-1"><Eye size={13} /> {profile.profileViews || 0} views</span>
                   </div>
                 </div>
 
@@ -152,7 +196,7 @@ export default function AlumniProfilePage() {
                         <UserPlus size={15} /> Connect
                       </button>
                     )}
-                    {alumni.isMentor && alumni.mentorAvailability !== 'unavailable' && (
+                    {isAlumni && profile.isMentor && profile.mentorAvailability !== 'unavailable' && (
                       <Link to={`/mentorship?mentor=${userId}`} className="btn btn-gold btn-sm">
                         <Star size={15} /> Request Mentorship
                       </Link>
@@ -169,7 +213,7 @@ export default function AlumniProfilePage() {
               {/* Social Links */}
               <div className="flex items-center gap-3 mt-4">
                 {user.socialLinks?.linkedin && (
-                  <a href={user.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600 transition-colors" title="LinkedIn">
+                  <a href={user.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-brand-500 transition-colors" title="LinkedIn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
                   </a>
                 )}
@@ -196,67 +240,74 @@ export default function AlumniProfilePage() {
         <div className="grid lg:grid-cols-3 gap-6 pb-12">
           {/* Left column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Career Timeline */}
-            {alumni.careerTimeline?.length > 0 && (
-              <div className="card p-6">
-                <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
-                  <Briefcase size={18} className="text-iitram-600" /> Career Journey
-                </h2>
-                <div className="relative">
-                  <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-slate-100" />
-                  <div className="space-y-6">
-                    {alumni.careerTimeline
-                      .sort((a: any, b: any) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
-                      .map((entry: any, i: number) => (
-                        <motion.div
-                          key={entry._id || i}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.05 }}
-                          className="relative pl-10"
-                        >
-                          <div className={`absolute left-2 top-1 w-4 h-4 rounded-full border-2 ${entry.isCurrent ? 'bg-iitram-600 border-iitram-600' : 'bg-white border-slate-300'}`} />
-                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1">
-                            <div>
-                              <p className="font-semibold text-slate-900">{entry.title}</p>
-                              <p className="text-iitram-600 text-sm">{entry.company}</p>
-                              {entry.location && <p className="text-xs text-slate-400 mt-0.5"><MapPin size={10} className="inline mr-1" />{entry.location}</p>}
-                            </div>
-                            <div className="text-right flex-shrink-0">
-                              <p className="text-xs text-slate-500">
-                                {formatDate(entry.startDate, { month: 'short', year: 'numeric' })} —{' '}
-                                {entry.isCurrent ? <span className="text-emerald-600 font-medium">Present</span> : entry.endDate ? formatDate(entry.endDate, { month: 'short', year: 'numeric' }) : ''}
-                              </p>
-                              <span className={`mt-1 inline-block text-2xs px-2 py-0.5 rounded-full capitalize ${
-                                entry.employmentType === 'full-time' ? 'bg-emerald-50 text-emerald-700' :
-                                entry.employmentType === 'internship' ? 'bg-purple-50 text-purple-700' :
-                                'bg-slate-100 text-slate-600'
-                              }`}>
-                                {entry.employmentType}
-                              </span>
-                            </div>
-                          </div>
-                          {entry.description && (
-                            <p className="text-sm text-slate-500 mt-2 leading-relaxed">{entry.description}</p>
-                          )}
-                        </motion.div>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            )}
+             {/* Career Timeline */}
+             {careerTimeline?.length > 0 && (
+               <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1 transition-all duration-300">
+                 <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
+                   <Briefcase size={18} className="text-[#0169FC]" /> {isAlumni ? 'Career Journey' : 'Internships & Experience'}
+                 </h2>
+                 <div className="relative">
+                   <div className="absolute left-4 top-2 bottom-2 w-[1.5px] bg-gradient-to-b from-[#0169FC]/25 via-slate-100 to-slate-100/50" />
+                   <div className="space-y-6">
+                     {careerTimeline
+                       .sort((a: any, b: any) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+                       .map((entry: any, i: number) => (
+                         <motion.div
+                           key={entry._id || i}
+                           initial={{ opacity: 0, x: -10 }}
+                           animate={{ opacity: 1, x: 0 }}
+                           transition={{ delay: i * 0.05 }}
+                           className="relative pl-10"
+                         >
+                           {entry.isCurrent ? (
+                             <div className="absolute left-4 -translate-x-1/2 top-2 flex h-4 w-4 items-center justify-center">
+                               <span className="absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-40 animate-ping"></span>
+                               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0169FC] shadow-[0_0_8px_rgba(1,105,252,0.4)]"></span>
+                             </div>
+                           ) : (
+                             <div className="absolute left-4 -translate-x-1/2 top-2.5 w-3 h-3 rounded-full border border-slate-300 bg-white shadow-2xs" />
+                           )}
+                           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1">
+                             <div>
+                               <p className="font-semibold text-slate-900">{entry.title}</p>
+                               <p className="text-[#0169FC] text-sm font-medium">{entry.company}</p>
+                               {entry.location && <p className="text-xs text-slate-400 mt-0.5"><MapPin size={10} className="inline mr-1" />{entry.location}</p>}
+                             </div>
+                             <div className="text-right flex-shrink-0">
+                               <p className="text-xs text-slate-500">
+                                 {formatDate(entry.startDate, { month: 'short', year: 'numeric' })} —{' '}
+                                 {entry.isCurrent ? <span className="text-emerald-600 font-semibold">Present</span> : entry.endDate ? formatDate(entry.endDate, { month: 'short', year: 'numeric' }) : ''}
+                               </p>
+                               <span className={`mt-1 inline-block text-2xs px-2 py-0.5 rounded-full capitalize font-medium ${
+                                 entry.employmentType === 'full-time' ? 'bg-emerald-50 text-emerald-700' :
+                                 entry.employmentType === 'internship' ? 'bg-purple-50 text-purple-700' :
+                                 'bg-slate-100 text-slate-600'
+                               }`}>
+                                 {entry.employmentType}
+                               </span>
+                             </div>
+                           </div>
+                           {entry.description && (
+                             <p className="text-sm text-slate-500 mt-2 leading-relaxed">{entry.description}</p>
+                           )}
+                         </motion.div>
+                       ))}
+                   </div>
+                 </div>
+               </div>
+             )}
 
             {/* Education */}
-            {alumni.educationHistory?.length > 0 && (
-              <div className="card p-6">
+            {educationHistory?.length > 0 && (
+              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
-                  <GraduationCap size={18} className="text-iitram-600" /> Education
+                  <GraduationCap size={18} className="text-[#0169FC]" /> Education
                 </h2>
                 <div className="space-y-5">
-                  {alumni.educationHistory.map((edu: any, i: number) => (
+                  {educationHistory.map((edu: any, i: number) => (
                     <div key={i} className="flex gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-iitram-50 flex items-center justify-center flex-shrink-0">
-                        <GraduationCap size={18} className="text-iitram-600" />
+                      <div className="w-10 h-10 rounded-xl bg-blue-50/50 flex items-center justify-center flex-shrink-0">
+                        <GraduationCap size={18} className="text-[#0169FC]" />
                       </div>
                       <div className="flex-1">
                         <p className="font-semibold text-slate-900">{edu.degree} in {edu.field}</p>
@@ -272,14 +323,55 @@ export default function AlumniProfilePage() {
               </div>
             )}
 
+            {/* Projects & Portfolio for Students */}
+            {!isAlumni && profile.projects?.length > 0 && (
+              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+                <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
+                  <Rocket size={18} className="text-brand-500" /> Projects & Portfolio
+                </h2>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {profile.projects.map((project: any, i: number) => (
+                    <div key={i} className="p-4 rounded-xl bg-slate-50/50 border border-slate-100 hover:border-slate-200 transition-colors duration-250 flex flex-col justify-between shadow-xs">
+                      <div>
+                        <h3 className="font-semibold text-slate-900 text-sm">{project.title}</h3>
+                        {project.description && <p className="text-xs text-slate-500 mt-1 line-clamp-3 leading-relaxed">{project.description}</p>}
+                        {project.technologies?.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-3">
+                            {project.technologies.map((tech: string) => (
+                              <span key={tech} className="text-[10px] px-2 py-0.5 bg-white border border-slate-200 text-slate-600 rounded-full">{tech}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      {(project.github || project.url) && (
+                        <div className="flex items-center gap-3 mt-4 text-xs text-slate-400">
+                          {project.github && (
+                            <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-slate-900 transition-colors">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
+                              GitHub
+                            </a>
+                          )}
+                          {project.url && (
+                            <a href={project.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-[#0169FC] transition-colors">
+                              <ExternalLink size={12} /> Live Demo
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Achievements */}
-            {alumni.achievements?.length > 0 && (
-              <div className="card p-6">
+            {achievements?.length > 0 && (
+              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
                   <Award size={18} className="text-gold-500" /> Achievements
                 </h2>
                 <div className="space-y-4">
-                  {alumni.achievements.map((ach: any, i: number) => (
+                  {achievements.map((ach: any, i: number) => (
                     <div key={i} className="flex items-start gap-3">
                       <div className="w-2 h-2 rounded-full bg-gold-400 mt-2 flex-shrink-0" />
                       <div>
@@ -294,18 +386,18 @@ export default function AlumniProfilePage() {
             )}
 
             {/* Publications */}
-            {alumni.publications?.length > 0 && (
-              <div className="card p-6">
+            {publications?.length > 0 && (
+              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
-                  <BookOpen size={18} className="text-iitram-600" /> Research & Publications
+                  <BookOpen size={18} className="text-[#0169FC]" /> Research & Publications
                 </h2>
                 <div className="space-y-4">
-                  {alumni.publications.map((pub: any, i: number) => (
-                    <div key={i} className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                  {publications.map((pub: any, i: number) => (
+                    <div key={i} className="p-4 rounded-xl bg-slate-50/50 border border-slate-100 hover:border-[#0169FC]/20 transition-all duration-200 shadow-2xs">
                       <p className="font-medium text-slate-900 text-sm">{pub.title}</p>
                       <p className="text-xs text-slate-500 mt-1">{pub.journal} · {pub.year}</p>
                       {pub.url && (
-                        <a href={pub.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-iitram-600 hover:text-iitram-700 mt-1.5">
+                        <a href={pub.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-[#0169FC] hover:underline mt-1.5 font-medium">
                           <ExternalLink size={11} /> View Publication
                         </a>
                       )}
@@ -316,29 +408,29 @@ export default function AlumniProfilePage() {
             )}
 
             {/* Startup */}
-            {alumni.startup?.name && (
-              <div className="card p-6">
+            {isAlumni && profile.startup?.name && (
+              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h2 className="font-bold text-slate-900 text-lg mb-4 flex items-center gap-2">
                   <Rocket size={18} className="text-orange-500" /> Startup Venture
                 </h2>
                 <div className="flex items-start gap-4">
-                  {alumni.startup.logo ? (
-                    <img src={alumni.startup.logo} className="w-16 h-16 rounded-xl object-cover" alt="" />
+                  {profile.startup.logo ? (
+                    <img src={profile.startup.logo} className="w-16 h-16 rounded-xl object-cover border border-slate-100" alt="" />
                   ) : (
-                    <div className="w-16 h-16 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0">
+                    <div className="w-16 h-16 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0">
                       <Rocket size={24} className="text-orange-400" />
                     </div>
                   )}
                   <div className="flex-1">
-                    <h3 className="font-bold text-slate-900">{alumni.startup.name}</h3>
+                    <h3 className="font-bold text-slate-900">{profile.startup.name}</h3>
                     <div className="flex flex-wrap gap-2 mt-1">
-                      {alumni.startup.sector && <span className="badge badge-warning">{alumni.startup.sector}</span>}
-                      <span className="badge badge-primary capitalize">{alumni.startup.stage}</span>
-                      {alumni.startup.founded && <span className="text-xs text-slate-500">Founded {alumni.startup.founded}</span>}
+                      {profile.startup.sector && <span className="badge badge-warning">{profile.startup.sector}</span>}
+                      <span className="badge badge-primary capitalize">{profile.startup.stage}</span>
+                      {profile.startup.founded && <span className="text-xs text-slate-500">Founded {profile.startup.founded}</span>}
                     </div>
-                    <p className="text-sm text-slate-600 mt-2">{alumni.startup.description}</p>
-                    {alumni.startup.website && (
-                      <a href={alumni.startup.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-iitram-600 mt-2">
+                    <p className="text-sm text-slate-600 mt-2 leading-relaxed">{profile.startup.description}</p>
+                    {profile.startup.website && (
+                      <a href={profile.startup.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-[#0169FC] hover:underline mt-2 font-medium">
                         <Globe size={12} /> Visit Website
                       </a>
                     )}
@@ -351,20 +443,30 @@ export default function AlumniProfilePage() {
           {/* Right sidebar */}
           <div className="space-y-5">
             {/* Skills */}
-            {alumni.skills?.length > 0 && (
-              <div className="card p-5">
-                <h3 className="font-semibold text-slate-900 text-sm mb-3">Skills & Expertise</h3>
+            {profile.skills?.length > 0 && (
+              <div className="card p-5 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+                <h3 className="font-bold text-slate-900 text-sm mb-3">Skills & Expertise</h3>
                 <div className="flex flex-wrap gap-1.5">
-                  {alumni.skills.map((skill: string) => (
-                    <span key={skill} className="text-xs px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full">{skill}</span>
+                  {profile.skills.map((skill: string) => (
+                    <span key={skill} className="text-xs px-2.5 py-1 bg-slate-50 border border-slate-200/60 text-slate-600 hover:text-[#0169FC] hover:border-[#0169FC]/30 hover:bg-blue-50/50 rounded-full transition-all duration-200 font-medium">{skill}</span>
                   ))}
                 </div>
-                {alumni.expertise?.length > 0 && (
+                {isAlumni && profile.expertise?.length > 0 && (
                   <>
-                    <p className="text-xs font-medium text-slate-500 mt-3 mb-2">Areas of Expertise</p>
+                    <p className="text-xs font-semibold text-slate-500 mt-4 mb-2">Areas of Expertise</p>
                     <div className="flex flex-wrap gap-1.5">
-                      {alumni.expertise.map((exp: string) => (
-                        <span key={exp} className="text-xs px-2.5 py-1 bg-iitram-50 text-iitram-700 rounded-full">{exp}</span>
+                      {profile.expertise.map((exp: string) => (
+                        <span key={exp} className="text-xs px-2.5 py-1 bg-blue-50/50 border border-blue-100 text-[#0169FC] rounded-full font-medium">{exp}</span>
+                      ))}
+                    </div>
+                  </>
+                )}
+                {!isAlumni && profile.interests?.length > 0 && (
+                  <>
+                    <p className="text-xs font-semibold text-slate-500 mt-4 mb-2">Interests</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {profile.interests.map((interest: string) => (
+                        <span key={interest} className="text-xs px-2.5 py-1 bg-brand-50 border border-brand-100 text-brand-700 rounded-full font-medium">{interest}</span>
                       ))}
                     </div>
                   </>
@@ -373,28 +475,28 @@ export default function AlumniProfilePage() {
             )}
 
             {/* Mentor Info */}
-            {alumni.isMentor && (
-              <div className="card p-5 border-l-4 border-l-gold-400">
+            {isAlumni && profile.isMentor && (
+              <div className="card p-5 border border-slate-100/80 border-l-4 border-l-gold-400 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <div className="flex items-center gap-2 mb-3">
                   <Star size={16} className="text-gold-500" />
-                  <h3 className="font-semibold text-slate-900 text-sm">Available to Mentor</h3>
+                  <h3 className="font-bold text-slate-900 text-sm">Available to Mentor</h3>
                 </div>
                 <p className="text-xs text-slate-500 mb-3">
-                  Availability: <span className={`font-medium ${alumni.mentorAvailability === 'available' ? 'text-emerald-600' : 'text-amber-600'}`}>
-                    {alumni.mentorAvailability}
+                  Availability: <span className={`font-semibold ${profile.mentorAvailability === 'available' ? 'text-emerald-600' : 'text-amber-600'}`}>
+                    {profile.mentorAvailability}
                   </span>
                 </p>
-                {alumni.mentorAreas?.length > 0 && (
+                {profile.mentorAreas?.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-4">
-                    {alumni.mentorAreas.map((area: string) => (
-                      <span key={area} className="text-2xs px-2 py-0.5 bg-gold-50 text-gold-700 rounded-full border border-gold-100">
+                    {profile.mentorAreas.map((area: string) => (
+                      <span key={area} className="text-2xs px-2 py-0.5 bg-gold-50 text-gold-700 rounded-full border border-gold-100 font-medium">
                         {area}
                       </span>
                     ))}
                   </div>
                 )}
-                {!isOwn && isAuthenticated && alumni.mentorAvailability !== 'unavailable' && (
-                  <Link to={`/mentorship?mentor=${userId}`} className="btn btn-gold btn-sm w-full justify-center">
+                {!isOwn && isAuthenticated && profile.mentorAvailability !== 'unavailable' && (
+                  <Link to={`/mentorship?mentor=${userId}`} className="btn btn-gold btn-sm w-full justify-center shadow-xs">
                     Request Mentorship
                   </Link>
                 )}
@@ -402,27 +504,27 @@ export default function AlumniProfilePage() {
             )}
 
             {/* Higher Studies */}
-            {alumni.higherStudies?.institution && (
-              <div className="card p-5">
-                <h3 className="font-semibold text-slate-900 text-sm mb-3 flex items-center gap-2">
-                  <GraduationCap size={15} className="text-iitram-600" /> Higher Studies
+            {isAlumni && profile.higherStudies?.institution && (
+              <div className="card p-5 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+                <h3 className="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
+                  <GraduationCap size={15} className="text-[#0169FC]" /> Higher Studies
                 </h3>
-                <p className="font-medium text-slate-800 text-sm">{alumni.higherStudies.degree} in {alumni.higherStudies.field}</p>
-                <p className="text-sm text-slate-600">{alumni.higherStudies.institution}</p>
-                <p className="text-xs text-slate-400 mt-1">{alumni.higherStudies.country} · {alumni.higherStudies.year}</p>
+                <p className="font-semibold text-slate-800 text-sm">{profile.higherStudies.degree} in {profile.higherStudies.field}</p>
+                <p className="text-sm text-slate-600">{profile.higherStudies.institution}</p>
+                <p className="text-xs text-slate-400 mt-1">{profile.higherStudies.country} · {profile.higherStudies.year}</p>
               </div>
             )}
 
             {/* Awards */}
-            {alumni.awards?.length > 0 && (
-              <div className="card p-5">
-                <h3 className="font-semibold text-slate-900 text-sm mb-3">Awards & Recognition</h3>
+            {isAlumni && profile.awards?.length > 0 && (
+              <div className="card p-5 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+                <h3 className="font-bold text-slate-900 text-sm mb-3">Awards & Recognition</h3>
                 <div className="space-y-3">
-                  {alumni.awards.map((award: any, i: number) => (
+                  {profile.awards.map((award: any, i: number) => (
                     <div key={i} className="flex gap-3">
                       <Award size={14} className="text-gold-500 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-sm font-medium text-slate-900">{award.name}</p>
+                        <p className="text-sm font-semibold text-slate-900">{award.name}</p>
                         <p className="text-xs text-slate-500">{award.organization} · {award.year}</p>
                       </div>
                     </div>
