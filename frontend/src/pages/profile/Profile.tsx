@@ -7,7 +7,7 @@ export default function ProfilePage() {
   const { user } = useAuthStore();
   const targetId = userId || user?._id;
 
-  if (!targetId) return null;
+  if (!targetId || targetId === 'undefined') return null;
 
   // Reuse alumni profile page with the user's own ID
   return <AlumniProfilePage userId={targetId} />;

@@ -19,7 +19,7 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const queryClient = useQueryClient();
 
-  const { data: dashData } = useQuery({
+  const { data: dashData, isLoading: dashLoading } = useQuery({
     queryKey: ['admin-dashboard'],
     queryFn: () => api.get('/admin/dashboard'),
     enabled: activeTab === 'overview',
@@ -58,7 +58,7 @@ export default function AdminPage() {
   });
 
   const dash = dashData?.data?.data;
-  const users = usersData?.data?.data?.data || [];
+  const users = usersData?.data?.data || [];
   const pendingVerifications = verificationsData?.data?.data || [];
 
   const statCards = dash ? [
@@ -114,44 +114,52 @@ export default function AdminPage() {
         {/* Overview */}
         {activeTab === 'overview' && (
           <div className="space-y-8">
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-              {statCards.map(({ label, value, icon: Icon, color, bg }) => (
-                <div key={label} className="card p-5">
-                  <div className={`w-9 h-9 rounded-xl ${bg} flex items-center justify-center mb-3`}>
-                    <Icon size={18} className={color} />
-                  </div>
-                  <p className="text-2xl font-bold text-slate-900">{value?.toLocaleString() ?? '—'}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Recent Users */}
-            {dash?.recentUsers?.length > 0 && (
-              <div className="card p-6">
-                <h3 className="font-semibold text-slate-900 mb-4">Recent Registrations</h3>
-                <div className="space-y-3">
-                  {dash.recentUsers.map((u: any) => (
-                    <div key={u._id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-iitram-100 flex items-center justify-center text-xs font-semibold text-iitram-700">
-                          {u.firstName?.[0]}{u.lastName?.[0]}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-slate-900">{u.firstName} {u.lastName}</p>
-                          <p className="text-xs text-slate-400">{u.email}</p>
-                        </div>
+            {dashLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader2 className="animate-spin text-[#0169FC]" size={36} />
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                  {statCards.map(({ label, value, icon: Icon, color, bg }) => (
+                    <div key={label} className="card p-5">
+                      <div className={`w-9 h-9 rounded-xl ${bg} flex items-center justify-center mb-3`}>
+                        <Icon size={18} className={color} />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`badge capitalize ${u.role === 'alumni' ? 'badge-primary' : u.role === 'student' ? 'badge-success' : 'badge-warning'}`}>
-                          {u.role}
-                        </span>
-                        <span className="text-xs text-slate-400">{formatDate(u.createdAt)}</span>
-                      </div>
+                      <p className="text-2xl font-bold text-slate-900">{value?.toLocaleString() ?? '—'}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{label}</p>
                     </div>
                   ))}
                 </div>
-              </div>
+
+                {/* Recent Users */}
+                {dash?.recentUsers?.length > 0 && (
+                  <div className="card p-6">
+                    <h3 className="font-semibold text-slate-900 mb-4">Recent Registrations</h3>
+                    <div className="space-y-3">
+                      {dash.recentUsers.map((u: any) => (
+                        <div key={u._id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-iitram-100 flex items-center justify-center text-xs font-semibold text-iitram-700">
+                              {u.firstName?.[0]}{u.lastName?.[0]}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-slate-900">{u.firstName} {u.lastName}</p>
+                              <p className="text-xs text-slate-400">{u.email}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className={`badge capitalize ${u.role === 'alumni' ? 'badge-primary' : u.role === 'student' ? 'badge-success' : 'badge-warning'}`}>
+                              {u.role}
+                            </span>
+                            <span className="text-xs text-slate-400">{formatDate(u.createdAt)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}

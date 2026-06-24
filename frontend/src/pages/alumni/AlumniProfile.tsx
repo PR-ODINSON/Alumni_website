@@ -7,7 +7,7 @@ import {
   UserPlus, UserCheck, Calendar, ChevronRight, BookOpen,
   Rocket, Users, Eye, Edit, ExternalLink,
 } from 'lucide-react';
-import { alumniApi, studentApi, connectionApi } from '../../lib/api';
+import { alumniApi, studentApi, connectionApi, userApi } from '../../lib/api';
 import { useAuthStore } from '../../stores/authStore';
 import { formatDate } from '../../lib/utils';
 import toast from 'react-hot-toast';
@@ -21,25 +21,23 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
   const { data, isLoading } = useQuery({
     queryKey: ['profile', userId],
     queryFn: async () => {
-      if (!userId) throw new Error('User ID is required');
-      try {
-        const res = await alumniApi.getProfile(userId);
-        return { isAlumni: true, profile: res.data.data };
-      } catch (err: any) {
-        if (err.response?.status === 404) {
-          const res = await studentApi.getProfile(userId);
-          return { isAlumni: false, profile: res.data.data };
-        }
-        throw err;
-      }
+      if (!userId || userId === 'undefined') throw new Error('User ID is required');
+      const res = await userApi.getUser(userId);
+      const user = res.data.data.user;
+      const profile = res.data.data.profile;
+      return {
+        isAlumni: user.role === 'alumni',
+        user,
+        profile,
+      };
     },
-    enabled: !!userId,
+    enabled: !!userId && userId !== 'undefined',
   });
 
   const { data: connData } = useQuery({
     queryKey: ['connection-status', userId],
     queryFn: () => connectionApi.getStatus(userId!),
-    enabled: isAuthenticated && !isOwn && !!userId,
+    enabled: isAuthenticated && !isOwn && !!userId && userId !== 'undefined',
   });
 
   const connectMutation = useMutation({
@@ -68,12 +66,42 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
     );
   }
 
-  const isAlumni = data?.isAlumni;
-  const profile = data?.profile;
+  if (!data) return <div className="py-24 text-center text-slate-400">Profile not found</div>;
 
-  if (!profile) return <div className="py-24 text-center text-slate-400">Profile not found</div>;
+  const isAlumni = data.isAlumni;
+  const user = data.user || {};
+  
+  // Synthesize or fallback profile if not created yet (e.g. pending onboarding)
+  const profile = data.profile || {
+    user,
+    batch: 2026,
+    graduationYear: 2026,
+    department: 'Engineering',
+    program: 'B.Tech',
+    degreeType: 'B.Tech',
+    currentCompany: '',
+    currentDesignation: '',
+    currentIndustry: '',
+    employmentStatus: '',
+    skills: [],
+    expertise: [],
+    languages: [],
+    careerTimeline: [],
+    educationHistory: [],
+    achievements: [],
+    publications: [],
+    awards: [],
+    projects: [],
+    interests: [],
+    isMentor: false,
+    mentorAreas: [],
+    mentorAvailability: 'unavailable',
+    maxMentees: 0,
+    profileViews: 0,
+    isDistinguished: false,
+    verificationStatus: 'pending',
+  };
 
-  const user = profile.user || {};
   const connStatus = connData?.data?.data?.status;
 
   // Map student internships and academic information to match alumni properties
