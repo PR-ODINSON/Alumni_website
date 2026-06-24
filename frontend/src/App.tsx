@@ -19,10 +19,13 @@ import StudentDirectoryPage from './pages/students/StudentDirectory';
 
 import FeedPage from './pages/community/Feed';
 import JobsPage from './pages/jobs/Jobs';
+import PostJobPage from './pages/jobs/PostJob';
 import JobDetailPage from './pages/jobs/JobDetail';
 import EventsPage from './pages/events/Events';
+import CreateEventPage from './pages/events/CreateEvent';
 import EventDetailPage from './pages/events/EventDetail';
 import MentorshipPage from './pages/mentorship/Mentorship';
+import MentorshipDetailPage from './pages/mentorship/MentorshipDetail';
 import SuccessStoriesPage from './pages/stories/SuccessStories';
 import StoryDetailPage from './pages/stories/StoryDetail';
 import AnalyticsPage from './pages/analytics/Analytics';
@@ -75,10 +78,13 @@ export default function App() {
         <Route path="/students/:userId" element={<ProfilePage />} />
         <Route path="/feed" element={<ProtectedRoute><FeedPage /></ProtectedRoute>} />
         <Route path="/jobs" element={<JobsPage />} />
+        <Route path="/jobs/post" element={<ProtectedRoute roles={['alumni', 'admin']}><PostJobPage /></ProtectedRoute>} />
         <Route path="/jobs/:jobId" element={<JobDetailPage />} />
         <Route path="/events" element={<EventsPage />} />
+        <Route path="/events/create" element={<ProtectedRoute roles={['alumni', 'faculty', 'admin']}><CreateEventPage /></ProtectedRoute>} />
         <Route path="/events/:eventId" element={<EventDetailPage />} />
         <Route path="/mentorship" element={<ProtectedRoute><MentorshipPage /></ProtectedRoute>} />
+        <Route path="/mentorship/:mentorshipId" element={<ProtectedRoute><MentorshipDetailPage /></ProtectedRoute>} />
         <Route path="/stories" element={<SuccessStoriesPage />} />
         <Route path="/stories/:storyId" element={<StoryDetailPage />} />
         <Route path="/success-stories" element={<Navigate to="/stories" replace />} />

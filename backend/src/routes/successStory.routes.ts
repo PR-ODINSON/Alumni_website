@@ -41,7 +41,7 @@ router.get('/:storyId', optionalAuth, asyncHandler(async (req: AuthRequest, res,
 
 router.use(protect);
 
-router.post('/', asyncHandler(async (req: AuthRequest, res) => {
+router.post('/', authorize('alumni', 'admin'), asyncHandler(async (req: AuthRequest, res) => {
   const story = await SuccessStory.create({ ...req.body, alumni: req.user._id });
   res.status(201).json({ success: true, data: story });
 }));

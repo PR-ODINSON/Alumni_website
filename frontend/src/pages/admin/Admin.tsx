@@ -71,16 +71,25 @@ export default function AdminPage() {
   ] : [];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50/50 pb-12">
       {/* Header */}
-      <div className="bg-slate-900 text-white py-8">
-        <div className="page-container">
-          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-          <p className="text-slate-400 mt-1">IITRAM Alumni Platform Administration</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div className="relative bg-white rounded-2xl border border-slate-200 p-6 mb-6 shadow-xs text-slate-900 overflow-hidden font-sans">
+          <div className="absolute -top-10 -right-10 w-48 h-48 bg-[#0169FC]/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold font-display tracking-tight text-slate-900">Admin Dashboard</h1>
+              <p className="text-slate-500 text-xs font-semibold mt-0.5">IITRAM Alumni Platform Administration & Moderation Portal</p>
+            </div>
+            <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200/50">
+              <span className="text-[10px] font-bold text-slate-500 px-2 py-0.5 bg-white rounded-md border border-slate-200 shadow-2xs">System Active</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-1" />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="page-container py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
         {/* Tabs */}
         <div className="flex gap-2 mb-8">
           {tabs.map(({ id, label, icon: Icon }) => (
