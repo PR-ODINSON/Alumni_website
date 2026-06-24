@@ -26,7 +26,7 @@ export default function CreatePostBox() {
   });
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-4 mb-4 font-sans text-slate-850">
+    <div className="bg-white border border-slate-200 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.015)] p-4 mb-4 font-sans text-slate-850 hover:shadow-md transition-shadow duration-300">
       <div className="flex items-center gap-3">
         <Avatar src={user?.avatar} name={`${user?.firstName} ${user?.lastName}`} size="sm" />
         <button

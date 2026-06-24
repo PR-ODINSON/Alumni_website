@@ -22,7 +22,8 @@ export default function StoryCard({ story, index }: { story: any; index: number 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="card-hover p-4 group"
+      whileHover={{ y: -6 }}
+      className="bg-white border border-slate-200 rounded-2xl p-4 shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:border-[#0169FC]/20 transition-all duration-300 group flex flex-col justify-between h-full"
     >
       <Link to={`/success-stories/${story._id}`}>
         <div className="relative h-48 rounded-xl overflow-hidden mb-4">

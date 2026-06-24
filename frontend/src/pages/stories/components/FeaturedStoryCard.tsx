@@ -46,7 +46,7 @@ export default function FeaturedStoryCard({ story, size }: { story: any; size: '
   }
 
   return (
-    <Link to={`/success-stories/${story._id}`} className="group flex gap-4 bg-white/50 border border-white/30 rounded-2xl p-3 shadow-2xs hover:bg-white hover:border-brand-500/20 hover:shadow-soft transition-all duration-300">
+    <Link to={`/success-stories/${story._id}`} className="group flex gap-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_15px_40px_rgba(1,105,252,0.04)] hover:border-[#0169FC]/20 hover:-translate-y-1 transition-all duration-300">
       <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
         {story.coverImage ? (
           <img src={story.coverImage} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />

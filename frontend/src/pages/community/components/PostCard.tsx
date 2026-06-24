@@ -34,7 +34,7 @@ export function PostCard({ post }: { post: any }) {
   });
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden mb-4 font-sans text-slate-800">
+    <div className="bg-white border border-slate-200 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.04)] transition-all duration-300 overflow-hidden mb-4 font-sans text-slate-800">
       {/* Post Header */}
       <div className="p-4 pb-2.5">
         <div className="flex items-start justify-between gap-3 mb-2.5">

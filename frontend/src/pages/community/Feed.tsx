@@ -58,9 +58,12 @@ export default function FeedPage() {
   return (
     <div className="pb-12 max-w-2xl mx-auto px-4 mt-4">
       {/* Header */}
-      <div className="relative bg-white rounded-xl border border-slate-200 p-5 md:p-6 mb-4 shadow-xs text-slate-900 overflow-hidden text-center">
-        <h1 className="text-xl font-bold tracking-tight mb-0.5 font-display">Community Feed</h1>
-        <p className="text-slate-500 text-xs font-semibold">Connect, share, and engage with the IITRAM network</p>
+      <div className="relative bg-white border border-slate-200 p-6 rounded-2xl shadow-xs mb-5 overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-brand-500/5 rounded-full blur-2xl pointer-events-none" />
+        <div className="relative z-10">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight font-display">Community Feed</h1>
+          <p className="text-slate-500 text-xs mt-1 font-semibold">Connect, share, and engage with the IITRAM alumni and student network</p>
+        </div>
       </div>
 
       <div>
