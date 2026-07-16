@@ -8,7 +8,10 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "lint": "eslint src --ext .ts",
-    "seed": "ts-node src/scripts/seed.ts"
+    "seed": "ts-node src/scripts/seed.ts",
+    "seed:prod": "node dist/scripts/seed.js",
+    "migrate": "ts-node src/scripts/migration.ts",
+    "migrate:prod": "node dist/scripts/migration.js"
   },
   "keywords": [
     "alumni",

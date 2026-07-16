@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { asyncHandler } from '../middleware/errorHandler';
-import { protect, authorize } from '../middleware/auth';
+import { protect, optionalAuth } from '../middleware/auth';
 import Alumni from '../models/Alumni';
 import User from '../models/User';
 import Job from '../models/Job';
@@ -10,9 +10,9 @@ import Mentorship from '../models/Mentorship';
 import { AuthRequest } from '../middleware/auth';
 
 const router = Router();
-router.use(protect);
 
-router.get('/overview', asyncHandler(async (_req: AuthRequest, res) => {
+// Public: homepage uses this for stats widgets
+router.get('/overview', optionalAuth, asyncHandler(async (_req: AuthRequest, res) => {
   const [
     totalAlumni, totalStudents, totalJobs, totalEvents,
     totalPosts, activeMentorships, verifiedAlumni,
@@ -31,6 +31,9 @@ router.get('/overview', asyncHandler(async (_req: AuthRequest, res) => {
     data: { totalAlumni, totalStudents, totalJobs, totalEvents, totalPosts, activeMentorships, verifiedAlumni },
   });
 }));
+
+// Protected: detailed analytics require auth
+router.use(protect);
 
 router.get('/alumni-distribution', asyncHandler(async (_req: AuthRequest, res) => {
   const [byDepartment, byBatch, byIndustry, byEmploymentStatus, byDegree] = await Promise.all([

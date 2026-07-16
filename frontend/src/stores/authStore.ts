@@ -19,6 +19,23 @@ export interface AuthUser {
   isProfileComplete: boolean;
   isVerified: boolean;
   verificationStatus?: 'pending' | 'under_review' | 'verified' | 'rejected' | 'suspended';
+  privacySettings?: {
+    email: 'public' | 'college' | 'connections' | 'private';
+    phone: 'public' | 'college' | 'connections' | 'private';
+    company: 'public' | 'college' | 'connections' | 'private';
+    linkedin: 'public' | 'college' | 'connections' | 'private';
+    resume: 'public' | 'college' | 'connections' | 'private';
+    socialLinks: 'public' | 'college' | 'connections' | 'private';
+  };
+  notificationPreferences?: {
+    email: boolean;
+    push: boolean;
+    connectionRequests: boolean;
+    messages: boolean;
+    jobAlerts: boolean;
+    eventReminders: boolean;
+    mentorshipUpdates: boolean;
+  };
 }
 
 interface AuthState {

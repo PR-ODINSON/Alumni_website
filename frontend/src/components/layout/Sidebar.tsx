@@ -13,10 +13,9 @@ const navGroups = [
   {
     label: 'Discover',
     items: [
-      { icon: Users, label: 'Alumni Directory', href: '/alumni' },
-      { icon: GraduationCap, label: 'Student Directory', href: '/students' },
+      { icon: Users, label: 'People Directory', href: '/directory' },
       { icon: Globe, label: 'Community Feed', href: '/feed' },
-      { icon: Star, label: 'Success Stories', href: '/stories' },
+      { icon: Star, label: 'Stories & Legacy', href: '/stories' },
     ],
   },
   {
@@ -38,7 +37,6 @@ const navGroups = [
     label: 'IITRAM',
     items: [
       { icon: Rocket, label: 'Startup Ecosystem', href: '/startups' },
-      { icon: Archive, label: 'Legacy Archive', href: '/legacy' },
       { icon: BarChart3, label: 'Analytics', href: '/analytics' },
     ],
   },
@@ -96,7 +94,13 @@ export default function Sidebar() {
                 </p>
                 <div className="space-y-0.5">
                   {group.items.map(({ icon: Icon, label, href }) => {
-                    const isActive = location.pathname === href || location.pathname.startsWith(href + '/');
+                    const isActive =
+                      location.pathname === href ||
+                      location.pathname.startsWith(href + '/') ||
+                      // /directory also matches old /alumni and /students
+                      (href === '/directory' && (location.pathname.startsWith('/alumni') || location.pathname.startsWith('/students'))) ||
+                      // /stories also matches /legacy
+                      (href === '/stories' && location.pathname.startsWith('/legacy'));
                     return (
                       <Link
                         key={href}
