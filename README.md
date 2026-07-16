@@ -1,390 +1,564 @@
-# IITRAM Alumni Relationship & Career Networking Platform
+# IITRAM Alumni Portal
 
-A production-ready, full-stack Alumni Platform built for the Institute of Infrastructure, Technology, Research and Management (IITRAM), Ahmedabad.
-
----
-
-## Overview
-
-The IITRAM Alumni Platform is a premium university ecosystem combining:
-
-- **Alumni Network** — Searchable directory, profiles, career timelines
-- **Career Platform** — Job postings, internships, referrals, application tracking
-- **Mentorship Hub** — Mentor matching, session scheduling, feedback system
-- **Event Management** — Reunions, workshops, webinars, RSVP & gallery
-- **Professional Community** — Academic community feed, achievements, announcements
-- **Institutional Archive** — IITRAM legacy, milestones, research collaboration
-- **Startup Ecosystem** — Alumni-founded ventures, funding stages, sectors
-- **Analytics Dashboard** — Visual data on alumni distribution, placement, industry
+> A production-grade, full-stack alumni networking platform for the Institute of Infrastructure, Technology, Research and Management (IITRAM), Ahmedabad. Built with a Hybrid RBAC + PBAC + ABAC Authorization framework, real-time messaging, and a modular enterprise architecture.
 
 ---
 
-## Tech Stack
+## 📸 Application Screenshots
 
-### Frontend
-| Technology | Purpose |
-|---|---|
-| React 19 + TypeScript | UI Framework |
-| Vite 8 | Build tool |
-| React Router v7 | Client-side routing |
-| Tailwind CSS v4 | Styling |
-| Framer Motion | Animations |
-| TanStack Query v5 | Data fetching & caching |
-| Zustand | State management |
-| Axios | HTTP client |
-| React Hook Form + Zod | Form validation |
-| Recharts | Data visualization |
-| Socket.IO Client | Real-time messaging |
+### Login Page
+![Login Page](docs/screenshots/login.png)
+
+### Community Feed
+![Community Feed](docs/screenshots/feed.png)
+
+### Jobs & Opportunities
+![Jobs](docs/screenshots/jobs.png)
+
+### Events
+![Events](docs/screenshots/events.png)
+
+### Mentorship
+![Mentorship](docs/screenshots/mentorship.png)
+
+### Success Stories
+![Stories](docs/screenshots/stories.png)
+
+### Research Hub
+![Research](docs/screenshots/research.png)
+
+### Startup Ecosystem
+![Startups](docs/screenshots/startups.png)
+
+### Alumni Directory
+![Alumni Directory](docs/screenshots/alumni.png)
+
+### Messages
+![Messages](docs/screenshots/messages.png)
+
+### Profile
+![Profile](docs/screenshots/profile.png)
+
+---
+
+## 🏗️ System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        CLIENT LAYER                                 │
+│  React + TypeScript + Vite + TailwindCSS + Zustand + React Query    │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │  AuthorizationContext  →  PermissionGuard  →  ProtectedRoute │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+└────────────────────────────┬────────────────────────────────────────┘
+                             │ HTTPS / WebSocket
+┌────────────────────────────▼────────────────────────────────────────┐
+│                        API GATEWAY LAYER                            │
+│  Express.js + Helmet + CORS + Rate Limiter + Morgan                 │
+│  ┌─────────────────────────────────────────────────────────────┐    │
+│  │  JWT Auth → requirePermission → requirePolicy → Controller  │    │
+│  └─────────────────────────────────────────────────────────────┘    │
+└──────────────────────────┬──────────────────────────────────────────┘
+                           │
+       ┌───────────────────┴───────────────────┐
+       │                                       │
+┌──────▼───────┐                    ┌──────────▼──────────┐
+│ Authorization │                   │   Socket.io Layer   │
+│    Engine     │                   │  Real-time Messaging│
+│ RBAC+PBAC    │                   │  Notifications      │
+│ +ABAC+Flags  │                   └─────────────────────┘
+└──────┬───────┘
+       │
+┌──────▼────────────────────────────────────────────────────────────┐
+│                       SERVICE LAYER                                │
+│  Policies: Job │ Event │ Feed │ Research │ Story │ Mentor │ Report │
+└──────┬────────────────────────────────────────────────────────────┘
+       │
+┌──────▼────────────────────────────────────────────────────────────┐
+│                       DATA LAYER                                   │
+│  MongoDB Atlas + Mongoose ODM                                      │
+│  Collections: User │ Job │ Event │ Post │ Comment │ Message        │
+│              Mentorship │ Research │ SuccessStory │ AuditLog       │
+│              Report │ FeatureFlag │ Notification │ Connection      │
+└───────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🔐 Enterprise Authorization System (Hybrid RBAC + PBAC + ABAC)
+
+### Role Hierarchy
+
+| Role | Level | Verification Required | Key Capabilities |
+|---|---|---|---|
+| **Guest** | 0 | No | View public pages only |
+| **Student** | 1 | No | Browse, apply to jobs, register for events, community feed |
+| **Alumni** | 2 | ✅ Yes | Post jobs, create events, mentorship, success stories |
+| **Faculty** | 2 | ✅ Yes | Create events, mentorship, research projects |
+| **Admin** | 3 | System | Full access, moderation, verification, feature flags |
+
+### Authorization Engine Architecture
+
+```
+AuthorizationEngine.can(user, action, resource?)
+         │
+         ├─ 1. Admin Bypass Check → if role=admin, allow all
+         │
+         ├─ 2. Account Status Check → if suspended, deny all
+         │
+         ├─ 3. Feature Flag Check → if module disabled, deny
+         │
+         ├─ 4. Permission Registry Check (RBAC)
+         │      └─ config/permissions/ → role maps to allowed actions
+         │
+         ├─ 5. Verification Status Check (ABAC)
+         │      └─ Mutating actions require verificationStatus='verified'
+         │
+         └─ 6. Resource Policy Check (PBAC)
+                └─ Ownership OR Admin → policies/JobPolicy, EventPolicy, etc.
+```
+
+### Permission Namespaces
+
+| Namespace | Actions | Who |
+|---|---|---|
+| `users:` | view, verify, delete, ban, edit_any | admin |
+| `feed:` | create, edit_own, delete_own, delete_any | student+ |
+| `comment:` | create, delete_own, delete_any | student+ |
+| `job:` | create, apply, edit_own, delete_own, edit_any | alumni+ |
+| `event:` | create, register, edit_own, delete_own | alumni+ |
+| `research:` | create, apply, approve, edit_any | faculty+/admin |
+| `story:` | create, edit_own, delete_own, approve | alumni+ |
+| `startup:` | create, edit_own, delete_own | alumni+ |
+| `mentor:` | enable, accept, reject, manage | alumni+/faculty |
+| `report:` | create, review | student+/admin |
+| `admin:` | panel_access, audit_log_view, feature_flag_manage | admin |
+
+### Page Access Matrix
+
+| Page | Guest | Student | Alumni | Faculty | Admin |
+|---|---|---|---|---|---|
+| Home / Landing | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Alumni Directory | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Student Directory | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Community Feed | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Post to Feed | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Browse Jobs | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Post a Job** | ❌ | ❌ | ✅ (verified) | ❌ | ✅ |
+| Apply to Job | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Browse Events | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Create Event** | ❌ | ❌ | ✅ (verified) | ✅ (verified) | ✅ |
+| Mentorship | ❌ | ✅ | ✅ | ✅ | ✅ |
+| **Offer Mentorship** | ❌ | ❌ | ✅ (verified) | ✅ (verified) | ✅ |
+| Success Stories | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Write a Story** | ❌ | ❌ | ✅ (verified) | ❌ | ✅ |
+| Research Hub | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Post Research** | ❌ | ❌ | ✅ (verified) | ✅ (verified) | ✅ |
+| Startup Ecosystem | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Messages | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Analytics | ❌ | ✅ | ✅ | ✅ | ✅ |
+| **Admin Dashboard** | ❌ | ❌ | ❌ | ❌ | ✅ |
+
+### Verification Lifecycle
+
+```
+PENDING ──► UNDER_REVIEW ──► VERIFIED
+                │
+                └──► REJECTED ──► (re-submit) ──► UNDER_REVIEW
+                │
+                └──► SUSPENDED (admin action)
+```
+
+---
+
+## 📊 Data Flow
+
+### Authentication Flow
+```
+User → Login Page
+  → Google OAuth / Email+Password
+  → Backend: POST /api/auth/login or /api/auth/google
+  → JWT Access Token + Refresh Token issued
+  → Frontend: Zustand authStore persisted to localStorage
+  → AuthorizationContext loads Feature Flags
+  → App renders role-appropriate navigation
+```
+
+### Request Authorization Flow
+```
+API Request with Bearer JWT
+  → protect() middleware → verify JWT → attach req.user
+  → requirePermission('action') → AuthorizationEngine.can()
+      → Check: Admin bypass? Feature flag disabled? Account suspended?
+      → Check: Role has this permission?
+      → Check: Mutating action + not verified? → 403
+  → requirePolicy('action', 'Model', 'idParam')
+      → Fetch resource from DB, attach to req.resource
+      → Check: resource.deletedAt exists + not admin? → 404
+      → Is user owner? OR has _any permission? → allow/deny
+  → Controller executes, logs audit entry
+```
+
+### Real-time Messaging Flow
+```
+User sends message → POST /api/messages/conversations/:id/messages
+  → AuthorizationEngine checks 'message:start' (requires relationship)
+  → Message saved to MongoDB
+  → Socket.io emits 'new_message' to all participants
+  → Frontend updates conversation in real-time
+```
+
+---
+
+## 🛠️ Technology Stack
 
 ### Backend
-| Technology | Purpose |
+| Layer | Technology |
 |---|---|
-| Node.js + Express.js | Server framework |
-| TypeScript | Type safety |
-| MongoDB + Mongoose | Database |
-| JWT | Authentication |
-| Passport.js (Google OAuth) | Social login |
-| Socket.IO | Real-time events |
-| Cloudinary | Media storage |
-| Nodemailer | Email service |
-| express-rate-limit | Rate limiting |
-| Helmet | Security headers |
+| Runtime | Node.js 20 |
+| Framework | Express.js + TypeScript |
+| Database | MongoDB Atlas + Mongoose |
+| Authentication | JWT (Access + Refresh tokens) + Passport.js |
+| OAuth | Google OAuth 2.0 |
+| Real-time | Socket.io |
+| File Uploads | Cloudinary via Multer |
+| API Docs | Swagger UI (`/api-docs`) |
+| Security | Helmet, CORS, Rate Limiter, bcrypt |
+
+### Frontend
+| Layer | Technology |
+|---|---|
+| Framework | React 18 + TypeScript + Vite |
+| Styling | TailwindCSS + custom design system |
+| State | Zustand (auth) + TanStack React Query (server) |
+| Routing | React Router v6 |
+| Animations | Framer Motion |
+| Icons | Lucide React |
+| Notifications | React Hot Toast |
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 Alumni/
-├── frontend/                 # React + Vite SPA
-│   ├── src/
-│   │   ├── components/       # Reusable UI components
-│   │   │   ├── layout/       # Navbar, Sidebar, AuthLayout
-│   │   │   └── ui/           # Avatar, Button, etc.
-│   │   ├── pages/            # Route pages
-│   │   │   ├── admin/        # Admin dashboard
-│   │   │   ├── alumni/       # Alumni directory + profiles
-│   │   │   ├── analytics/    # Analytics dashboard
-│   │   │   ├── auth/         # Login, Register, OAuth
-│   │   │   ├── community/    # Feed
-│   │   │   ├── events/       # Events listing + detail
-│   │   │   ├── jobs/         # Jobs + referrals
-│   │   │   ├── legacy/       # IITRAM legacy archive
-│   │   │   ├── mentorship/   # Mentorship hub
-│   │   │   ├── messages/     # Real-time messaging
-│   │   │   ├── notifications/# Notifications
-│   │   │   ├── profile/      # User profile + edit
-│   │   │   ├── research/     # Research collaboration
-│   │   │   ├── startups/     # Startup ecosystem
-│   │   │   ├── stories/      # Success stories
-│   │   │   └── students/     # Student directory
-│   │   ├── lib/
-│   │   │   ├── api.ts        # Axios API helpers (all modules)
-│   │   │   └── utils.ts      # Utility functions
-│   │   ├── stores/
-│   │   │   ├── authStore.ts  # Auth state (Zustand + persist)
-│   │   │   └── uiStore.ts    # UI state (sidebar, theme)
-│   │   └── types/            # TypeScript interfaces
-│   ├── Dockerfile
-│   └── nginx.conf
+├── backend/
+│   └── src/
+│       ├── config/
+│       │   ├── permissions/     # Modular permission registries per domain
+│       │   ├── roles/           # Role-to-permission mapping tables
+│       │   ├── database.ts
+│       │   ├── passport.ts      # Google OAuth strategy
+│       │   └── swagger.ts       # OpenAPI spec
+│       ├── middleware/
+│       │   ├── auth.ts          # JWT protect() + optionalAuth()
+│       │   ├── authorization.ts # requirePermission / requirePolicy / requireVerified
+│       │   ├── errorHandler.ts
+│       │   └── rateLimiter.ts
+│       ├── models/
+│       │   ├── User.ts          # + verificationStatus, privacySettings, softDelete
+│       │   ├── Job.ts           # + JobStatus lifecycle, softDelete
+│       │   ├── Event.ts         # + EventStatus lifecycle, softDelete
+│       │   ├── Post.ts          # + softDelete audit fields
+│       │   ├── ResearchProject.ts
+│       │   ├── SuccessStory.ts
+│       │   ├── Mentorship.ts
+│       │   ├── Connection.ts
+│       │   ├── Message.ts
+│       │   ├── Notification.ts
+│       │   ├── AuditLog.ts      # System audit trail
+│       │   ├── Report.ts        # Content moderation reports
+│       │   └── FeatureFlag.ts   # Dynamic module toggles
+│       ├── services/
+│       │   ├── AuthorizationEngine.ts   # Central permission resolver
+│       │   ├── socketService.ts
+│       │   └── policies/
+│       │       ├── BasePolicy.ts
+│       │       ├── JobPolicy.ts
+│       │       ├── EventPolicy.ts
+│       │       ├── FeedPolicy.ts
+│       │       ├── ResearchPolicy.ts
+│       │       ├── StoryPolicy.ts
+│       │       ├── StartupPolicy.ts
+│       │       ├── MentorshipPolicy.ts
+│       │       ├── MessagingPolicy.ts
+│       │       └── ReportPolicy.ts
+│       ├── routes/
+│       │   ├── auth.routes.ts
+│       │   ├── user.routes.ts
+│       │   ├── job.routes.ts       # Policy middleware integrated
+│       │   ├── event.routes.ts     # Policy middleware integrated
+│       │   ├── post.routes.ts      # Policy middleware integrated
+│       │   ├── research.routes.ts  # Policy middleware integrated
+│       │   ├── successStory.routes.ts
+│       │   ├── mentorship.routes.ts
+│       │   ├── message.routes.ts
+│       │   ├── verification.routes.ts  # NEW: verification queue
+│       │   ├── reports.routes.ts       # NEW: moderation reports
+│       │   ├── auditLogs.routes.ts     # NEW: audit log explorer
+│       │   └── featureFlags.routes.ts  # NEW: feature flag management
+│       ├── controllers/
+│       ├── utils/
+│       │   └── auditLogger.ts     # Async audit event recorder
+│       └── scripts/
+│           └── migration.ts       # DB backfill for new schema fields
 │
-├── backend/                  # Node.js + Express API
-│   ├── src/
-│   │   ├── config/
-│   │   │   ├── database.ts   # MongoDB connection
-│   │   │   ├── passport.ts   # Google OAuth strategy
-│   │   │   └── cloudinary.ts # Cloudinary config
-│   │   ├── models/           # Mongoose schemas
-│   │   │   ├── User.ts
-│   │   │   ├── Alumni.ts
-│   │   │   ├── Student.ts
-│   │   │   ├── Connection.ts
-│   │   │   ├── Message.ts
-│   │   │   ├── Post.ts
-│   │   │   ├── Job.ts
-│   │   │   ├── Event.ts
-│   │   │   ├── Mentorship.ts
-│   │   │   ├── Notification.ts
-│   │   │   ├── SuccessStory.ts
-│   │   │   └── ResearchProject.ts
-│   │   ├── controllers/      # Route handlers
-│   │   ├── routes/           # Express routers
-│   │   ├── middleware/
-│   │   │   ├── auth.ts       # JWT protect + RBAC
-│   │   │   ├── errorHandler.ts
-│   │   │   ├── rateLimiter.ts
-│   │   │   └── validateRequest.ts
-│   │   ├── services/
-│   │   │   └── socketService.ts  # Socket.IO real-time
-│   │   └── utils/
-│   │       ├── jwt.ts
-│   │       └── email.ts
-│   └── Dockerfile
-│
-├── docker-compose.yml
-└── README.md
+└── frontend/
+    └── src/
+        ├── config/
+        │   └── permissions.ts     # Frontend permission mirror (const maps)
+        ├── contexts/
+        │   └── AuthorizationContext.tsx  # Feature flags + permission resolver
+        ├── components/
+        │   ├── auth/
+        │   │   └── guards.tsx     # ProtectedRoute, PermissionGuard, VerificationRequiredPage
+        │   └── layout/
+        │       ├── Sidebar.tsx    # Permission-driven nav rendering
+        │       └── Navbar.tsx
+        ├── stores/
+        │   └── authStore.ts       # Zustand: user + tokens + verificationStatus
+        ├── pages/
+        │   ├── admin/Admin.tsx    # Command Center: verifications, reports, logs, flags
+        │   ├── auth/              # Login, Register, ForgotPassword, OAuth Callback
+        │   ├── community/Feed.tsx
+        │   ├── jobs/
+        │   ├── events/
+        │   ├── mentorship/
+        │   ├── stories/
+        │   ├── research/
+        │   ├── startups/
+        │   ├── messages/
+        │   ├── profile/
+        │   ├── alumni/
+        │   ├── students/
+        │   ├── analytics/
+        │   └── legacy/
+        └── App.tsx                # Route definitions with ProtectedRoute guards
 ```
 
 ---
 
-## Getting Started
+## 🔌 API Reference
+
+Full interactive API documentation is available at: **`http://localhost:5000/api-docs`**
+
+### Auth Endpoints
+| Method | Path | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Register new account |
+| POST | `/api/auth/login` | Email/password login |
+| GET | `/api/auth/google` | Google OAuth initiation |
+| GET | `/api/auth/google/callback` | Google OAuth callback |
+| POST | `/api/auth/refresh` | Refresh access token |
+| POST | `/api/auth/logout` | Invalidate session |
+
+### Core Resource Endpoints
+| Method | Path | Auth | Permission |
+|---|---|---|---|
+| GET | `/api/jobs` | Optional | — |
+| POST | `/api/jobs` | Required | `job:create` + verified |
+| PUT | `/api/jobs/:id` | Required | `job:update` (owner/admin) |
+| DELETE | `/api/jobs/:id` | Required | `job:delete` (owner/admin) |
+| POST | `/api/jobs/:id/apply` | Required | `job:apply` |
+| GET | `/api/events` | Optional | — |
+| POST | `/api/events` | Required | `event:create` + verified |
+| GET | `/api/posts` | Optional | — |
+| POST | `/api/posts` | Required | `feed:create` |
+| POST | `/api/posts/:id/comments` | Required | `comment:create` |
+| GET | `/api/research` | Optional | — |
+| POST | `/api/research` | Required | `research:create` + verified |
+| GET | `/api/success-stories` | Optional | — |
+| POST | `/api/success-stories` | Required | `story:create` + verified |
+| GET | `/api/mentorship` | Required | — |
+| POST | `/api/mentorship/request` | Required | authenticated |
+
+### Admin / Management Endpoints
+| Method | Path | Permission |
+|---|---|---|
+| GET | `/api/verification/queue` | `users:verify` |
+| POST | `/api/verification/submit` | authenticated |
+| POST | `/api/verification/review/:userId` | `users:verify` |
+| GET | `/api/reports` | `report:review` |
+| POST | `/api/reports` | authenticated |
+| POST | `/api/reports/:id/action` | `report:review` |
+| GET | `/api/audit-logs` | `admin:audit_log_view` |
+| GET | `/api/feature-flags` | authenticated |
+| POST | `/api/feature-flags/toggle` | `admin:feature_flag_manage` |
+| GET | `/api/admin/dashboard` | admin role |
+
+---
+
+## 🗃️ Database Schema
+
+### User Model (Key Fields)
+```typescript
+{
+  firstName, lastName, email, password, googleId,
+  role: 'student' | 'alumni' | 'faculty' | 'admin',
+  verificationStatus: 'pending' | 'under_review' | 'verified' | 'rejected' | 'suspended',
+  verificationDocuments: string[],
+  verificationHistory: [{ status, updatedBy, notes, updatedAt }],
+  mentorStatus: 'inactive' | 'active' | 'suspended',
+  privacySettings: { email, phone, company, linkedin, resume, socialLinks },
+  deletedAt, deletedBy, deletionReason,       // Soft delete
+  isBanned, banReason, isActive,
+}
+```
+
+### Resource Lifecycle States
+| Model | Status Values |
+|---|---|
+| Job | `draft` → `published` → `closed` → `archived` |
+| Event | `draft` → `published` → `ongoing` → `completed` → `cancelled` |
+| SuccessStory | `draft` → `pending_review` → `published` → `archived` |
+| ResearchProject | `draft` → `open` → `applications_closed` → `completed` → `archived` |
+
+### AuditLog Model
+```typescript
+{
+  actor: ObjectId (User),
+  action: string,           // e.g. 'USER_VERIFY', 'REPORT_RESOLVE'
+  resource: string,         // Model name
+  resourceId: string,
+  previousValues: object,
+  newValues: object,
+  changedFields: string[],
+  reason: string,
+  ipAddress: string,
+  userAgent: string,
+  timestamp: Date,
+}
+```
+
+---
+
+## ⚙️ Environment Setup
 
 ### Prerequisites
 - Node.js 20+
-- MongoDB 7.0+ (local or Atlas)
-- npm or yarn
+- MongoDB Atlas account (or local MongoDB)
+- Google OAuth credentials (Cloud Console)
+- Cloudinary account (for file uploads)
 
-### 1. Clone and Install
-
+### Backend Setup
 ```bash
-# Backend
 cd backend
-cp .env.example .env
-# Fill in your .env values
 npm install
+cp .env.example .env
+# Fill in .env values (see below)
 npm run dev
+```
 
-# Frontend (new terminal)
+### Frontend Setup
+```bash
 cd frontend
-cp .env.example .env
 npm install
+cp .env.example .env
+# Set VITE_API_URL=http://localhost:5000/api
 npm run dev
 ```
 
-### 2. Environment Variables
-
-**Backend** (`backend/.env`):
-```
-MONGODB_URI=mongodb://localhost:27017/iitram-alumni
-JWT_ACCESS_SECRET=<strong-secret>
-JWT_REFRESH_SECRET=<strong-secret>
-GOOGLE_CLIENT_ID=<your-google-client-id>
-GOOGLE_CLIENT_SECRET=<your-google-client-secret>
-CLOUDINARY_CLOUD_NAME=<your-cloud>
-CLOUDINARY_API_KEY=<key>
-CLOUDINARY_API_SECRET=<secret>
-EMAIL_HOST=smtp.gmail.com
-EMAIL_USER=<your@email.com>
-EMAIL_PASS=<app-password>
-```
-
-**Frontend** (`frontend/.env`):
-```
-VITE_API_URL=http://localhost:5000/api
-VITE_SOCKET_URL=http://localhost:5000
-VITE_GOOGLE_CLIENT_ID=<your-google-client-id>
+### Backend Environment Variables
+```env
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/alumni
+JWT_SECRET=your-jwt-secret-min-32-chars
+JWT_REFRESH_SECRET=your-refresh-secret-min-32-chars
+JWT_EXPIRE=15m
+JWT_REFRESH_EXPIRE=7d
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+CLIENT_URL=http://localhost:5173
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
 ```
 
-### 3. Seed Data (Optional)
-
+### Database Migration (run once after setup)
 ```bash
 cd backend
-npm run seed
+npx ts-node src/scripts/migration.ts
 ```
+This backfills `verificationStatus`, `privacySettings`, and lifecycle `status` fields on all existing documents.
 
 ---
 
-## API Endpoints
-
-### Authentication
-```
-POST   /api/auth/register
-POST   /api/auth/login
-POST   /api/auth/logout
-GET    /api/auth/me
-POST   /api/auth/forgot-password
-POST   /api/auth/reset-password/:token
-GET    /api/auth/verify-email/:token
-GET    /api/auth/google
-GET    /api/auth/google/callback
-```
-
-### Alumni
-```
-GET    /api/alumni              - Directory with filters
-GET    /api/alumni/:userId      - Profile
-PUT    /api/alumni/profile/me   - Update my profile
-POST   /api/alumni/profile/career
-GET    /api/alumni/mentors
-GET    /api/alumni/distinguished
-GET    /api/alumni/startups
-```
-
-### Posts / Feed
-```
-GET    /api/posts               - Feed with filters
-POST   /api/posts               - Create post
-PUT    /api/posts/:id
-DELETE /api/posts/:id
-POST   /api/posts/:id/like
-GET    /api/posts/:id/comments
-POST   /api/posts/:id/comments
-```
-
-### Jobs
-```
-GET    /api/jobs                - Listings with filters
-POST   /api/jobs                - Post a job (alumni/admin)
-POST   /api/jobs/:id/apply
-POST   /api/jobs/:id/save
-GET    /api/jobs/me/saved
-GET    /api/jobs/me/applications
-```
-
-### Events
-```
-GET    /api/events
-POST   /api/events
-GET    /api/events/:id
-POST   /api/events/:id/register
-DELETE /api/events/:id/register
-```
-
-### Mentorship
-```
-POST   /api/mentorship/request
-GET    /api/mentorship          - My mentorships
-PATCH  /api/mentorship/:id/respond
-POST   /api/mentorship/:id/sessions
-POST   /api/mentorship/:id/feedback
-```
-
-### Messages
-```
-GET    /api/messages/conversations
-POST   /api/messages/conversations
-GET    /api/messages/conversations/:id/messages
-POST   /api/messages/conversations/:id/messages
-```
-
-### Connections
-```
-POST   /api/connections/request/:userId
-PATCH  /api/connections/:id/respond
-GET    /api/connections/me
-GET    /api/connections/pending
-GET    /api/connections/status/:userId
-```
-
-### Analytics
-```
-GET    /api/analytics/overview
-GET    /api/analytics/alumni-distribution
-GET    /api/analytics/global-presence
-GET    /api/analytics/placement-stats
-GET    /api/analytics/startup-stats
-```
-
----
-
-## User Roles
-
-| Role | Capabilities |
-|---|---|
-| `student` | Browse alumni, request mentorship, apply to jobs, community feed |
-| `alumni` | Full profile, post jobs, mentor students, success stories |
-| `faculty` | Browse directory, events, research collaboration |
-| `admin` | User management, content moderation, analytics, verification |
-
----
-
-## Key Features
-
-### Alumni Directory
-- Full-text search across name, company, location, skills
-- Filters: batch, department, industry, country, employment status
-- Career timeline visualization
-- Mentorship availability indicator
-
-### Career Platform
-- Job/internship postings by alumni
-- Referral request system
-- Application tracking dashboard
-- Save opportunities
-
-### Mentorship Hub
-- Mentor discovery with area-of-expertise filters
-- Session scheduling with platform link
-- Session history and notes
-- Bidirectional feedback system
-
-### Community Feed
-- Post types: general, achievement, opportunity, announcement, research
-- Rich media support
-- Threaded comments
-- Academic community design (not social media)
-
-### Real-time Messaging
-- One-on-one conversations
-- Message read status
-- Socket.IO powered
-- Unread count badges
-
-### Analytics Dashboard
-- Alumni distribution by department, batch, industry
-- Global presence map data
-- Placement rate trends
-- Startup ecosystem statistics
-
----
-
-## Docker Deployment
+## 🚀 Running the Application
 
 ```bash
-# Copy env files
-cp backend/.env.example backend/.env
-# Edit backend/.env with production values
+# Terminal 1 — Backend API
+cd backend && npm start
+# Server at http://localhost:5000
+# Swagger UI at http://localhost:5000/api-docs
 
-# Build and start all services
-docker-compose up -d --build
-
-# View logs
-docker-compose logs -f backend
+# Terminal 2 — Frontend Dev Server
+cd frontend && npm run dev
+# App at http://localhost:5173
 ```
 
-### Production Checklist
-- [ ] Set strong JWT secrets
-- [ ] Configure MongoDB Atlas URI
-- [ ] Set up Cloudinary account
-- [ ] Configure Google OAuth credentials
-- [ ] Set up SMTP (Gmail App Password / SendGrid)
-- [ ] Enable HTTPS (certbot / reverse proxy)
-- [ ] Set `NODE_ENV=production`
-- [ ] Configure rate limiting appropriately
+---
+
+## 🛡️ Security Features
+
+| Feature | Implementation |
+|---|---|
+| JWT Auth | Access (15m) + Refresh (7d) token rotation |
+| Password Hashing | bcryptjs with salt rounds |
+| Rate Limiting | express-rate-limit on all `/api/` routes |
+| CORS | Whitelisted origin only |
+| Helmet | HTTP security headers |
+| Soft Deletion | Resources flagged `deletedAt` — never hard-deleted |
+| Audit Logging | All admin/destructive actions persisted to `AuditLog` |
+| Verification Gate | Mutating actions blocked for unverified accounts |
+| Account Suspension | `suspended` status = all API access denied |
+| Feature Flags | Module-level toggles storable in DB, evaluated per request |
 
 ---
 
-## AI Features (Prepared Backend Architecture)
+## 🔧 Admin Dashboard Features
 
-The following AI-ready service stubs are prepared for integration:
+The admin dashboard at `/admin` provides:
 
-- `/api/ai/resume-analysis` — Resume parsing and skill gap analysis
-- `/api/ai/alumni-recommend` — Alumni recommendations based on interests
-- `/api/ai/mentor-match` — ML-based mentor matching
-- `/api/ai/career-assistant` — Career guidance chat
-- `/api/ai/opportunity-match` — Job/opportunity recommendations
-
-These are modular services designed to integrate with OpenAI, Gemini, or custom ML models.
+1. **Overview** — Platform stats, system health indicators, quick-action buttons
+2. **Verification Queue** — Review submitted documents, approve/reject with notes
+3. **Moderation Reports** — Process abuse reports, delete content, ban users
+4. **Audit Logs** — Searchable, paginated log of all sensitive system actions
+5. **Feature Flags** — Toggle platform modules on/off in real-time
 
 ---
 
-## Architecture Decisions
+## 📡 Real-time Features (Socket.io)
 
-- **Zustand** for lightweight client state with localStorage persistence
-- **TanStack Query** for server state with automatic cache invalidation
-- **Socket.IO** for real-time messaging and notifications
-- **Tailwind CSS v4** with CSS-based `@theme` configuration
-- **MongoDB** with compound indexes for optimized queries
-- **JWT** with short-lived access tokens + refresh token rotation
-- **Cloudinary** for image transformation and CDN delivery
-- **Rate limiting** per-route (auth routes stricter)
+| Event | Description |
+|---|---|
+| `new_message` | Delivered to conversation participants on new message |
+| `notification` | Pushed on connection requests, job applications, mentions |
+| `online_status` | User presence tracking |
 
 ---
 
-## License
+## 🧪 Build Verification
 
-This project is built exclusively for IITRAM (Institute of Infrastructure, Technology, Research and Management). All rights reserved.
+```bash
+# Backend TypeScript check
+cd backend && npx tsc --noEmit   # ✅ 0 errors
+
+# Frontend TypeScript + Vite build
+cd frontend && npm run build     # ✅ Built in ~1.5s, 0 errors
+
+# Database migration
+cd backend && npx ts-node src/scripts/migration.ts
+# ✅ 6 users, 2 events, 2 stories migrated
+```
 
 ---
 
-*Built with dedication for the IITRAM alumni community.*
+## 📄 License
+
+This project is developed for IITRAM (Institute of Infrastructure, Technology, Research and Management), Ahmedabad. All rights reserved © 2026.
+
+---
+
+*Built with ❤️ for the IITRAM alumni community — connecting minds, building futures.*

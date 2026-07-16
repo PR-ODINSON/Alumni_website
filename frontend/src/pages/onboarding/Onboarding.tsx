@@ -13,18 +13,10 @@ const DEPARTMENTS = [
   'Computer Science & Engineering',
   'Electrical Engineering',
   'Mechanical Engineering',
-  'Civil Engineering',
-  'Chemical Engineering',
-  'Electronics & Communication Engineering',
-  'Information Technology',
-  'Mathematics',
-  'Physics',
-  'Chemistry',
-  'Management Studies',
-  'Other',
+  'Civil Engineering'
 ];
 
-const DEGREE_TYPES = ['B.Tech', 'M.Tech', 'MBA', 'PhD', 'Diploma', 'Other'];
+const DEGREE_TYPES = ['B.Tech', 'M.Tech', 'PhD'];
 
 const ROLES = [
   {

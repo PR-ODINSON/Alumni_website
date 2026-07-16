@@ -4,12 +4,15 @@ import { motion } from 'framer-motion';
 import { FlaskConical, Search, Plus } from 'lucide-react';
 import api from '../../lib/api';
 import { useAuthStore } from '../../stores/authStore';
-import { formatDate } from '../../lib/utils';
+import PostResearchModal from './components/PostResearchModal';
+import ResearchProjectDetailModal from './components/ResearchProjectDetailModal';
 
 export default function ResearchPage() {
   const { isAuthenticated } = useAuthStore();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
+  const [isPostOpen, setIsPostOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['research', search, status],
@@ -41,7 +44,10 @@ export default function ResearchPage() {
             </p>
           </div>
           {isAuthenticated && (
-            <button className="btn btn-primary shadow-sm hover:-translate-y-0.5 shrink-0 self-start md:self-center">
+            <button 
+              onClick={() => setIsPostOpen(true)}
+              className="btn btn-primary shadow-sm hover:-translate-y-0.5 shrink-0 self-start md:self-center"
+            >
               <Plus size={16} /> Post Research
             </button>
           )}
@@ -98,7 +104,8 @@ export default function ResearchPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 rounded-2xl p-5 flex flex-col justify-between transition-all duration-200"
+              onClick={() => setSelectedProjectId(project._id)}
+              className="bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 rounded-2xl p-5 flex flex-col justify-between transition-all duration-200 cursor-pointer"
             >
               <div>
                 <div className="flex items-center gap-2 mb-3">
@@ -135,6 +142,12 @@ export default function ResearchPage() {
             </motion.div>
           ))}
         </div>
+      )}
+
+      {/* Modals */}
+      <PostResearchModal isOpen={isPostOpen} onClose={() => setIsPostOpen(false)} />
+      {selectedProjectId && (
+        <ResearchProjectDetailModal projectId={selectedProjectId} onClose={() => setSelectedProjectId(null)} />
       )}
     </div>
   );

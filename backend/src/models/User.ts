@@ -3,6 +3,15 @@ import bcrypt from 'bcryptjs';
 
 export type UserRole = 'student' | 'alumni' | 'faculty' | 'admin';
 export type AuthProvider = 'local' | 'google';
+export type VerificationStatus = 'pending' | 'under_review' | 'verified' | 'rejected' | 'suspended';
+export type PrivacyOption = 'public' | 'college' | 'connections' | 'private';
+
+export interface IVerificationHistory {
+  status: VerificationStatus;
+  updatedBy?: mongoose.Types.ObjectId;
+  notes?: string;
+  updatedAt: Date;
+}
 
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;
@@ -17,7 +26,31 @@ export interface IUser extends Document {
   authProvider: AuthProvider;
   isEmailVerified: boolean;
   isProfileComplete: boolean;
-  isVerified: boolean;
+  
+  // Verification
+  verificationStatus: VerificationStatus;
+  verificationDocuments: string[];
+  verificationHistory: IVerificationHistory[];
+  isVerified: boolean; // Keep for backward compatibility
+
+  // Mentorship
+  mentorStatus: 'inactive' | 'active' | 'suspended';
+
+  // Soft Delete
+  deletedAt?: Date;
+  deletedBy?: mongoose.Types.ObjectId;
+  deletionReason?: string;
+
+  // Privacy Control
+  privacySettings: {
+    email: PrivacyOption;
+    phone: PrivacyOption;
+    company: PrivacyOption;
+    linkedin: PrivacyOption;
+    resume: PrivacyOption;
+    socialLinks: PrivacyOption;
+  };
+
   isActive: boolean;
   isBanned: boolean;
   banReason?: string;
@@ -81,7 +114,46 @@ const UserSchema = new Schema<IUser>(
     authProvider: { type: String, enum: ['local', 'google'], default: 'local' },
     isEmailVerified: { type: Boolean, default: false },
     isProfileComplete: { type: Boolean, default: false },
-    isVerified: { type: Boolean, default: false },
+
+    // Verification
+    verificationStatus: {
+      type: String,
+      enum: ['pending', 'under_review', 'verified', 'rejected', 'suspended'],
+      default: 'pending',
+    },
+    verificationDocuments: [{ type: String }],
+    verificationHistory: [
+      {
+        status: { type: String, enum: ['pending', 'under_review', 'verified', 'rejected', 'suspended'] },
+        updatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+        notes: { type: String },
+        updatedAt: { type: Date, default: Date.now },
+      },
+    ],
+    isVerified: { type: Boolean, default: false }, // Backwards compatibility
+
+    // Mentorship
+    mentorStatus: {
+      type: String,
+      enum: ['inactive', 'active', 'suspended'],
+      default: 'inactive',
+    },
+
+    // Soft Delete
+    deletedAt: { type: Date },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletionReason: { type: String },
+
+    // Profile Privacy Settings
+    privacySettings: {
+      email: { type: String, enum: ['public', 'college', 'connections', 'private'], default: 'college' },
+      phone: { type: String, enum: ['public', 'college', 'connections', 'private'], default: 'connections' },
+      company: { type: String, enum: ['public', 'college', 'connections', 'private'], default: 'public' },
+      linkedin: { type: String, enum: ['public', 'college', 'connections', 'private'], default: 'public' },
+      resume: { type: String, enum: ['public', 'college', 'connections', 'private'], default: 'connections' },
+      socialLinks: { type: String, enum: ['public', 'college', 'connections', 'private'], default: 'college' },
+    },
+
     isActive: { type: Boolean, default: true },
     isBanned: { type: Boolean, default: false },
     banReason: { type: String },
@@ -126,6 +198,8 @@ const UserSchema = new Schema<IUser>(
 // Indexes
 UserSchema.index({ role: 1 });
 UserSchema.index({ isActive: 1 });
+UserSchema.index({ verificationStatus: 1 });
+UserSchema.index({ deletedAt: 1 });
 UserSchema.index({ firstName: 'text', lastName: 'text', bio: 'text' });
 
 // Virtual
@@ -135,6 +209,9 @@ UserSchema.virtual('fullName').get(function () {
 
 // Pre-save: hash password
 UserSchema.pre('save', async function (next) {
+  if (this.isModified('verificationStatus')) {
+    this.isVerified = this.verificationStatus === 'verified';
+  }
   if (!this.isModified('password') || !this.password) return next();
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);

@@ -22,6 +22,19 @@ const profileSchema = z.object({
   'socialLinks.github': z.string().url().optional().or(z.literal('')),
   'socialLinks.twitter': z.string().url().optional().or(z.literal('')),
   'socialLinks.website': z.string().url().optional().or(z.literal('')),
+  'privacySettings.email': z.enum(['public', 'college', 'connections', 'private']).optional(),
+  'privacySettings.phone': z.enum(['public', 'college', 'connections', 'private']).optional(),
+  'privacySettings.company': z.enum(['public', 'college', 'connections', 'private']).optional(),
+  'privacySettings.linkedin': z.enum(['public', 'college', 'connections', 'private']).optional(),
+  'privacySettings.resume': z.enum(['public', 'college', 'connections', 'private']).optional(),
+  'privacySettings.socialLinks': z.enum(['public', 'college', 'connections', 'private']).optional(),
+  'notificationPreferences.email': z.boolean().optional(),
+  'notificationPreferences.push': z.boolean().optional(),
+  'notificationPreferences.connectionRequests': z.boolean().optional(),
+  'notificationPreferences.messages': z.boolean().optional(),
+  'notificationPreferences.jobAlerts': z.boolean().optional(),
+  'notificationPreferences.eventReminders': z.boolean().optional(),
+  'notificationPreferences.mentorshipUpdates': z.boolean().optional(),
 });
 
 const TABS = ['Basic Info', 'Career', 'Education', 'Settings'] as const;
@@ -46,6 +59,19 @@ export default function EditProfile() {
       'socialLinks.github': user?.socialLinks?.github || '',
       'socialLinks.twitter': user?.socialLinks?.twitter || '',
       'socialLinks.website': user?.socialLinks?.website || '',
+      'privacySettings.email': user?.privacySettings?.email || 'college',
+      'privacySettings.phone': user?.privacySettings?.phone || 'connections',
+      'privacySettings.company': user?.privacySettings?.company || 'public',
+      'privacySettings.linkedin': user?.privacySettings?.linkedin || 'public',
+      'privacySettings.resume': user?.privacySettings?.resume || 'connections',
+      'privacySettings.socialLinks': user?.privacySettings?.socialLinks || 'college',
+      'notificationPreferences.email': user?.notificationPreferences?.email ?? true,
+      'notificationPreferences.push': user?.notificationPreferences?.push ?? true,
+      'notificationPreferences.connectionRequests': user?.notificationPreferences?.connectionRequests ?? true,
+      'notificationPreferences.messages': user?.notificationPreferences?.messages ?? true,
+      'notificationPreferences.jobAlerts': user?.notificationPreferences?.jobAlerts ?? true,
+      'notificationPreferences.eventReminders': user?.notificationPreferences?.eventReminders ?? true,
+      'notificationPreferences.mentorshipUpdates': user?.notificationPreferences?.mentorshipUpdates ?? true,
     },
   });
 
@@ -207,7 +233,7 @@ export default function EditProfile() {
                 <div className="card p-6">
                   <div className="flex items-center gap-2 mb-4">
                     <Briefcase size={18} className="text-iitram-600" />
-                    <h3 className="font-semibold text-slate-900">Career Timeline</h3>
+                    <h3 className="font-semibold text-slate-900">Career Journey</h3>
                   </div>
                   <p className="text-sm text-slate-500 mb-4">Manage your career entries from your profile page.</p>
                   <Link to="/profile" className="btn-primary btn-sm">Go to Profile</Link>
@@ -245,24 +271,56 @@ export default function EditProfile() {
 
           {/* Settings Tab */}
           {activeTab === 'Settings' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+              {/* Privacy Settings */}
               <div className="card p-6">
                 <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <Lock size={16} className="text-slate-500" /> Privacy
+                  <Lock size={16} className="text-slate-500" /> Privacy Settings
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { label: 'Email Visibility', key: 'privacySettings.email' },
+                    { label: 'Phone Visibility', key: 'privacySettings.phone' },
+                    { label: 'Company Visibility', key: 'privacySettings.company' },
+                    { label: 'LinkedIn Visibility', key: 'privacySettings.linkedin' },
+                    { label: 'Resume Visibility', key: 'privacySettings.resume' },
+                    { label: 'Social Links Visibility', key: 'privacySettings.socialLinks' },
+                  ].map(setting => (
+                    <div key={setting.key}>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">{setting.label}</label>
+                      <select {...register(setting.key as any)} className="input h-10 py-1 text-xs">
+                        <option value="public">Public (Everyone)</option>
+                        <option value="college">College Members</option>
+                        <option value="connections">Connections Only</option>
+                        <option value="private">Private (Only Me)</option>
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Notification Preferences */}
+              <div className="card p-6">
+                <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                  <Globe size={16} className="text-slate-500" /> Notification Preferences
                 </h3>
                 <div className="space-y-4">
                   {[
-                    { label: 'Show profile in directory', desc: 'Allow others to find your profile', key: 'showInDirectory' },
-                    { label: 'Show email publicly', desc: 'Display email on your profile', key: 'showEmail' },
-                    { label: 'Allow connection requests', desc: 'Let others send you connection requests', key: 'allowConnections' },
-                  ].map(setting => (
-                    <div key={setting.key} className="flex items-center justify-between">
+                    { label: 'Email Notifications', desc: 'Receive periodic emails and digests', key: 'notificationPreferences.email' },
+                    { label: 'Push Notifications', desc: 'Receive live push alerts in the browser', key: 'notificationPreferences.push' },
+                    { label: 'Connection Requests', desc: 'Notify when someone requests to connect', key: 'notificationPreferences.connectionRequests' },
+                    { label: 'Messages', desc: 'Notify on new chat messages', key: 'notificationPreferences.messages' },
+                    { label: 'Job Alerts', desc: 'Notify when new jobs matching your profile are posted', key: 'notificationPreferences.jobAlerts' },
+                    { label: 'Event Reminders', desc: 'Notify about upcoming registered events', key: 'notificationPreferences.eventReminders' },
+                    { label: 'Mentorship Updates', desc: 'Notify on mentorship application state changes', key: 'notificationPreferences.mentorshipUpdates' },
+                  ].map(pref => (
+                    <div key={pref.key} className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-slate-700">{setting.label}</p>
-                        <p className="text-xs text-slate-400">{setting.desc}</p>
+                        <p className="text-sm font-medium text-slate-700">{pref.label}</p>
+                        <p className="text-xs text-slate-400">{pref.desc}</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" defaultChecked className="sr-only peer" />
+                        <input type="checkbox" {...register(pref.key as any)} className="sr-only peer" />
                         <div className="w-9 h-5 bg-slate-200 peer-checked:bg-iitram-600 rounded-full transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4"></div>
                       </label>
                     </div>
@@ -273,18 +331,16 @@ export default function EditProfile() {
           )}
 
           {/* Save button */}
-          {activeTab !== 'Settings' && (
-            <div className="mt-6 flex justify-end">
-              <button
-                type="submit"
-                disabled={updateMutation.isPending}
-                className="btn-primary flex items-center gap-2"
-              >
-                <Save size={16} />
-                {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
-              </button>
-            </div>
-          )}
+          <div className="mt-6 flex justify-end">
+            <button
+              type="submit"
+              disabled={updateMutation.isPending}
+              className="btn-primary flex items-center gap-2"
+            >
+              <Save size={16} />
+              {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
         </form>
       </div>
     </div>

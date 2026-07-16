@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Heart, Eye, Star, Award, ArrowRight, Search, BookOpen, Quote } from 'lucide-react';
+import { Heart, Eye, Star, Award, ArrowRight, Search, BookOpen, Quote, Plus } from 'lucide-react';
 import { successStoryApi } from '../../lib/api';
 import { useAuthStore } from '../../stores/authStore';
 import { formatDate, truncate } from '../../lib/utils';
+import { PermissionGuard } from '../../components/auth/guards';
 
 import StoryCard from './components/StoryCard';
 import FeaturedStoryCard from './components/FeaturedStoryCard';
@@ -13,6 +14,7 @@ import FeaturedStoryCard from './components/FeaturedStoryCard';
 const CATEGORIES = ['all', 'career', 'entrepreneurship', 'research', 'social-impact', 'leadership', 'arts', 'sports'];
 
 export default function SuccessStoriesPage() {
+  const { isAuthenticated, user } = useAuthStore();
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
 
@@ -40,9 +42,17 @@ export default function SuccessStoriesPage() {
               <Award size={12} /> IITRAM Legacy Archive
             </span>
             <h1 className="text-3xl md:text-4xl font-bold mb-3 font-serif tracking-tight">Success Stories</h1>
-            <p className="text-slate-350 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+            <p className="text-slate-350 text-sm md:text-base leading-relaxed max-w-xl mx-auto mb-5">
               Journeys of IITRAM graduates who transformed industries, built companies, and made an impact across the world.
             </p>
+            <PermissionGuard permission="story:create">
+              <Link
+                to="/stories/create"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-slate-900 hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold shadow-md hover:-translate-y-0.5 transition-all duration-200"
+              >
+                <Plus size={14} /> Share Your Story
+              </Link>
+            </PermissionGuard>
           </motion.div>
         </div>
       </div>

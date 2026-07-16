@@ -29,6 +29,13 @@ import adminRoutes from './routes/admin.routes';
 import notificationRoutes from './routes/notification.routes';
 import researchRoutes from './routes/research.routes';
 import uploadRoutes from './routes/upload.routes';
+import reportsRoutes from './routes/reports.routes';
+import verificationRoutes from './routes/verification.routes';
+import auditLogsRoutes from './routes/auditLogs.routes';
+import featureFlagsRoutes from './routes/featureFlags.routes';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
+
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -86,6 +93,10 @@ app.get('/health', (_req, res) => {
   });
 });
 
+// Swagger API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -103,6 +114,10 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/research', researchRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/reports', reportsRoutes);
+app.use('/api/verification', verificationRoutes);
+app.use('/api/audit-logs', auditLogsRoutes);
+app.use('/api/feature-flags', featureFlagsRoutes);
 
 // 404 Handler
 app.use('*', (req, res) => {

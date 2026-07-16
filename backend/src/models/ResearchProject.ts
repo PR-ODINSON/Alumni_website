@@ -1,5 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+export type ResearchStatus = 'draft' | 'open' | 'applications_closed' | 'completed' | 'archived';
+
 export interface IResearchProject extends Document {
   title: string;
   abstract: string;
@@ -7,7 +9,7 @@ export interface IResearchProject extends Document {
   domain: string;
   subDomain: string;
   keywords: string[];
-  status: 'open' | 'in-progress' | 'completed' | 'on-hold';
+  status: ResearchStatus;
   type: 'thesis' | 'paper' | 'project' | 'startup-research' | 'collaboration';
   
   // Team
@@ -60,6 +62,11 @@ export interface IResearchProject extends Document {
   
   isPublic: boolean;
   views: number;
+
+  // Soft Delete
+  deletedAt?: Date;
+  deletedBy?: mongoose.Types.ObjectId;
+  deletionReason?: string;
   
   createdAt: Date;
   updatedAt: Date;
@@ -75,7 +82,7 @@ const ResearchProjectSchema = new Schema<IResearchProject>(
     keywords: [String],
     status: {
       type: String,
-      enum: ['open', 'in-progress', 'completed', 'on-hold'],
+      enum: ['draft', 'open', 'applications_closed', 'completed', 'archived'],
       default: 'open',
     },
     type: {
@@ -135,6 +142,11 @@ const ResearchProjectSchema = new Schema<IResearchProject>(
     documents: [{ url: String, name: String, type: String }],
     isPublic: { type: Boolean, default: true },
     views: { type: Number, default: 0 },
+
+    // Soft Delete
+    deletedAt: { type: Date },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletionReason: { type: String },
   },
   { timestamps: true }
 );
@@ -142,6 +154,7 @@ const ResearchProjectSchema = new Schema<IResearchProject>(
 ResearchProjectSchema.index({ pi: 1 });
 ResearchProjectSchema.index({ domain: 1 });
 ResearchProjectSchema.index({ status: 1 });
+ResearchProjectSchema.index({ deletedAt: 1 });
 ResearchProjectSchema.index({ title: 'text', abstract: 'text', keywords: 'text' });
 
 export default mongoose.model<IResearchProject>('ResearchProject', ResearchProjectSchema);

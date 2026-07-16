@@ -1,5 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+export type StoryStatus = 'draft' | 'pending_review' | 'approved' | 'published' | 'archived';
+
 export interface ISuccessStory extends Document {
   alumni: mongoose.Types.ObjectId;
   title: string;
@@ -23,6 +25,13 @@ export interface ISuccessStory extends Document {
   views: number;
   likes: mongoose.Types.ObjectId[];
   publishedAt?: Date;
+
+  // Lifecycle & Soft Delete
+  status: StoryStatus;
+  deletedAt?: Date;
+  deletedBy?: mongoose.Types.ObjectId;
+  deletionReason?: string;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,6 +66,16 @@ const SuccessStorySchema = new Schema<ISuccessStory>(
     views: { type: Number, default: 0 },
     likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     publishedAt: Date,
+
+    // Lifecycle & Soft Delete
+    status: {
+      type: String,
+      enum: ['draft', 'pending_review', 'approved', 'published', 'archived'],
+      default: 'draft',
+    },
+    deletedAt: { type: Date },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletionReason: { type: String },
   },
   { timestamps: true }
 );
@@ -64,6 +83,8 @@ const SuccessStorySchema = new Schema<ISuccessStory>(
 SuccessStorySchema.index({ alumni: 1 });
 SuccessStorySchema.index({ category: 1 });
 SuccessStorySchema.index({ isPublished: 1, isFeatured: -1 });
+SuccessStorySchema.index({ status: 1 });
+SuccessStorySchema.index({ deletedAt: 1 });
 SuccessStorySchema.index({ publishedAt: -1 });
 
 export default mongoose.model<ISuccessStory>('SuccessStory', SuccessStorySchema);

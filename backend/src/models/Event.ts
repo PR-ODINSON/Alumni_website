@@ -1,5 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+export type EventStatus = 'draft' | 'published' | 'cancelled' | 'completed';
+
 export interface IEvent extends Document {
   title: string;
   description: string;
@@ -79,6 +81,12 @@ export interface IEvent extends Document {
   isPublished: boolean;
   isFeatured: boolean;
   views: number;
+
+  // Lifecycles & Soft Delete
+  status: EventStatus;
+  deletedAt?: Date;
+  deletedBy?: mongoose.Types.ObjectId;
+  deletionReason?: string;
   
   createdAt: Date;
   updatedAt: Date;
@@ -167,6 +175,16 @@ const EventSchema = new Schema<IEvent>(
     isPublished: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },
     views: { type: Number, default: 0 },
+
+    // Lifecycles & Soft Delete
+    status: {
+      type: String,
+      enum: ['draft', 'published', 'cancelled', 'completed'],
+      default: 'published',
+    },
+    deletedAt: { type: Date },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletionReason: { type: String },
   },
   { timestamps: true }
 );
@@ -175,6 +193,8 @@ EventSchema.index({ startDate: 1 });
 EventSchema.index({ eventType: 1 });
 EventSchema.index({ organizer: 1 });
 EventSchema.index({ isPublished: 1 });
+EventSchema.index({ status: 1 });
+EventSchema.index({ deletedAt: 1 });
 EventSchema.index({ isFeatured: -1, startDate: 1 });
 
 export default mongoose.model<IEvent>('Event', EventSchema);

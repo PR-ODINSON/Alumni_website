@@ -28,6 +28,7 @@ import MentorshipPage from './pages/mentorship/Mentorship';
 import MentorshipDetailPage from './pages/mentorship/MentorshipDetail';
 import SuccessStoriesPage from './pages/stories/SuccessStories';
 import StoryDetailPage from './pages/stories/StoryDetail';
+import CreateStoryPage from './pages/stories/CreateStory';
 import AnalyticsPage from './pages/analytics/Analytics';
 import AdminPage from './pages/admin/Admin';
 import MessagesPage from './pages/messages/Messages';
@@ -40,12 +41,7 @@ import StartupEcosystemPage from './pages/startups/StartupEcosystem';
 import OnboardingPage from './pages/onboarding/Onboarding';
 import NotFoundPage from './pages/NotFound';
 
-const ProtectedRoute = ({ children, roles }: { children: React.ReactElement; roles?: string[] }) => {
-  const { isAuthenticated, user } = useAuthStore();
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (roles && user && !roles.includes(user.role)) return <Navigate to="/" replace />;
-  return children;
-};
+import { ProtectedRoute, VerificationRequiredPage } from './components/auth/guards';
 
 const GuestRoute = ({ children }: { children: React.ReactElement }) => {
   const { isAuthenticated } = useAuthStore();
@@ -66,6 +62,9 @@ export default function App() {
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
       </Route>
 
+      {/* Verification Required route */}
+      <Route path="/verification-required" element={<VerificationRequiredPage />} />
+
       {/* Onboarding (outside main layout) */}
       <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
 
@@ -78,26 +77,27 @@ export default function App() {
         <Route path="/students/:userId" element={<ProfilePage />} />
         <Route path="/feed" element={<ProtectedRoute><FeedPage /></ProtectedRoute>} />
         <Route path="/jobs" element={<JobsPage />} />
-        <Route path="/jobs/post" element={<ProtectedRoute roles={['alumni', 'admin']}><PostJobPage /></ProtectedRoute>} />
+        <Route path="/jobs/post" element={<ProtectedRoute permission="job:create" requireVerifiedAccount><PostJobPage /></ProtectedRoute>} />
         <Route path="/jobs/:jobId" element={<JobDetailPage />} />
         <Route path="/events" element={<EventsPage />} />
-        <Route path="/events/create" element={<ProtectedRoute roles={['alumni', 'faculty', 'admin']}><CreateEventPage /></ProtectedRoute>} />
+        <Route path="/events/create" element={<ProtectedRoute permission="event:create" requireVerifiedAccount><CreateEventPage /></ProtectedRoute>} />
         <Route path="/events/:eventId" element={<EventDetailPage />} />
         <Route path="/mentorship" element={<ProtectedRoute><MentorshipPage /></ProtectedRoute>} />
         <Route path="/mentorship/:mentorshipId" element={<ProtectedRoute><MentorshipDetailPage /></ProtectedRoute>} />
         <Route path="/stories" element={<SuccessStoriesPage />} />
+        <Route path="/stories/create" element={<ProtectedRoute permission="story:create" requireVerifiedAccount><CreateStoryPage /></ProtectedRoute>} />
         <Route path="/stories/:storyId" element={<StoryDetailPage />} />
         <Route path="/success-stories" element={<Navigate to="/stories" replace />} />
-        <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
         <Route path="/research" element={<ResearchPage />} />
         <Route path="/legacy" element={<LegacyArchivePage />} />
-        <Route path="/startups" element={<StartupEcosystemPage />} />
+        <Route path="/startups" element={<ProtectedRoute><StartupEcosystemPage /></ProtectedRoute>} />
         <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
         <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/profile/edit" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
         <Route path="/profile/:userId" element={<ProfilePage />} />
-        <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminPage /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute permission="admin:panel_access"><AdminPage /></ProtectedRoute>} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

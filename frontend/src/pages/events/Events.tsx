@@ -9,6 +9,7 @@ import {
 import { eventApi } from '../../lib/api';
 import { useAuthStore } from '../../stores/authStore';
 import { formatDate } from '../../lib/utils';
+import { PermissionGuard } from '../../components/auth/guards';
 
 const EVENT_TYPES = ['reunion', 'alumni-meet', 'workshop', 'webinar', 'guest-lecture', 'conference', 'other'];
 
@@ -51,11 +52,11 @@ export default function EventsPage() {
               <h1 className="text-3xl font-bold tracking-tight mb-2">Events</h1>
               <p className="text-slate-500 text-base md:text-lg">Alumni meets, workshops, webinars and more</p>
             </div>
-            {isAuthenticated && (user?.role === 'alumni' || user?.role === 'faculty' || user?.role === 'admin') && (
+            <PermissionGuard permission="event:create">
               <Link to="/events/create" className="btn btn-primary shadow-md hover:-translate-y-0.5 transition-all shrink-0">
                 <Plus size={16} /> Create Event
               </Link>
-            )}
+            </PermissionGuard>
           </div>
 
           <div className="flex gap-3 flex-wrap">

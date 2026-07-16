@@ -8,12 +8,12 @@ import { protect } from '../middleware/auth';
 const router = Router();
 router.use(protect);
 
+router.get('/pending', getPendingRequests);
+router.get('/status/:userId', getConnectionStatus);
+router.get('/mutual/:userId', getMutualConnections);
+router.get('/:userId', getConnections);
 router.post('/request/:userId', sendConnectionRequest);
 router.patch('/:connectionId/respond', respondToRequest);
-router.get('/pending', getPendingRequests);
-router.get('/:userId', getConnections);
-router.get('/status/:userId', getConnectionStatus);
 router.delete('/:connectionId', removeConnection);
-router.get('/mutual/:userId', getMutualConnections);
 
 export default router;

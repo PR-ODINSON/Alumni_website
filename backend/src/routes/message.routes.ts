@@ -3,6 +3,7 @@ import { asyncHandler, AppError } from '../middleware/errorHandler';
 import { protect } from '../middleware/auth';
 import { Message, Conversation } from '../models/Message';
 import { AuthRequest } from '../middleware/auth';
+import { AuthorizationEngine } from '../services/AuthorizationEngine';
 
 const router = Router();
 router.use(protect);
@@ -15,8 +16,13 @@ router.get('/conversations', asyncHandler(async (req: AuthRequest, res) => {
   res.json({ success: true, data: conversations });
 }));
 
-router.post('/conversations', asyncHandler(async (req: AuthRequest, res) => {
+router.post('/conversations', asyncHandler(async (req: AuthRequest, res, next) => {
   const { participantId } = req.body;
+
+  const allowed = await AuthorizationEngine.can(req.user, 'message:start', participantId);
+  if (!allowed) {
+    return next(new AppError('You can only start messaging users with whom you have an established relationship (connection, mentorship, or application).', 403));
+  }
 
   const existing = await Conversation.findOne({
     participants: { $all: [req.user._id, participantId], $size: 2 },

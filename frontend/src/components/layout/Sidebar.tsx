@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
+import { useAuthorization } from '../../contexts/AuthorizationContext';
 
 const navGroups = [
   {
@@ -51,6 +52,7 @@ export default function Sidebar() {
   const location = useLocation();
   const { sidebarOpen } = useUIStore();
   const { user } = useAuthStore();
+  const { can } = useAuthorization();
 
   return (
     <AnimatePresence>
@@ -110,7 +112,7 @@ export default function Sidebar() {
               </div>
             ))}
 
-            {user?.role === 'admin' && (
+            {can('admin:panel_access') && (
               <div>
                 <p className="px-3 mb-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Admin</p>
                 <div className="space-y-0.5">

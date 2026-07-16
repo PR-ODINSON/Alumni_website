@@ -24,9 +24,17 @@ const sendTokenResponse = (user: any, statusCode: number, res: Response): void =
     email: user.email,
     role: user.role,
     avatar: user.avatar,
+    coverImage: user.coverImage,
+    bio: user.bio,
+    phone: user.phone,
+    location: user.location,
+    socialLinks: user.socialLinks,
     isEmailVerified: user.isEmailVerified,
     isProfileComplete: user.isProfileComplete,
     isVerified: user.isVerified,
+    verificationStatus: user.verificationStatus,
+    mentorStatus: user.mentorStatus,
+    notificationPreferences: user.notificationPreferences,
   };
 
   res.status(statusCode).json({

@@ -22,7 +22,7 @@ router.get('/dashboard', asyncHandler(async (_req: AuthRequest, res) => {
     User.countDocuments({ role: 'alumni' }),
     User.countDocuments({ role: 'student' }),
     User.countDocuments({ role: 'faculty' }),
-    Alumni.countDocuments({ verificationStatus: 'pending' }),
+    User.countDocuments({ verificationStatus: 'under_review' }),
     Job.countDocuments(),
     Event.countDocuments(),
     User.find().sort('-createdAt').limit(10).select('firstName lastName email role createdAt isEmailVerified'),
@@ -79,33 +79,20 @@ router.patch('/users/:userId/unban', asyncHandler(async (req: AuthRequest, res, 
 }));
 
 router.patch('/users/:userId/verify', asyncHandler(async (req: AuthRequest, res, next) => {
-  const user = await User.findByIdAndUpdate(req.params.userId, { isVerified: true }, { new: true });
+  const user = await User.findById(req.params.userId);
   if (!user) return next(new AppError('User not found.', 404));
+  
+  user.verificationStatus = 'verified';
+  user.isVerified = true;
+  user.verificationHistory.push({
+    status: 'verified',
+    updatedBy: req.user._id,
+    notes: 'Manually verified via user list.',
+    updatedAt: new Date(),
+  });
+  await user.save();
+
   res.json({ success: true, data: user });
-}));
-
-// Alumni Verification
-router.get('/alumni/pending', asyncHandler(async (_req: AuthRequest, res) => {
-  const alumni = await Alumni.find({ verificationStatus: 'pending' })
-    .populate('user', 'firstName lastName email avatar createdAt')
-    .sort('-createdAt');
-  res.json({ success: true, data: alumni });
-}));
-
-router.patch('/alumni/:alumniId/verify', asyncHandler(async (req: AuthRequest, res, next) => {
-  const { status, note } = req.body;
-  const alumni = await Alumni.findByIdAndUpdate(
-    req.params.alumniId,
-    { verificationStatus: status, verificationNote: note },
-    { new: true }
-  );
-  if (!alumni) return next(new AppError('Alumni not found.', 404));
-
-  if (status === 'verified') {
-    await User.findByIdAndUpdate(alumni.user, { isVerified: true });
-  }
-
-  res.json({ success: true, data: alumni });
 }));
 
 // Content Moderation

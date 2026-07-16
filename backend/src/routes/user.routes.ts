@@ -30,6 +30,20 @@ router.get('/search', asyncHandler(async (req: AuthRequest, res) => {
   res.json({ success: true, data: users });
 }));
 
+router.patch('/profile', asyncHandler(async (req: AuthRequest, res) => {
+  const allowedFields = [
+    'firstName', 'lastName', 'bio', 'phone', 'location', 'socialLinks', 
+    'avatar', 'coverImage', 'privacySettings', 'notificationPreferences'
+  ];
+  const updates: Record<string, any> = {};
+  allowedFields.forEach(field => {
+    if (req.body[field] !== undefined) updates[field] = req.body[field];
+  });
+
+  const user = await User.findByIdAndUpdate(req.user._id, { $set: updates }, { new: true });
+  res.json({ success: true, data: user });
+}));
+
 router.get('/:userId', asyncHandler(async (req: AuthRequest, res, next) => {
   const user = await User.findById(req.params.userId)
     .select('-password -refreshToken -emailVerificationToken -passwordResetToken');
@@ -40,17 +54,6 @@ router.get('/:userId', asyncHandler(async (req: AuthRequest, res, next) => {
   else if (user.role === 'student') profile = await Student.findOne({ user: user._id });
 
   res.json({ success: true, data: { user, profile } });
-}));
-
-router.patch('/profile', asyncHandler(async (req: AuthRequest, res) => {
-  const allowedFields = ['firstName', 'lastName', 'bio', 'phone', 'location', 'socialLinks', 'avatar', 'coverImage'];
-  const updates: Record<string, any> = {};
-  allowedFields.forEach(field => {
-    if (req.body[field] !== undefined) updates[field] = req.body[field];
-  });
-
-  const user = await User.findByIdAndUpdate(req.user._id, { $set: updates }, { new: true });
-  res.json({ success: true, data: user });
 }));
 
 export default router;

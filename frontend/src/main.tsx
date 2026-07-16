@@ -16,11 +16,15 @@ const queryClient = new QueryClient({
   },
 });
 
+import { AuthorizationProvider } from './contexts/AuthorizationContext';
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <App />
+        <AuthorizationProvider>
+          <App />
+        </AuthorizationProvider>
         <Toaster
           position="top-right"
           toastOptions={{

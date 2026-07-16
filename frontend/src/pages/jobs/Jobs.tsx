@@ -6,6 +6,7 @@ import { jobApi } from '../../lib/api';
 import { useAuthStore } from '../../stores/authStore';
 import { INDUSTRIES } from '../../lib/utils';
 import JobCard from './components/JobCard';
+import { PermissionGuard } from '../../components/auth/guards';
 
 export default function JobsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -46,11 +47,11 @@ export default function JobsPage() {
               <h1 className="text-2xl font-bold tracking-tight mb-0.5 font-display">Jobs & Opportunities</h1>
               <p className="text-slate-500 text-xs font-semibold">Exclusive positions shared by the IITRAM alumni network</p>
             </div>
-            {isAuthenticated && (user?.role === 'alumni' || user?.role === 'admin') && (
+            <PermissionGuard permission="job:create">
               <Link to="/jobs/post" className="btn btn-primary shadow-xs hover:-translate-y-0.5 transition-all shrink-0 py-2 px-4 text-xs font-bold rounded-lg cursor-pointer">
                 <Plus size={14} /> Post a Job
               </Link>
-            )}
+            </PermissionGuard>
           </div>
  
           {/* Tabs */}

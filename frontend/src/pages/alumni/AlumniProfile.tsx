@@ -175,30 +175,48 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
                 <div>
                   <div className="flex items-center gap-3 flex-wrap">
                     <h1 className="text-2xl font-bold text-slate-900">{user.firstName} {user.lastName}</h1>
-                    {isAlumni && profile.isDistinguished && (
+                    {user.role === 'alumni' && profile.isDistinguished && (
                       <span className="badge badge-gold">
                         <Award size={11} /> Distinguished Alumni
                       </span>
                     )}
-                    {isAlumni && profile.isMentor && (
+                    {user.role === 'alumni' && profile.isMentor && (
                       <span className="badge badge-success">
                         <Star size={11} /> Mentor
                       </span>
                     )}
+                    {user.role === 'faculty' && (
+                      <span className="badge bg-blue-100 text-blue-800 border border-blue-200 text-xs px-2 py-0.5 rounded-full font-medium">
+                        Faculty
+                      </span>
+                    )}
+                    {user.role === 'admin' && (
+                      <span className="badge bg-red-100 text-red-800 border border-red-200 text-xs px-2 py-0.5 rounded-full font-medium">
+                        Admin
+                      </span>
+                    )}
                   </div>
                   <p className="text-slate-600 mt-1">
-                    {isAlumni 
+                    {user.role === 'alumni' 
                       ? (profile.currentDesignation || 'IITRAM Alumni') + (profile.currentCompany ? ` at ${profile.currentCompany}` : '')
-                      : `Student · ${profile.degreeType} in ${profile.department}`}
+                      : user.role === 'student'
+                      ? `Student · ${profile.degreeType || 'B.Tech'} in ${profile.department || 'Engineering'}`
+                      : user.role === 'faculty'
+                      ? `Faculty · ${profile.currentDesignation || 'Professor'} in ${profile.department || 'Engineering'}`
+                      : `Administrator`}
                   </p>
                   <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-slate-500">
                     {user.location?.city && (
                       <span className="flex items-center gap-1"><MapPin size={13} /> {user.location.city}, {user.location.country}</span>
                     )}
-                    {isAlumni && profile.currentIndustry && (
+                    {user.role === 'alumni' && profile.currentIndustry && (
                       <span className="flex items-center gap-1"><Briefcase size={13} /> {profile.currentIndustry}</span>
                     )}
-                    <span className="flex items-center gap-1"><GraduationCap size={13} /> {profile.degreeType} · {profile.department} · Batch {profile.batch}</span>
+                    {(profile.degreeType || profile.department) && (
+                      <span className="flex items-center gap-1">
+                        <GraduationCap size={13} /> {profile.degreeType || ''} {profile.department ? `· ${profile.department}` : ''} {profile.batch ? `· Batch ${profile.batch}` : ''}
+                      </span>
+                    )}
                     <span className="flex items-center gap-1"><Eye size={13} /> {profile.profileViews || 0} views</span>
                   </div>
                 </div>

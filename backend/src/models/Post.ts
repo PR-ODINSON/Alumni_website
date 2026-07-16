@@ -7,6 +7,12 @@ export interface IComment extends Document {
   likes: mongoose.Types.ObjectId[];
   parentComment?: mongoose.Types.ObjectId;
   isDeleted: boolean;
+  
+  // Soft Delete Audits
+  deletedAt?: Date;
+  deletedBy?: mongoose.Types.ObjectId;
+  deletionReason?: string;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -41,6 +47,12 @@ export interface IPost extends Document {
   };
   linkedEvent?: mongoose.Types.ObjectId;
   linkedJob?: mongoose.Types.ObjectId;
+
+  // Soft Delete
+  deletedAt?: Date;
+  deletedBy?: mongoose.Types.ObjectId;
+  deletionReason?: string;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,6 +65,11 @@ const CommentSchema = new Schema<IComment>(
     likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     parentComment: { type: Schema.Types.ObjectId, ref: 'Comment' },
     isDeleted: { type: Boolean, default: false },
+
+    // Soft Delete Audits
+    deletedAt: { type: Date },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletionReason: { type: String },
   },
   { timestamps: true }
 );
@@ -100,6 +117,11 @@ const PostSchema = new Schema<IPost>(
     },
     linkedEvent: { type: Schema.Types.ObjectId, ref: 'Event' },
     linkedJob: { type: Schema.Types.ObjectId, ref: 'Job' },
+
+    // Soft Delete
+    deletedAt: { type: Date },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletionReason: { type: String },
   },
   { timestamps: true }
 );
@@ -107,6 +129,7 @@ const PostSchema = new Schema<IPost>(
 PostSchema.index({ author: 1 });
 PostSchema.index({ createdAt: -1 });
 PostSchema.index({ postType: 1 });
+PostSchema.index({ deletedAt: 1 });
 PostSchema.index({ isPinned: -1, createdAt: -1 });
 PostSchema.index({ content: 'text', tags: 'text' });
 CommentSchema.index({ post: 1 });

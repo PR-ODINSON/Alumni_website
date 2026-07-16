@@ -18,6 +18,7 @@ export interface AuthUser {
   isEmailVerified: boolean;
   isProfileComplete: boolean;
   isVerified: boolean;
+  verificationStatus?: 'pending' | 'under_review' | 'verified' | 'rejected' | 'suspended';
 }
 
 interface AuthState {

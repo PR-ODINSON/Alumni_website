@@ -1,5 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+export type JobStatus = 'draft' | 'published' | 'open' | 'closed' | 'archived';
+
 export interface IJob extends Document {
   postedBy: mongoose.Types.ObjectId;
   title: string;
@@ -48,6 +50,13 @@ export interface IJob extends Document {
   isFeatured: boolean;
   isVerified: boolean;
   tags: string[];
+
+  // Lifecycles & Soft Delete
+  status: JobStatus;
+  deletedAt?: Date;
+  deletedBy?: mongoose.Types.ObjectId;
+  deletionReason?: string;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -119,6 +128,16 @@ const JobSchema = new Schema<IJob>(
     isFeatured: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
     tags: [String],
+
+    // Lifecycles & Soft Delete
+    status: {
+      type: String,
+      enum: ['draft', 'published', 'open', 'closed', 'archived'],
+      default: 'open',
+    },
+    deletedAt: { type: Date },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    deletionReason: { type: String },
   },
   { timestamps: true }
 );
@@ -128,6 +147,8 @@ JobSchema.index({ jobType: 1 });
 JobSchema.index({ industry: 1 });
 JobSchema.index({ location: 1 });
 JobSchema.index({ isActive: 1 });
+JobSchema.index({ status: 1 });
+JobSchema.index({ deletedAt: 1 });
 JobSchema.index({ createdAt: -1 });
 JobSchema.index({ title: 'text', description: 'text', skills: 'text' });
 
