@@ -69,59 +69,56 @@ export default function StartupCard({ alumni, onSelect }: StartupCardProps) {
         </p>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-2 gap-2 text-[10px] font-bold text-slate-500 mb-4 pt-3 border-t border-slate-100">
-          {startup.teamSize ? (
-            <div className="flex items-center gap-1.5 truncate">
-              <Users size={12} className="text-brand-500 shrink-0" />
-              <span className="truncate">{startup.teamSize} team</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 text-slate-400">
-              <Users size={12} className="shrink-0" />
-              <span>Growing</span>
-            </div>
-          )}
+        {(startup.teamSize || startup.valuation || startup.location) ? (
+          <div className="grid grid-cols-2 gap-2 text-[10px] font-bold text-slate-600 mb-4 pt-3 border-t border-slate-100">
+            {startup.teamSize && (
+              <div className="flex items-center gap-1.5 truncate">
+                <Users size={13} className="text-brand-600 shrink-0" />
+                <span className="truncate">{startup.teamSize} team</span>
+              </div>
+            )}
 
-          {startup.valuation ? (
-            <div className="flex items-center gap-1.5 truncate">
-              <DollarSign size={12} className="text-brand-500 shrink-0" />
-              <span className="truncate">{startup.valuation}</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 text-slate-400">
-              <DollarSign size={12} className="shrink-0" />
-              <span>Bootstrapped</span>
-            </div>
-          )}
+            {startup.valuation && (
+              <div className="flex items-center gap-1.5 truncate">
+                <DollarSign size={13} className="text-brand-600 shrink-0" />
+                <span className="truncate">{startup.valuation}</span>
+              </div>
+            )}
 
-          {startup.location && (
-            <div className="col-span-2 flex items-center gap-1.5 truncate text-slate-400">
-              <MapPin size={12} className="shrink-0 text-slate-400" />
-              <span className="truncate">{startup.location}</span>
-            </div>
-          )}
-        </div>
+            {startup.location && (
+              <div className="col-span-2 flex items-center gap-1.5 truncate text-slate-500">
+                <MapPin size={13} className="shrink-0 text-slate-400" />
+                <span className="truncate">{startup.location}</span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="mb-4 pt-2" />
+        )}
       </div>
 
       {/* Founder Footer */}
-      <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto" onClick={e => e.stopPropagation()}>
+      <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto bg-slate-50/50 -mx-5 -mb-5 sm:-mx-6 sm:-mb-6 p-4 sm:p-5 rounded-b-2xl" onClick={e => e.stopPropagation()}>
         <Link
           to={`/alumni/${user._id || alumni._id}`}
-          className="flex items-center gap-2.5 min-w-0 group/founder hover:opacity-85 transition-opacity"
+          className="flex items-center gap-2.5 min-w-0 group/founder hover:opacity-90 transition-opacity"
         >
           {user.avatar ? (
-            <img src={user.avatar} alt={founderName} className="w-7 h-7 rounded-full object-cover ring-1 ring-slate-200 shrink-0" />
+            <img src={user.avatar} alt={founderName} className="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-2xs shrink-0" />
           ) : (
-            <div className="w-7 h-7 bg-brand-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold shrink-0">
+            <div className="w-8 h-8 bg-brand-500 text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs">
               {founderName.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
             </div>
           )}
           <div className="min-w-0">
-            <p className="text-xs font-bold text-slate-800 truncate leading-tight group-hover/founder:text-brand-600 transition-colors">
-              {founderName}
-            </p>
-            <p className="text-[9px] text-slate-400 font-semibold truncate">
-              Batch {alumni.batch || 'N/A'} · {alumni.department || 'IITRAM'}
+            <div className="flex items-center gap-1.5">
+              <p className="text-xs font-bold text-slate-900 truncate leading-tight group-hover/founder:text-brand-600 transition-colors">
+                {founderName}
+              </p>
+              <span className="text-[9px] px-1.5 py-0.2 rounded bg-slate-200 text-slate-700 font-bold">Founder</span>
+            </div>
+            <p className="text-[10px] text-slate-500 font-semibold truncate mt-0.5">
+              Batch {alumni.batch || 'Alumnus'} · {alumni.department || 'Engineering'}
             </p>
           </div>
         </Link>
@@ -132,7 +129,7 @@ export default function StartupCard({ alumni, onSelect }: StartupCardProps) {
               href={startup.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-brand-600"
+              className="p-2 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors text-slate-600 hover:text-brand-600 shadow-2xs"
               title="Visit Website"
             >
               <ExternalLink size={14} />
@@ -141,10 +138,10 @@ export default function StartupCard({ alumni, onSelect }: StartupCardProps) {
           <button
             type="button"
             onClick={() => onSelect?.(alumni)}
-            className="p-1.5 hover:bg-brand-50 text-brand-600 rounded-lg transition-colors text-xs font-bold flex items-center gap-1 cursor-pointer"
+            className="px-3 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200/80 rounded-xl transition-colors text-xs font-bold flex items-center gap-1 cursor-pointer shadow-2xs"
           >
             <span>Details</span>
-            <ArrowRight size={12} />
+            <ArrowRight size={13} />
           </button>
         </div>
       </div>

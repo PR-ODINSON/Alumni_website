@@ -109,36 +109,46 @@ export default function StartupDetailModal({ alumni, onClose }: StartupDetailMod
               </p>
             </div>
 
-            {/* Key Metrics Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-                  <Users size={12} className="text-brand-500" /> Team Size
-                </div>
-                <p className="text-xs sm:text-sm font-bold text-slate-900">{startup.teamSize || '1-10'} members</p>
-              </div>
+            {/* Key Metrics Grid (Only if available) */}
+            {(startup.teamSize || startup.valuation || startup.location || startup.founded) && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {startup.teamSize && (
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+                      <Users size={12} className="text-brand-500" /> Team Size
+                    </div>
+                    <p className="text-xs sm:text-sm font-bold text-slate-900">{startup.teamSize} members</p>
+                  </div>
+                )}
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-                  <DollarSign size={12} className="text-brand-500" /> Valuation
-                </div>
-                <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">{startup.valuation || 'Undisclosed'}</p>
-              </div>
+                {startup.valuation && (
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+                      <DollarSign size={12} className="text-brand-500" /> Valuation
+                    </div>
+                    <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">{startup.valuation}</p>
+                  </div>
+                )}
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-                  <MapPin size={12} className="text-brand-500" /> Location
-                </div>
-                <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">{startup.location || 'India'}</p>
-              </div>
+                {startup.location && (
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+                      <MapPin size={12} className="text-brand-500" /> Location
+                    </div>
+                    <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">{startup.location}</p>
+                  </div>
+                )}
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-                  <Calendar size={12} className="text-brand-500" /> Year
-                </div>
-                <p className="text-xs sm:text-sm font-bold text-slate-900">{startup.founded || 'Recent'}</p>
+                {startup.founded && (
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+                      <Calendar size={12} className="text-brand-500" /> Founded
+                    </div>
+                    <p className="text-xs sm:text-sm font-bold text-slate-900">{startup.founded}</p>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
             {/* Founder Highlight */}
             <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-4">

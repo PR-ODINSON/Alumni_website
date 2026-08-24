@@ -24,13 +24,16 @@ export default function StartupEcosystem() {
     queryFn: () => alumniApi.getStartupEcosystem(),
   });
 
-  const { data: statsData } = useQuery({
-    queryKey: ['startup-stats'],
-    queryFn: () => analyticsApi.getStartupStats(),
-  });
-
-  const stats = (statsData as any)?.data?.data || {};
   const allStartups: any[] = (startupData as any)?.data?.data || [];
+
+  const uniqueSectors = useMemo(() => {
+    const list = Array.from(new Set(allStartups.map(a => a.startup?.sector).filter(Boolean)));
+    return list.length > 0 ? list : ['Infrastructure Tech', 'Clean Energy', 'AI/ML', 'SaaS', 'FinTech'];
+  }, [allStartups]);
+
+  const uniqueStages = useMemo(() => {
+    return Array.from(new Set(allStartups.map(a => a.startup?.stage).filter(Boolean)));
+  }, [allStartups]);
 
   const filtered = useMemo(() => {
     return allStartups
@@ -87,35 +90,35 @@ export default function StartupEcosystem() {
                 Alumni Startup Ecosystem
               </h1>
               <p className="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed font-medium">
-                Explore innovative ventures, deep-tech spinouts, and fast-growing companies founded by IITRAM graduates worldwide.
+                Explore innovative ventures, deep-tech spinouts, and companies founded by IITRAM graduates worldwide.
               </p>
             </div>
 
             <div className="flex flex-wrap sm:flex-nowrap gap-3 shrink-0">
               <Link
                 to="/profile/edit"
-                className="btn btn-primary btn-sm sm:btn-lg font-bold text-xs sm:text-sm shadow-md flex items-center gap-2"
+                className="px-4 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2"
               >
                 <Plus size={16} />
                 <span>List Your Startup</span>
               </Link>
               <Link
                 to="/directory"
-                className="btn btn-outline border-white/20 text-white hover:bg-white/10 btn-sm sm:btn-lg font-bold text-xs sm:text-sm"
+                className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/25 backdrop-blur-sm transition-all flex items-center justify-center gap-2 shadow-sm"
               >
                 <span>Browse Founders</span>
-                <ChevronRight size={14} />
+                <ChevronRight size={15} />
               </Link>
             </div>
           </div>
 
-          {/* Quick Ecosystem Metrics */}
+          {/* Real Dynamic Ecosystem Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-8 pt-8 border-t border-white/10">
             {[
-              { label: 'Ventures Listed', value: stats.totalStartups || (allStartups.length > 0 ? allStartups.length : '120+'), icon: Rocket, color: 'text-amber-400' },
-              { label: 'Cumulative Capital', value: '₹2,400Cr+', icon: DollarSign, color: 'text-emerald-400' },
-              { label: 'Jobs Created', value: '15,000+', icon: Users, color: 'text-brand-400' },
-              { label: 'Global Footprint', value: '18 Countries', icon: Globe, color: 'text-purple-400' },
+              { label: 'Ventures Registered', value: allStartups.length, icon: Rocket, color: 'text-amber-400' },
+              { label: 'Industry Sectors', value: uniqueSectors.length, icon: DollarSign, color: 'text-emerald-400' },
+              { label: 'Growth Stages', value: uniqueStages.length > 0 ? uniqueStages.length : 1, icon: Users, color: 'text-brand-400' },
+              { label: 'Alumni Founders', value: allStartups.length, icon: Globe, color: 'text-purple-400' },
             ].map(({ label, value, icon: Icon, color }) => (
               <motion.div
                 key={label}
@@ -127,7 +130,9 @@ export default function StartupEcosystem() {
                   <Icon size={14} className={color} />
                   <span className="text-[10px] sm:text-[11px] text-slate-300 font-bold uppercase tracking-wider">{label}</span>
                 </div>
-                <p className="text-base sm:text-xl md:text-2xl font-extrabold font-display text-white tracking-tight leading-none">{value}</p>
+                <p className="text-base sm:text-xl md:text-2xl font-extrabold font-display text-white tracking-tight leading-none">
+                  {isLoading ? '...' : value}
+                </p>
               </motion.div>
             ))}
           </div>
