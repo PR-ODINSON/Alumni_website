@@ -55,7 +55,7 @@ export default function JobsPage() {
           </div>
  
           {/* Tabs */}
-          <div className="flex gap-1.5 mb-5">
+          <div className="flex gap-1.5 mb-5 overflow-x-auto scrollbar-none pb-1">
             {[
               { label: 'Browse Jobs', value: 'browse' },
               ...(isAuthenticated ? [
@@ -65,6 +65,7 @@ export default function JobsPage() {
             ].map(({ label, value }) => (
               <button
                 key={value}
+                type="button"
                 onClick={() => setSearchParams({ tab: value })}
                 className={tab === value ? 'filter-pill-active' : 'filter-pill'}
               >
@@ -74,21 +75,21 @@ export default function JobsPage() {
           </div>
  
           {tab === 'browse' && (
-            <div className="flex gap-3 flex-wrap">
-              <div className="flex-1 min-w-64 relative">
-                <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+              <div className="sm:col-span-2 lg:col-span-2 relative">
+                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                   placeholder="Search jobs, companies, skills..."
-                  className="input pl-9 h-10 text-xs"
+                  className="input pl-10 h-10 text-xs"
                 />
               </div>
               <select
                 value={filters.jobType}
                 onChange={(e) => setFilters(f => ({ ...f, jobType: e.target.value }))}
-                className="input h-10 w-40 text-xs py-1 px-2.5"
+                className="input h-10 text-xs"
               >
                 <option value="">All Types</option>
                 <option value="full-time">Full Time</option>
@@ -100,7 +101,7 @@ export default function JobsPage() {
               <select
                 value={filters.locationType}
                 onChange={(e) => setFilters(f => ({ ...f, locationType: e.target.value }))}
-                className="input h-11 w-36"
+                className="input h-10 text-xs"
               >
                 <option value="">All Locations</option>
                 <option value="remote">Remote</option>
@@ -110,20 +111,22 @@ export default function JobsPage() {
               <select
                 value={filters.industry}
                 onChange={(e) => setFilters(f => ({ ...f, industry: e.target.value }))}
-                className="input h-11 w-44"
+                className="input h-10 text-xs"
               >
                 <option value="">All Industries</option>
                 {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
               </select>
-              <label className="flex items-center gap-2 px-3 h-11 rounded-lg border border-slate-200 cursor-pointer bg-white/60 hover:border-brand-500/40 hover:bg-white/80 transition-colors text-sm text-slate-600">
-                <input
-                  type="checkbox"
-                  checked={filters.isReferralAvailable}
-                  onChange={(e) => setFilters(f => ({ ...f, isReferralAvailable: e.target.checked }))}
-                  className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 focus:outline-none"
-                />
-                <Zap size={14} className="text-amber-500" /> Referral Available
-              </label>
+              <div className="sm:col-span-2 lg:col-span-5 flex items-center pt-1">
+                <label className="inline-flex items-center gap-2 px-3.5 h-9 rounded-xl border border-slate-200 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors text-xs font-semibold text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={filters.isReferralAvailable}
+                    onChange={(e) => setFilters(f => ({ ...f, isReferralAvailable: e.target.checked }))}
+                    className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 focus:outline-none cursor-pointer"
+                  />
+                  <Zap size={14} className="text-amber-500" /> Referral Available
+                </label>
+              </div>
             </div>
           )}
         </div>

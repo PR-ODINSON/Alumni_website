@@ -16,10 +16,13 @@ export default function Layout() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-slate-50 relative overflow-x-hidden font-sans">
       <Navbar />
       <div className="flex pt-16 relative z-10">
         {showSidebar && (
@@ -27,15 +30,15 @@ export default function Layout() {
             {/* Mobile overlay */}
             {sidebarOpen && (
               <div
-                className="fixed inset-0 z-20 bg-slate-900/40 backdrop-blur-xs lg:hidden"
+                className="fixed inset-0 z-20 bg-slate-900/40 backdrop-blur-xs lg:hidden transition-opacity"
                 onClick={() => setSidebarOpen(false)}
               />
             )}
             <Sidebar />
           </>
         )}
-        <main className={`flex-1 min-h-[calc(100vh-4rem)] transition-all duration-300 ${showSidebar ? 'lg:ml-72 p-4 lg:pl-0' : 'p-0'}`}>
-          <div className="w-full h-full">
+        <main className={`flex-1 min-h-[calc(100vh-4rem)] transition-all duration-300 ${showSidebar ? 'lg:ml-72 p-3 sm:p-4 lg:p-6 lg:pl-0' : 'p-0'}`}>
+          <div className="w-full h-full max-w-full">
             <Outlet />
           </div>
         </main>

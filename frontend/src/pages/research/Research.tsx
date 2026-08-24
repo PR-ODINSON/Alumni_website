@@ -29,51 +29,53 @@ export default function ResearchPage() {
   };
 
   return (
-    <div className="py-6 bg-transparent">
-      {/* Solid White Header */}
-      <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 lg:p-8 mb-6">
+    <div className="pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="bg-white border border-slate-200 shadow-xs rounded-2xl p-5 sm:p-6 lg:p-8 mt-4 mb-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-slate-605 text-xs font-bold mb-3">
-              <FlaskConical size={14} className="text-slate-500" />
+            <div className="flex items-center gap-2 text-brand-600 text-xs font-bold mb-2">
+              <FlaskConical size={14} className="text-brand-500" />
               <span>Research Collaboration</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold font-display text-slate-900 mb-2 tracking-tight">Research Hub</h1>
-            <p className="text-slate-500 text-sm max-w-2xl leading-relaxed font-medium">
+            <h1 className="text-2xl sm:text-3xl font-extrabold font-display text-slate-900 mb-1 tracking-tight">Research Hub</h1>
+            <p className="text-slate-500 text-xs sm:text-sm max-w-2xl leading-relaxed font-medium">
               Collaborate on cutting-edge research and publications with the IITRAM academic community.
             </p>
           </div>
           {isAuthenticated && (
             <button 
+              type="button"
               onClick={() => setIsPostOpen(true)}
-              className="btn btn-primary shadow-sm hover:-translate-y-0.5 shrink-0 self-start md:self-center"
+              className="btn btn-primary btn-sm shadow-xs shrink-0 self-start md:self-center"
             >
-              <Plus size={16} /> Post Research
+              <Plus size={14} /> Post Research
             </button>
           )}
         </div>
 
-        {/* Filters and search in solid style */}
-        <div className="flex gap-3 flex-wrap mt-6 pt-5 border-t border-slate-100">
-          <div className="flex-1 min-w-60 relative">
+        {/* Filters and search */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-5 border-t border-slate-100">
+          <div className="sm:col-span-2 relative">
             <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search research projects..."
-              className="input pl-10 h-10 bg-white"
+              placeholder="Search research topics, faculty, tags..."
+              className="input pl-10 h-10 text-xs"
             />
           </div>
-          <select 
-            value={status} 
-            onChange={(e) => setStatus(e.target.value)} 
-            className="input h-10 w-40 bg-white"
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="input h-10 text-xs"
           >
-            <option value="">All Status</option>
-            <option value="open">Open</option>
+            <option value="">All Statuses</option>
+            <option value="open">Open for Collaboration</option>
             <option value="in-progress">In Progress</option>
             <option value="completed">Completed</option>
+            <option value="on-hold">On Hold</option>
           </select>
         </div>
       </div>

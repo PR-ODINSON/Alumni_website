@@ -47,49 +47,55 @@ export default function EventsPage() {
         <div className="absolute -top-10 -right-10 w-48 h-48 bg-brand-500/10 rounded-full blur-2xl pointer-events-none" />
         
         <div className="relative z-10">
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight mb-2">Events</h1>
-              <p className="text-slate-500 text-base md:text-lg">Alumni meets, workshops, webinars and more</p>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-1 font-display">Events & Gatherings</h1>
+              <p className="text-slate-500 text-xs sm:text-sm font-medium">Alumni meets, workshops, webinars and reunions</p>
             </div>
             <PermissionGuard permission="event:create">
-              <Link to="/events/create" className="btn btn-primary shadow-md hover:-translate-y-0.5 transition-all shrink-0">
-                <Plus size={16} /> Create Event
+              <Link to="/events/create" className="btn btn-primary btn-sm shadow-xs shrink-0 self-start sm:self-auto">
+                <Plus size={14} /> Create Event
               </Link>
             </PermissionGuard>
           </div>
 
-          <div className="flex gap-3 flex-wrap">
-            <div className="flex-1 min-w-60 relative">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="sm:col-span-2 relative">
+              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search events..."
-                className="input pl-10 h-11"
+                className="input pl-10 h-10 text-xs"
               />
             </div>
             <select
               value={filters.eventType}
               onChange={(e) => setFilters(f => ({ ...f, eventType: e.target.value }))}
-              className="input h-11 w-44"
+              className="input h-10 text-xs"
             >
               <option value="">All Types</option>
               {EVENT_TYPES.map(t => (
                 <option key={t} value={t} className="capitalize">{t.replace('-', ' ')}</option>
               ))}
             </select>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
               <button
+                type="button"
                 onClick={() => setUpcoming(true)}
-                className={upcoming ? 'filter-pill-active' : 'filter-pill'}
+                className={`flex-1 py-1.5 text-center text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                  upcoming ? 'bg-white shadow-2xs text-brand-600' : 'text-slate-600 hover:text-slate-900'
+                }`}
               >
                 Upcoming
               </button>
               <button
+                type="button"
                 onClick={() => setUpcoming(false)}
-                className={!upcoming ? 'filter-pill-active' : 'filter-pill'}
+                className={`flex-1 py-1.5 text-center text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                  !upcoming ? 'bg-white shadow-2xs text-brand-600' : 'text-slate-600 hover:text-slate-900'
+                }`}
               >
                 All Events
               </button>

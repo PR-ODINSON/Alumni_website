@@ -14,7 +14,7 @@ export default function SearchBar({ searchOpen, setSearchOpen }: SearchBarProps)
 
   const handleSearchSubmit = () => {
     if (searchQuery.trim()) {
-      navigate(`/alumni?search=${searchQuery}`);
+      navigate(`/directory?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchOpen(false);
       setSearchQuery('');
     }
@@ -23,8 +23,10 @@ export default function SearchBar({ searchOpen, setSearchOpen }: SearchBarProps)
   return (
     <div className="relative">
       <button
+        type="button"
         onClick={() => setSearchOpen(!searchOpen)}
-        className="p-2.5 rounded-2xl text-slate-500 hover:bg-slate-100/60 backdrop-blur-sm transition-colors border border-transparent hover:border-white/50 cursor-pointer"
+        aria-label="Search"
+        className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer"
       >
         <Search size={18} />
       </button>
@@ -32,13 +34,14 @@ export default function SearchBar({ searchOpen, setSearchOpen }: SearchBarProps)
       <AnimatePresence>
         {searchOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="absolute top-[3.25rem] right-0 w-80 sm:w-96 bg-white/95 backdrop-blur-md border border-slate-100/80 rounded-2xl shadow-soft-xl overflow-hidden z-40 p-3"
+            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-12 right-0 w-[calc(100vw-2rem)] sm:w-96 max-w-sm bg-white rounded-2xl shadow-soft-xl border border-slate-200 overflow-hidden z-40 p-3"
           >
-            <div className="flex items-center gap-2 bg-slate-100/60 border border-white/50 rounded-xl px-3 py-2 focus-within:border-brand-500/35 focus-within:ring-2 focus-within:ring-brand-100 transition-all">
-              <Search size={14} className="text-slate-400" />
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/20 transition-all">
+              <Search size={15} className="text-slate-400 shrink-0" />
               <input
                 autoFocus
                 type="text"
@@ -48,10 +51,10 @@ export default function SearchBar({ searchOpen, setSearchOpen }: SearchBarProps)
                   if (e.key === 'Enter') handleSearchSubmit();
                   if (e.key === 'Escape') setSearchOpen(false);
                 }}
-                placeholder="Search alumni, jobs, events..."
-                className="flex-1 bg-transparent text-xs text-slate-800 placeholder-slate-400 outline-none"
+                placeholder="Search people, companies, skills..."
+                className="flex-1 bg-transparent text-xs text-slate-900 placeholder-slate-400 outline-none"
               />
-              <kbd className="text-[9px] text-slate-400 bg-slate-200/60 px-1.5 py-0.5 rounded font-mono">ESC</kbd>
+              <kbd className="hidden sm:inline-block text-[10px] text-slate-400 bg-slate-200/70 px-1.5 py-0.5 rounded font-mono">ESC</kbd>
             </div>
           </motion.div>
         )}

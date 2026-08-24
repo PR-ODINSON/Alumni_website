@@ -19,28 +19,28 @@ export default function EventsPreview({ events }: EventsPreviewProps) {
   if (events.length === 0) return null;
 
   return (
-    <section className="py-20 bg-white border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <section className="py-16 sm:py-20 bg-white border-b border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4"
+          className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-12 gap-4"
         >
           <div>
-            <span className="badge badge-primary mb-3 text-[10px] font-bold">Upcoming</span>
-            <h2 className="text-3xl md:text-4xl font-bold font-display text-slate-900 tracking-tight">
+            <span className="badge badge-primary mb-3">Upcoming</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-display text-slate-900 tracking-tight">
               Events &<br />Gatherings
             </h2>
           </div>
-          <Link to="/events" className="btn btn-outline group shrink-0">
+          <Link to="/events" className="btn btn-outline group shrink-0 self-start sm:self-auto">
             View All Events
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {events.map((event: any, i: number) => (
             <motion.div
               key={event._id}
@@ -49,40 +49,40 @@ export default function EventsPreview({ events }: EventsPreviewProps) {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="bg-white border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1 rounded-xl overflow-hidden flex flex-col h-full transition-all duration-200"
+              className="bg-white border border-slate-200 shadow-xs hover:border-brand-500/40 hover:shadow-md rounded-2xl overflow-hidden flex flex-col h-full transition-all duration-200"
             >
               <Link to={`/events/${event._id}`} className="flex flex-col h-full">
                 <div className="relative h-32 overflow-hidden border-b border-slate-100 bg-slate-50">
                   {event.coverImage ? (
-                    <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-[#001f54] flex items-center justify-center">
                       <Calendar size={22} className="text-white/40" />
                     </div>
                   )}
                   <div className="absolute top-2.5 left-2.5">
-                    <span className="badge bg-white border border-slate-200 text-slate-700 capitalize text-[9px] font-bold shadow-sm">{event.eventType.replace('-', ' ')}</span>
+                    <span className="badge bg-white/95 border border-slate-200 text-slate-700 capitalize text-[9px] font-bold shadow-xs">{event.eventType?.replace('-', ' ')}</span>
                   </div>
                   {event.isVirtual && (
                     <div className="absolute top-2.5 right-2.5">
-                      <span className="badge bg-emerald-600 text-white border-0 text-[9px] font-bold shadow-sm">Virtual</span>
+                      <span className="badge bg-emerald-600 text-white border-0 text-[9px] font-bold shadow-xs">Virtual</span>
                     </div>
                   )}
                 </div>
                 
                 <div className="p-4 flex-1 flex flex-col justify-between gap-3 bg-white">
-                  <h3 className="font-bold font-display text-slate-900 text-xs leading-snug line-clamp-2 group-hover:text-brand-600 transition-colors">
+                  <h3 className="font-bold font-display text-slate-900 text-xs leading-snug line-clamp-2 hover:text-brand-600 transition-colors">
                     {event.title}
                   </h3>
                   
-                  <div className="space-y-1">
+                  <div className="space-y-1 pt-2 border-t border-slate-100">
                     <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold">
-                      <Calendar size={12} className="text-slate-400" />
+                      <Calendar size={12} className="text-slate-400 shrink-0" />
                       <span>{formatDate(event.startDate)}</span>
                     </div>
                     {event.city && (
                       <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold">
-                        <MapPin size={12} className="text-slate-400" />
+                        <MapPin size={12} className="text-slate-400 shrink-0" />
                         <span className="truncate">{event.city}</span>
                       </div>
                     )}

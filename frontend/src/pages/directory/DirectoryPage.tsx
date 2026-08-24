@@ -90,19 +90,19 @@ export default function DirectoryPage() {
   return (
     <div className="pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="relative bg-white rounded-xl border border-slate-200 p-5 md:p-6 mt-4 mb-6 shadow-xs text-slate-900 overflow-hidden font-sans">
+      <div className="relative bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 mt-4 mb-6 shadow-xs text-slate-900 overflow-hidden font-sans">
         <div className="relative z-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight mb-0.5 font-display">People Directory</h1>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-0.5 font-display">People Directory</h1>
               <p className="text-slate-500 text-xs font-semibold">
                 {total > 0 ? `${total.toLocaleString()} people` : 'Discover'} across the IITRAM network
               </p>
             </div>
-            <div className="flex items-center gap-3 text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 font-semibold">
-              <span className="flex items-center gap-1.5"><Users size={14} className="text-[#0169FC]" /> Alumni Network</span>
+            <div className="flex items-center gap-2.5 text-xs text-slate-600 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 font-semibold self-start sm:self-auto">
+              <span className="flex items-center gap-1.5"><Users size={14} className="text-brand-500" /> Alumni Network</span>
               <span className="w-1 h-1 rounded-full bg-slate-300" />
-              <span className="flex items-center gap-1.5"><Globe size={14} className="text-[#0169FC]" /> Global Presence</span>
+              <span className="flex items-center gap-1.5"><Globe size={14} className="text-brand-500" /> Global Presence</span>
             </div>
           </div>
 
@@ -111,23 +111,24 @@ export default function DirectoryPage() {
             {ROLE_TABS.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
+                type="button"
                 onClick={() => setActiveRole(id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   activeRole === id
-                    ? 'bg-white shadow-sm text-[#0169FC] border border-slate-200'
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-white shadow-2xs text-brand-600 border border-slate-200'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <Icon size={13} />
+                <Icon size={14} />
                 {label}
               </button>
             ))}
           </div>
 
           {/* Search + Filter bar */}
-          <div className="flex gap-3.5 max-w-2xl">
+          <div className="flex flex-col sm:flex-row gap-3 max-w-2xl">
             <div className="flex-1 relative">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 key={activeRole}
                 type="text"
@@ -136,22 +137,23 @@ export default function DirectoryPage() {
                   else { handleStudentSearch(e.target.value); }
                 }}
                 placeholder={activeRole === 'alumni' ? 'Search by name, company, skills...' : 'Search by name, skill, interest...'}
-                className="w-full pl-10 pr-4 h-10 bg-slate-50/50 border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-[#0169FC]/25 focus:border-[#0169FC]/40"
+                className="input pl-10 pr-4 h-10 text-xs"
               />
             </div>
             <button
+              type="button"
               onClick={() => activeRole === 'alumni' ? setShowAlumniFilters(f => !f) : setShowStudentFilters(f => !f)}
-              className={`flex items-center gap-1.5 px-4 h-10 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center justify-center gap-1.5 px-4 h-10 rounded-xl border text-xs font-bold transition-all cursor-pointer shrink-0 ${
                 (activeRole === 'alumni' && (showAlumniFilters || alumniActiveFilterCount > 0)) ||
                 (activeRole === 'students' && (showStudentFilters || studentActiveFilterCount > 0))
-                  ? 'bg-[#0169FC] border-[#0169FC] text-white shadow-xs'
-                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                  ? 'bg-brand-500 border-brand-500 text-white shadow-xs'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
               <SlidersHorizontal size={14} />
               Filters
               {(activeRole === 'alumni' ? alumniActiveFilterCount : studentActiveFilterCount) > 0 && (
-                <span className="w-4 h-4 rounded-full bg-white text-[#0169FC] text-[10px] flex items-center justify-center font-extrabold ml-1 border border-[#0169FC]/20">
+                <span className="w-4 h-4 rounded-full bg-white text-brand-600 text-[10px] flex items-center justify-center font-extrabold ml-1">
                   {activeRole === 'alumni' ? alumniActiveFilterCount : studentActiveFilterCount}
                 </span>
               )}

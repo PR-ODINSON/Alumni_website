@@ -87,17 +87,17 @@ export default function RegisterPage() {
         <div className="relative flex justify-center"><span className="bg-white border border-slate-150 px-3 py-0.5 rounded-full text-[9px] text-slate-400 font-bold shadow-2xs">or register with email</span></div>
       </div>
  
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2.5">
         {/* Name Fields */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <div>
             <label className="block text-[10px] font-bold text-slate-500 mb-0.5 uppercase tracking-wider">First Name</label>
-            <input {...register('firstName')} className={`input py-1.5 px-3 text-xs ${errors.firstName ? 'input-error' : ''}`} placeholder="Rahul" />
+            <input {...register('firstName')} className={`input h-9 px-3 text-xs ${errors.firstName ? 'input-error' : ''}`} placeholder="Rahul" />
             {errors.firstName && <p className="mt-0.5 text-[9px] text-red-500 font-medium">{errors.firstName.message}</p>}
           </div>
           <div>
             <label className="block text-[10px] font-bold text-slate-500 mb-0.5 uppercase tracking-wider">Last Name</label>
-            <input {...register('lastName')} className={`input py-1.5 px-3 text-xs ${errors.lastName ? 'input-error' : ''}`} placeholder="Sharma" />
+            <input {...register('lastName')} className={`input h-9 px-3 text-xs ${errors.lastName ? 'input-error' : ''}`} placeholder="Sharma" />
             {errors.lastName && <p className="mt-0.5 text-[9px] text-red-500 font-medium">{errors.lastName.message}</p>}
           </div>
         </div>
@@ -105,15 +105,15 @@ export default function RegisterPage() {
         {/* Email Address */}
         <div>
           <label className="block text-[10px] font-bold text-slate-500 mb-0.5 uppercase tracking-wider">Email Address</label>
-          <input {...register('email')} type="email" className={`input py-1.5 px-3 text-xs ${errors.email ? 'input-error' : ''}`} placeholder="you@example.com" />
+          <input {...register('email')} type="email" className={`input h-9 px-3 text-xs ${errors.email ? 'input-error' : ''}`} placeholder="you@example.com" />
           {errors.email && <p className="mt-0.5 text-[9px] text-red-500 font-medium">{errors.email.message}</p>}
         </div>
  
         {/* Role & Department */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <div>
             <label className="block text-[10px] font-bold text-slate-500 mb-0.5 uppercase tracking-wider">I am a</label>
-            <select {...register('role')} className="input py-1.5 px-3 text-xs h-[34px] leading-tight">
+            <select {...register('role')} className="input h-9 px-3 text-xs">
               <option value="alumni">Alumni</option>
               <option value="student">Current Student</option>
               <option value="faculty">Faculty</option>
@@ -121,7 +121,7 @@ export default function RegisterPage() {
           </div>
           <div>
             <label className="block text-[10px] font-bold text-slate-500 mb-0.5 uppercase tracking-wider">Department</label>
-            <select {...register('department')} className={`input py-1.5 px-3 text-xs h-[34px] leading-tight ${errors.department ? 'input-error' : ''}`}>
+            <select {...register('department')} className={`input h-9 px-3 text-xs ${errors.department ? 'input-error' : ''}`}>
               <option value="">Select Department</option>
               {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
@@ -130,15 +130,15 @@ export default function RegisterPage() {
         </div>
  
         {/* Batch & Degree */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <div>
             <label className="block text-[10px] font-bold text-slate-500 mb-0.5 uppercase tracking-wider">Batch Year</label>
-            <input {...register('batch')} className={`input py-1.5 px-3 text-xs ${errors.batch ? 'input-error' : ''}`} placeholder="2019" maxLength={4} />
+            <input {...register('batch')} className={`input h-9 px-3 text-xs ${errors.batch ? 'input-error' : ''}`} placeholder="2019" maxLength={4} />
             {errors.batch && <p className="mt-0.5 text-[9px] text-red-500 font-medium">{errors.batch.message}</p>}
           </div>
           <div>
             <label className="block text-[10px] font-bold text-slate-500 mb-0.5 uppercase tracking-wider">Degree</label>
-            <select {...register('degreeType')} className="input py-1.5 px-3 text-xs h-[34px] leading-tight">
+            <select {...register('degreeType')} className="input h-9 px-3 text-xs">
               <option value="">Select Degree</option>
               <option value="B.Tech">B.Tech</option>
               <option value="M.Tech">M.Tech</option>
@@ -151,17 +151,17 @@ export default function RegisterPage() {
         </div>
  
         {/* Password & Confirm Password */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <div>
             <label className="block text-[10px] font-bold text-slate-500 mb-0.5 uppercase tracking-wider">Password</label>
             <div className="relative">
               <input
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
-                className={`input py-1.5 pl-3 pr-8 text-xs ${errors.password ? 'input-error' : ''}`}
+                className={`input h-9 pl-3 pr-8 text-xs ${errors.password ? 'input-error' : ''}`}
                 placeholder="Min. 8 chars"
               />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400">
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400">
                 {showPassword ? <EyeOff size={13} /> : <Eye size={13} />}
               </button>
             </div>
@@ -172,25 +172,25 @@ export default function RegisterPage() {
             <input
               {...register('confirmPassword')}
               type="password"
-              className={`input py-1.5 px-3 text-xs ${errors.confirmPassword ? 'input-error' : ''}`}
+              className={`input h-9 px-3 text-xs ${errors.confirmPassword ? 'input-error' : ''}`}
               placeholder="Repeat password"
             />
             {errors.confirmPassword && <p className="mt-0.5 text-[9px] text-red-500 font-medium">{errors.confirmPassword.message}</p>}
           </div>
         </div>
  
-        <p className="text-[9px] text-slate-400 font-semibold leading-tight">
+        <p className="text-[10px] text-slate-400 font-medium leading-tight pt-1">
           By creating an account, you agree to our{' '}
-          <a href="#" className="text-brand-600 hover:underline">Terms of Service</a> and{' '}
-          <a href="#" className="text-brand-600 hover:underline">Privacy Policy</a>.
+          <a href="#" className="text-brand-600 hover:underline font-semibold">Terms of Service</a> and{' '}
+          <a href="#" className="text-brand-600 hover:underline font-semibold">Privacy Policy</a>.
         </p>
  
-        <button type="submit" disabled={isSubmitting} className="btn btn-primary w-full py-2 text-xs rounded-xl font-bold shadow-md cursor-pointer mt-1">
+        <button type="submit" disabled={isSubmitting} className="btn btn-primary w-full h-10 text-xs rounded-xl font-bold shadow-xs cursor-pointer mt-1">
           {isSubmitting ? <><Loader2 size={13} className="animate-spin" /> Creating account...</> : 'Create Account'}
         </button>
       </form>
  
-      <p className="text-center text-xs text-slate-500 mt-2.5 font-semibold">
+      <p className="text-center text-xs text-slate-500 mt-3 font-semibold">
         Already have an account?{' '}
         <Link to="/login" className="font-bold text-brand-600 hover:text-brand-700">Sign in</Link>
       </p>
