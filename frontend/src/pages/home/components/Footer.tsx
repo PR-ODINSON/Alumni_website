@@ -27,6 +27,16 @@ export default function Footer() {
               ] 
             },
             { 
+              title: 'IITRAM', 
+              links: [
+                { label: 'About IITRAM', href: '/institute/about' },
+                { label: 'Academics', href: '/institute/academics' },
+                { label: 'Departments', href: '/institute/departments' },
+                { label: 'Research', href: '/institute/research' },
+                { label: 'Alumni Relations', href: '/institute/alumni-relations' },
+              ] 
+            },
+            { 
               title: 'Explore', 
               links: [
                 { label: 'Stories & Legacy', href: '/stories' }, 

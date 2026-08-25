@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Users, Briefcase, Calendar, BookOpen, FlaskConical, LogIn, UserPlus } from 'lucide-react';
+import { Menu, X, Users, Briefcase, Calendar, BookOpen, FlaskConical, LogIn, UserPlus, Building2 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { useUIStore } from '../../stores/uiStore';
 
@@ -11,6 +11,7 @@ import ProfileDropdown from './Navbar/ProfileDropdown';
 import SearchBar from './Navbar/SearchBar';
 
 const NAV_LINKS = [
+  { label: 'About IITRAM', href: '/institute', icon: Building2 },
   { label: 'Directory', href: '/directory', icon: Users },
   { label: 'Jobs', href: '/jobs', icon: Briefcase },
   { label: 'Events', href: '/events', icon: Calendar },
@@ -74,6 +75,7 @@ export default function Navbar() {
             const isActive =
               location.pathname === href ||
               location.pathname.startsWith(href + '/') ||
+              (href === '/institute' && location.pathname.startsWith('/institute')) ||
               (href === '/directory' && (location.pathname.startsWith('/alumni') || location.pathname.startsWith('/students')));
             return (
               <Link
@@ -141,6 +143,7 @@ export default function Navbar() {
                     const isActive =
                       location.pathname === href ||
                       location.pathname.startsWith(href + '/') ||
+                      (href === '/institute' && location.pathname.startsWith('/institute')) ||
                       (href === '/directory' && (location.pathname.startsWith('/alumni') || location.pathname.startsWith('/students')));
                     return (
                       <Link

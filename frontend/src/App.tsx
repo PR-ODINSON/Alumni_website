@@ -57,6 +57,19 @@ import StartupEcosystemPage from './pages/startups/StartupEcosystem';
 import OnboardingPage from './pages/onboarding/Onboarding';
 import NotFoundPage from './pages/NotFound';
 
+// ── Institute (verified IITRAM institutional information) ───────────────────
+import InstituteLayout from './pages/institute/InstituteLayout';
+import InstituteIndexPage from './pages/institute/InstituteIndexPage';
+import AboutPage from './pages/institute/AboutPage';
+import AcademicsPage from './pages/institute/AcademicsPage';
+import DepartmentsPage from './pages/institute/DepartmentsPage';
+import DepartmentDetailPage from './pages/institute/DepartmentDetailPage';
+import InstituteResearchPage from './pages/institute/InstituteResearchPage';
+import CentersPage from './pages/institute/CentersPage';
+import StudentLifePage from './pages/institute/StudentLifePage';
+import CampusPage from './pages/institute/CampusPage';
+import AlumniRelationsPage from './pages/institute/AlumniRelationsPage';
+
 import { ProtectedRoute, VerificationRequiredPage } from './components/auth/guards';
 
 const GuestRoute = ({ children }: { children: React.ReactElement }) => {
@@ -85,6 +98,20 @@ export default function App() {
       {/* ── Main App (with Layout) ────────────────────────────────────────── */}
       <Route element={<Layout />}>
         <Route path="/"      element={<HomePage />} />
+
+        {/* ── IITRAM Institutional Information ─────────────────────────── */}
+        <Route path="/institute" element={<InstituteLayout />}>
+          <Route index                        element={<InstituteIndexPage />} />
+          <Route path="about"                 element={<AboutPage />} />
+          <Route path="academics"             element={<AcademicsPage />} />
+          <Route path="departments"           element={<DepartmentsPage />} />
+          <Route path="departments/:departmentId" element={<DepartmentDetailPage />} />
+          <Route path="research"              element={<InstituteResearchPage />} />
+          <Route path="centers"               element={<CentersPage />} />
+          <Route path="student-life"          element={<StudentLifePage />} />
+          <Route path="campus"                element={<CampusPage />} />
+          <Route path="alumni-relations"      element={<AlumniRelationsPage />} />
+        </Route>
 
         {/* ── People / Directory (merged alumni + students) ─────────────── */}
         <Route path="/directory"           element={<DirectoryPage />} />

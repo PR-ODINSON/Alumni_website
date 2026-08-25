@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/authStore';
 // Subcomponents
 import Hero from './home/components/Hero';
 import Features from './home/components/Features';
+import InstitutePreview from './home/components/InstitutePreview';
 import StoriesPreview from './home/components/StoriesPreview';
 import EventsPreview from './home/components/EventsPreview';
 import AlumniPreview from './home/components/AlumniPreview';
@@ -46,6 +47,9 @@ export default function HomePage() {
 
       {/* Platform Features */}
       <Features />
+
+      {/* IITRAM Institutional Information */}
+      <InstitutePreview />
 
       {/* Success Stories Preview */}
       <StoriesPreview stories={stories} />
