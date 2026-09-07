@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
-  Printer, Download, ShieldCheck, QrCode, Lock, CheckCircle2, Copy, Sparkles, Building2, Eye, LayoutGrid, Layers
+  Printer, Download, ShieldCheck, QrCode, Lock, CheckCircle2, LayoutGrid, Layers, Sparkles
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AlumniICard, { type ICardData } from './components/AlumniICard';
@@ -27,7 +26,7 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
     bloodGroup: 'O+',
   });
 
-  const [viewMode, setViewMode] = useState<'flip' | 'side-by-side'>('side-by-side');
+  const [viewMode, setViewMode] = useState<'side-by-side' | 'flip'>('side-by-side');
   const [isFlipped, setIsFlipped] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
 
@@ -271,7 +270,7 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/80 pb-16 pt-4">
+    <div className="min-h-screen bg-slate-50/60 pb-16 pt-6">
       {/* Print-only CSS */}
       <style>{`
         @media print {
@@ -295,78 +294,70 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
         
-        {/* ── HEADER BANNER (CLEAN & PROFESSIONAL WEBSITE THEME) ───────────── */}
-        <div className="no-print bg-gradient-to-r from-[#7A152B] via-[#630f21] to-[#450916] rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#C59B27]/10 rounded-full blur-3xl pointer-events-none" />
+        {/* ── CLEAN & ELEGANT TOP BAR ────────────────────────────────────── */}
+        <div className="no-print bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-2.5 py-0.5 bg-amber-50 border border-amber-200 text-[#7A152B] rounded-full text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
+                <ShieldCheck size={13} className="text-[#C59B27]" /> IITRAM Verified Alumni Card
+              </span>
+              <span className="text-xs text-slate-400 font-mono">ID: 2310400011011</span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 font-display tracking-tight">
+              Official Digital Identity Card
+            </h1>
+          </div>
 
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <span className="px-3 py-1 bg-[#C59B27]/20 border border-[#C59B27]/40 rounded-full text-amber-300 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                  <ShieldCheck size={14} /> Official Verified Digital Card
-                </span>
-                <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full text-[11px] font-bold flex items-center gap-1">
-                  <Lock size={12} /> Anti-Tamper Locked
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black font-serif tracking-tight text-white uppercase">
-                IITRAM Alumni Identity Card
-              </h1>
-              <p className="text-xs text-slate-200 leading-relaxed max-w-lg">
-                Member: <strong>HEMANSHU TALA</strong> &nbsp;|&nbsp; ID: <strong className="font-mono">2310400011011</strong>
-              </p>
+          {/* Action Toolbar */}
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            {/* View Mode Switcher */}
+            <div className="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200/80">
+              <button
+                type="button"
+                onClick={() => setViewMode('side-by-side')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  viewMode === 'side-by-side' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <LayoutGrid size={14} /> Side-by-Side
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('flip')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  viewMode === 'flip' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Layers size={14} /> 3D Flip
+              </button>
             </div>
 
-            {/* View Switcher & Action Buttons */}
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 md:pt-0">
-              <div className="bg-white/10 p-1 rounded-xl flex items-center gap-1 border border-white/15">
-                <button
-                  type="button"
-                  onClick={() => setViewMode('side-by-side')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                    viewMode === 'side-by-side' ? 'bg-white text-[#7A152B] shadow-xs' : 'text-white/80 hover:text-white'
-                  }`}
-                >
-                  <LayoutGrid size={14} /> Both Sides
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode('flip')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                    viewMode === 'flip' ? 'bg-white text-[#7A152B] shadow-xs' : 'text-white/80 hover:text-white'
-                  }`}
-                >
-                  <Layers size={14} /> 3D Flip
-                </button>
-              </div>
+            <button
+              type="button"
+              onClick={handleDownloadFrontPNG}
+              className="px-3.5 py-2 bg-[#7A152B] hover:bg-[#600f21] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+            >
+              <Download size={14} className="text-amber-300" />
+              <span>Front PNG</span>
+            </button>
 
-              <button
-                type="button"
-                onClick={handleDownloadFrontPNG}
-                className="px-3.5 py-2 bg-[#C59B27] hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <Download size={14} />
-                <span>Front PNG</span>
-              </button>
+            <button
+              type="button"
+              onClick={handleDownloadBackPNG}
+              className="px-3.5 py-2 bg-[#7A152B] hover:bg-[#600f21] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+            >
+              <Download size={14} className="text-amber-300" />
+              <span>Back PNG</span>
+            </button>
 
-              <button
-                type="button"
-                onClick={handleDownloadBackPNG}
-                className="px-3.5 py-2 bg-[#C59B27] hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <Download size={14} />
-                <span>Back PNG</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handlePrint}
-                className="px-3.5 py-2 bg-white text-[#7A152B] hover:bg-slate-100 rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <Printer size={14} />
-                <span>Print</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all border border-slate-200 flex items-center gap-1.5 cursor-pointer"
+            >
+              <Printer size={14} />
+              <span>Print</span>
+            </button>
           </div>
         </div>
 
@@ -374,11 +365,11 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
         <div className="print-area">
           {viewMode === 'side-by-side' ? (
             /* DUAL SIDE-BY-SIDE VIEW (FRONT CARD & BACK CARD) */
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                 {/* FRONT SIDE */}
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-                  <div className="flex items-center justify-between no-print border-b border-slate-100 pb-2.5">
+                <div className="bg-white p-5 sm:p-7 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between no-print border-b border-slate-100 pb-2">
                     <span className="text-xs font-bold text-[#7A152B] uppercase tracking-wider flex items-center gap-1.5 font-serif">
                       <Sparkles size={14} /> Front View
                     </span>
@@ -393,12 +384,12 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
                 </div>
 
                 {/* BACK SIDE */}
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-                  <div className="flex items-center justify-between no-print border-b border-slate-100 pb-2.5">
+                <div className="bg-white p-5 sm:p-7 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between no-print border-b border-slate-100 pb-2">
                     <span className="text-xs font-bold text-[#7A152B] uppercase tracking-wider flex items-center gap-1.5 font-serif">
                       <Sparkles size={14} /> Back View
                     </span>
-                    <span className="text-[11px] font-bold text-slate-400">Official Privileges</span>
+                    <span className="text-[11px] font-bold text-slate-400">Membership Privileges</span>
                   </div>
                   <AlumniICard
                     data={cardData}
@@ -411,8 +402,8 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
             </div>
           ) : (
             /* SINGLE INTERACTIVE 3D FLIP CARD VIEW */
-            <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-md">
-              <div className="flex items-center justify-between mb-4 no-print border-b border-slate-100 pb-3">
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs">
+              <div className="flex items-center justify-between mb-4 no-print border-b border-slate-100 pb-2.5">
                 <div className="flex items-center gap-2">
                   <Sparkles size={16} className="text-[#7A152B]" />
                   <h3 className="text-sm font-bold text-slate-900 font-serif uppercase tracking-wide">
@@ -435,30 +426,28 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
           )}
         </div>
 
-        {/* ── SECURITY FOOTER NOTICE ─────────────────────────────────────── */}
-        <div className="no-print bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
+        {/* ── SECURITY NOTICE FOOTER ─────────────────────────────────────── */}
+        <div className="no-print bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-50 text-[#7A152B] flex items-center justify-center shrink-0 border border-amber-200">
-              <ShieldCheck size={20} />
+            <div className="w-8 h-8 rounded-xl bg-amber-50 text-[#7A152B] flex items-center justify-center shrink-0 border border-amber-200">
+              <Lock size={16} />
             </div>
             <div>
-              <h4 className="font-bold text-slate-900">Cryptographically Sealed Record</h4>
+              <h4 className="font-bold text-slate-900">Cryptographically Verified Record</h4>
               <p className="text-[11px] text-slate-500">
-                Member: <strong>HEMANSHU TALA</strong> | ID: <strong className="font-mono text-[#7A152B]">2310400011011</strong> | Protected against DOM Inspect Element alteration.
+                Holder: <strong>HEMANSHU TALA</strong> &nbsp;|&nbsp; ID: <strong className="font-mono text-[#7A152B]">2310400011011</strong> &nbsp;|&nbsp; IITRAM Alumni Association
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => setShowVerifyModal(true)}
-              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold transition-colors cursor-pointer flex items-center gap-1.5"
-            >
-              <QrCode size={14} className="text-[#7A152B]" />
-              <span>Verify Barcode / QR</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowVerifyModal(true)}
+            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+          >
+            <QrCode size={14} className="text-[#7A152B]" />
+            <span>Verify QR Code</span>
+          </button>
         </div>
 
       </div>
