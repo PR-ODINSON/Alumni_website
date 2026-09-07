@@ -243,26 +243,35 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
     // QR Box in center
     ctx.strokeStyle = '#7A152B';
     ctx.lineWidth = 4;
-    ctx.strokeRect(700, 810, 200, 140);
+    ctx.strokeRect(710, 800, 180, 150);
     ctx.fillStyle = '#FDFBF7';
-    ctx.fillRect(702, 812, 196, 136);
-
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#7A152B';
-    ctx.font = 'bold 44px sans-serif';
-    ctx.fillText('QR', 800, 895);
+    ctx.fillRect(712, 802, 176, 146);
 
     // Right Website Link
     ctx.textAlign = 'right';
     ctx.fillStyle = '#7A152B';
     ctx.font = 'bold 30px sans-serif';
-    ctx.fillText('www.iitram.ac.in', 1500, 880);
+    ctx.fillText('www.iitram.ac.in', 1500, 885);
 
-    const link = document.createElement('a');
-    link.download = `IITRAM_Alumni_ICard_Back_HEMANSHU_TALA.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    toast.success('Back I-Card PNG downloaded!', { id: 'dl-back' });
+    // Draw QR Code Image inside Box
+    const qrImg = new Image();
+    qrImg.crossOrigin = 'anonymous';
+    qrImg.onload = () => {
+      ctx.drawImage(qrImg, 722, 807, 156, 136);
+      const link = document.createElement('a');
+      link.download = `IITRAM_Alumni_ICard_Back_HEMANSHU_TALA.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      toast.success('Back I-Card PNG downloaded!', { id: 'dl-back' });
+    };
+    qrImg.onerror = () => {
+      const link = document.createElement('a');
+      link.download = `IITRAM_Alumni_ICard_Back_HEMANSHU_TALA.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      toast.success('Back I-Card PNG downloaded!', { id: 'dl-back' });
+    };
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent('https://alumni.iitram.ac.in/verify/2310400011011')}`;
   };
 
   const handlePrint = () => {

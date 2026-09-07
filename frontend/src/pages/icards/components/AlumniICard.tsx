@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { QrCode, RotateCw, Lock, ShieldCheck } from 'lucide-react';
+import { QrCode, RotateCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export interface ICardData {
@@ -36,10 +36,7 @@ export default function AlumniICard({
 }: AlumniICardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // SILENT SECURITY & ANTI-INSPECT PROTECTION
-  // Intercepts contextmenu (right click) and F12/Ctrl+Shift+I inspect shortcuts
-  // ══════════════════════════════════════════════════════════════════════════
+  // Silent ContextMenu & Shortcut protection without toast spam
   useEffect(() => {
     if (!securityProtected || !cardRef.current) return;
     const targetNode = cardRef.current;
@@ -74,7 +71,7 @@ export default function AlumniICard({
   };
 
   // ══════════════════════════════════════════════════════════════════════════
-  // 1. FRONT SIDE MARKUP (EXACT 1:1 REPLICA MATCH)
+  // 1. FRONT SIDE MARKUP (EXACT 1:1 REPLICA MATCH WITH ZERO CUTOFFS)
   // ══════════════════════════════════════════════════════════════════════════
   const renderFrontCard = () => (
     <div
@@ -87,7 +84,7 @@ export default function AlumniICard({
       <div className="h-1.5 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
 
       {/* Card Outer Layout Container with Right Vertical Bars */}
-      <div className="relative flex-1 flex flex-col justify-between pl-3 sm:pl-4 pr-9 sm:pr-11 pt-2.5 sm:pt-3 pb-0">
+      <div className="relative flex-1 flex flex-col justify-between pl-3 sm:pl-4 pr-11 sm:pr-14 pt-2.5 sm:pt-3 pb-0">
         
         {/* ── HEADER SECTION ────────────────────────────────────────────── */}
         <div>
@@ -112,7 +109,7 @@ export default function AlumniICard({
               <p className="text-[9px] sm:text-xs font-semibold text-slate-800 leading-tight mt-0.5">
                 Institute of Infrastructure, Technology, Research and Management
               </p>
-              <p className="text-[8px] sm:text-[10px] font-medium text-slate-500 leading-tight mt-0.5 tracking-tight">
+              <p className="text-[8px] sm:text-[10px] font-medium text-slate-500 leading-tight mt-0.5 tracking-tight truncate">
                 Ahmedabad, Gujarat &nbsp;|&nbsp; www.iitram.ac.in &nbsp;|&nbsp; alumni@iitram.ac.in
               </p>
             </div>
@@ -138,27 +135,27 @@ export default function AlumniICard({
           </div>
 
           {/* Alumni Details Column (Right Side) */}
-          <div className="flex-1 flex flex-col justify-center min-w-0 pr-0.5">
+          <div className="flex-1 flex flex-col justify-center min-w-0 pr-1">
             {/* Member Category Badge */}
             <span className="text-[9px] sm:text-[11px] font-bold text-[#C59B27] uppercase tracking-widest block mb-0.5">
               ALUMNI MEMBER
             </span>
 
             {/* Full Name: HEMANSHU TALA */}
-            <h1 className="text-sm sm:text-xl font-black text-[#7A152B] uppercase tracking-tight leading-tight truncate mb-1.5 sm:mb-2.5 font-serif">
+            <h1 className="text-sm sm:text-xl font-black text-[#7A152B] uppercase tracking-tight leading-tight truncate mb-1.5 sm:mb-2 font-serif">
               {data.fullName || 'HEMANSHU TALA'}
             </h1>
 
             {/* Information Grid */}
-            <div className="space-y-0.5 sm:space-y-1 text-[9px] sm:text-[12px] font-semibold text-slate-700">
+            <div className="space-y-0.5 sm:space-y-1 text-[8.5px] sm:text-[11.5px] font-semibold text-slate-700">
               <div className="flex items-baseline">
-                <span className="w-20 sm:w-28 text-slate-500 font-medium shrink-0">Degree</span>
+                <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Degree</span>
                 <span className="mr-1.5 text-slate-400 font-normal">:</span>
                 <span className="font-bold text-slate-900 truncate">{data.degree || 'B.Tech'}</span>
               </div>
 
               <div className="flex items-baseline">
-                <span className="w-20 sm:w-28 text-slate-500 font-medium shrink-0">Department</span>
+                <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Department</span>
                 <span className="mr-1.5 text-slate-400 font-normal">:</span>
                 <span className="font-bold text-slate-900 truncate">
                   {data.department || 'Computer Engineering'}
@@ -166,7 +163,7 @@ export default function AlumniICard({
               </div>
 
               <div className="flex items-baseline">
-                <span className="w-20 sm:w-28 text-slate-500 font-medium shrink-0">Batch</span>
+                <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Batch</span>
                 <span className="mr-1.5 text-slate-400 font-normal">:</span>
                 <span className="font-bold text-slate-900 truncate">
                   {data.batch || '2023 - 2027'}
@@ -174,15 +171,15 @@ export default function AlumniICard({
               </div>
 
               <div className="flex items-center" onClick={handleCopyId}>
-                <span className="w-20 sm:w-28 text-slate-500 font-medium shrink-0">Membership No.</span>
+                <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Membership No.</span>
                 <span className="mr-1.5 text-slate-400 font-normal">:</span>
-                <span className="font-extrabold text-[#7A152B] tracking-tight hover:underline cursor-pointer flex items-center gap-1 truncate font-mono text-[9px] sm:text-[11px]">
+                <span className="font-extrabold text-[#7A152B] tracking-tight hover:underline cursor-pointer flex items-center gap-1 truncate font-mono text-[8.5px] sm:text-[10.5px]">
                   {data.membershipNo || 'ALUM/IITRAM/2310400011011'}
                 </span>
               </div>
 
               <div className="flex items-baseline">
-                <span className="w-20 sm:w-28 text-slate-500 font-medium shrink-0">Date of Issue</span>
+                <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Date of Issue</span>
                 <span className="mr-1.5 text-slate-400 font-normal">:</span>
                 <span className="font-semibold text-slate-800">{data.dateOfIssue || '07/09/2026'}</span>
               </div>
@@ -191,8 +188,8 @@ export default function AlumniICard({
         </div>
 
         {/* ── FOOTER BANNER ────────────────────────────────────────────── */}
-        <div className="-mx-3 sm:-mx-4 -mr-9 sm:-mr-11 bg-[#7A152B] text-white px-3 sm:px-4 py-1 sm:py-1.5 flex items-center justify-between shadow-inner">
-          <span className="text-[9px] sm:text-xs font-black uppercase tracking-wider text-white">
+        <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white px-3 sm:px-4 py-1 sm:py-1.5 flex items-center justify-between shadow-inner">
+          <span className="text-[8.5px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">
             {data.membershipType || 'LIFE MEMBER'}
           </span>
 
@@ -203,14 +200,14 @@ export default function AlumniICard({
               e.stopPropagation();
               onOpenVerify?.();
             }}
-            className="flex items-center gap-1 bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded text-[8px] sm:text-[11px] font-bold tracking-wider text-white uppercase transition-colors cursor-pointer"
+            className="flex items-center gap-1 bg-white/10 hover:bg-white/20 px-1.5 py-0.5 rounded text-[8px] sm:text-[10px] font-bold tracking-wider text-white uppercase transition-colors cursor-pointer shrink-0"
             title="Click to verify card authenticity"
           >
             <QrCode className="w-3 h-3 text-amber-300" />
             <span>BARCODE / QR</span>
           </button>
 
-          <span className="text-[8px] sm:text-[11px] font-semibold text-amber-200/90 tracking-tight">
+          <span className="text-[8px] sm:text-[10.5px] font-semibold text-amber-200/90 tracking-tight shrink-0">
             Issuing Authority
           </span>
         </div>
@@ -220,14 +217,14 @@ export default function AlumniICard({
           {/* Inner Gold Stripe */}
           <div className="w-2 sm:w-2.5 h-full bg-[#C59B27]" />
           {/* Outer Burgundy Column */}
-          <div className="w-6 sm:w-8 h-full bg-[#7A152B]" />
+          <div className="w-7 sm:w-9 h-full bg-[#7A152B]" />
         </div>
       </div>
     </div>
   );
 
   // ══════════════════════════════════════════════════════════════════════════
-  // 2. BACK SIDE MARKUP (EXACT 1:1 REPLICA MATCH TO BACK IMAGE SPEC)
+  // 2. BACK SIDE MARKUP (EXACT 1:1 REPLICA MATCH WITH REAL QR CODE)
   // ══════════════════════════════════════════════════════════════════════════
   const renderBackCard = () => (
     <div
@@ -247,13 +244,13 @@ export default function AlumniICard({
       </div>
 
       {/* Body Section: Membership Privileges */}
-      <div className="px-4 sm:px-7 py-2.5 sm:py-3 flex-1 flex flex-col justify-between">
+      <div className="px-4 sm:px-7 py-2 sm:py-3 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-xs sm:text-sm font-black text-[#7A152B] uppercase tracking-wide mb-1.5 sm:mb-2.5">
+          <h3 className="text-xs sm:text-sm font-black text-[#7A152B] uppercase tracking-wide mb-1.5 sm:mb-2">
             MEMBERSHIP PRIVILEGES
           </h3>
 
-          <ul className="space-y-1 sm:space-y-2 text-[9px] sm:text-[12px] font-semibold text-slate-800">
+          <ul className="space-y-1 sm:space-y-2 text-[9px] sm:text-[11.5px] font-semibold text-slate-800">
             <li className="flex items-start gap-1.5">
               <span className="text-[#7A152B] font-bold text-xs leading-none">•</span>
               <span>Access to alumni networking and events</span>
@@ -274,8 +271,8 @@ export default function AlumniICard({
         </div>
 
         {/* Horizontal Gold Line Separator */}
-        <div className="my-1.5">
-          <div className="h-[2.5px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1.5" />
+        <div className="my-1 sm:my-1.5">
+          <div className="h-[2.5px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1" />
           <p className="text-[8px] sm:text-[10px] font-medium text-slate-700 text-center">
             This card certifies that the holder is a registered member of the IITRAM Alumni Association.
           </p>
@@ -294,18 +291,20 @@ export default function AlumniICard({
             Verify membership
           </button>
 
-          {/* QR Box */}
+          {/* QR Box showing REAL QR CODE graphic as requested */}
           <div
             onClick={(e) => {
               e.stopPropagation();
               onOpenVerify?.();
             }}
-            className="w-10 sm:w-14 h-8 sm:h-10 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-2xs cursor-pointer hover:bg-amber-50/50 transition-colors"
-            title="Click to view QR verification"
+            className="w-11 sm:w-15 h-9 sm:h-11 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-2xs cursor-pointer hover:bg-amber-50/50 transition-colors"
+            title="Click to verify QR code"
           >
-            <span className="text-[10px] sm:text-xs font-black text-[#7A152B] uppercase tracking-wider">
-              QR
-            </span>
+            <img
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent('https://alumni.iitram.ac.in/verify/2310400011011')}`}
+              alt="Verification QR Code"
+              className="w-full h-full object-contain"
+            />
           </div>
 
           <a
