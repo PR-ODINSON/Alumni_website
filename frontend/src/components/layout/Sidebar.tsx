@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Users, Briefcase, Calendar,
   MessageCircle, BarChart3, Lightbulb,
-  Globe, Star, BookOpen, Rocket, Archive, GraduationCap, ChevronRight, X, Building2,
+  Globe, Star, BookOpen, Rocket, Archive, GraduationCap, ChevronRight, X, Building2, CreditCard,
 } from 'lucide-react';
 import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
@@ -37,6 +37,7 @@ const navGroups = [
     label: 'IITRAM',
     items: [
       { icon: Building2, label: 'About IITRAM', href: '/institute' },
+      { icon: CreditCard, label: 'Digital I-Card', href: '/icards' },
       { icon: Rocket, label: 'Startup Ecosystem', href: '/startups' },
       { icon: BarChart3, label: 'Analytics', href: '/analytics' },
     ],

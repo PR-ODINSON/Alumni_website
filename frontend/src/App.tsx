@@ -56,6 +56,7 @@ import ResearchPage from './pages/research/Research';
 import StartupEcosystemPage from './pages/startups/StartupEcosystem';
 import OnboardingPage from './pages/onboarding/Onboarding';
 import NotFoundPage from './pages/NotFound';
+import ICardsPage from './pages/icards/ICardsPage';
 
 // ── Institute (verified IITRAM institutional information) ───────────────────
 import InstituteLayout from './pages/institute/InstituteLayout';
@@ -156,6 +157,12 @@ export default function App() {
 
         {/* ── Startups ──────────────────────────────────────────────────── */}
         <Route path="/startups"            element={<ProtectedRoute><StartupEcosystemPage /></ProtectedRoute>} />
+
+        {/* ── Alumni Digital I-Cards ─────────────────────────────────────── */}
+        <Route path="/icards"              element={<ICardsPage />} />
+        <Route path="/cards"               element={<Navigate to="/icards" replace />} />
+        <Route path="/card/login"          element={<ICardsPage mode="login" />} />
+        <Route path="/cards/login"         element={<ICardsPage mode="login" />} />
 
         {/* ── Analytics (admin-gated; non-admins see locked message) ──────── */}
         <Route path="/analytics"           element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />

@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Users, Briefcase, Calendar, BookOpen, FlaskConical, LogIn, UserPlus, Building2 } from 'lucide-react';
+import { Menu, X, Users, Briefcase, Calendar, BookOpen, FlaskConical, LogIn, UserPlus, Building2, CreditCard } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { useUIStore } from '../../stores/uiStore';
 
@@ -13,6 +13,7 @@ import SearchBar from './Navbar/SearchBar';
 const NAV_LINKS = [
   { label: 'About IITRAM', href: '/institute', icon: Building2 },
   { label: 'Directory', href: '/directory', icon: Users },
+  { label: 'I-Cards', href: '/icards', icon: CreditCard },
   { label: 'Jobs', href: '/jobs', icon: Briefcase },
   { label: 'Events', href: '/events', icon: Calendar },
   { label: 'Stories', href: '/stories', icon: BookOpen },
