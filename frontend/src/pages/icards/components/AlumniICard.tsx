@@ -23,6 +23,7 @@ interface AlumniICardProps {
   isFlipped?: boolean;
   onFlip?: () => void;
   securityProtected?: boolean;
+  side?: 'front' | 'back' | 'auto';
 }
 
 export default function AlumniICard({
@@ -31,10 +32,13 @@ export default function AlumniICard({
   isFlipped = false,
   onFlip,
   securityProtected = true,
+  side = 'auto',
 }: AlumniICardProps) {
   const [copied, setCopied] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const [tamperCount, setTamperCount] = useState(0);
+
+  const activeFlipped = side === 'back' ? true : side === 'front' ? false : isFlipped;
 
   // ══════════════════════════════════════════════════════════════════════════
   // ANTI-TAMPERING & INSPECT-ELEMENT PROTECTION
@@ -45,7 +49,7 @@ export default function AlumniICard({
 
     const targetNode = cardRef.current;
 
-    // 1. DOM MutationObserver: Reverts any attempt to edit text/styles via Inspect Element
+    // DOM MutationObserver: Reverts any attempt to edit text/styles via Inspect Element
     const observer = new MutationObserver((mutations) => {
       let tampered = false;
       for (const mutation of mutations) {
@@ -71,7 +75,7 @@ export default function AlumniICard({
       characterData: true,
     });
 
-    // 2. Prevent right-click inspect element on the card
+    // Prevent right-click inspect element on the card
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
       toast('🔒 Card is security-locked. Inspect element is disabled.', {
@@ -80,7 +84,7 @@ export default function AlumniICard({
       });
     };
 
-    // 3. Prevent DevTools keyboard shortcuts when interacting with card
+    // Prevent DevTools keyboard shortcuts when interacting with card
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
         e.key === 'F12' ||
@@ -115,7 +119,7 @@ export default function AlumniICard({
       <motion.div
         ref={cardRef}
         className="relative w-full aspect-[1.58/1] rounded-2xl shadow-2xl transition-all duration-700 transform-style-3d cursor-pointer select-none"
-        animate={{ rotateY: isFlipped ? 180 : 0 }}
+        animate={{ rotateY: activeFlipped ? 180 : 0 }}
         transition={{ duration: 0.6, ease: 'easeInOut' }}
         onClick={onFlip}
         style={{
@@ -130,7 +134,7 @@ export default function AlumniICard({
            ════════════════════════════════════════════════════════════════════ */}
         <div
           className={`absolute inset-0 w-full h-full bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between backface-hidden ${
-            isFlipped ? 'pointer-events-none' : ''
+            activeFlipped ? 'pointer-events-none' : ''
           }`}
           style={{
             boxShadow: '0 20px 40px -15px rgba(122, 21, 43, 0.18), 0 0 1px 1px rgba(0,0,0,0.05)',
@@ -184,7 +188,7 @@ export default function AlumniICard({
             {/* ── MAIN BODY SECTION ─────────────────────────────────────────── */}
             <div className="flex items-stretch gap-3 sm:gap-5 py-2 sm:py-3 my-auto">
               
-              {/* Photo Frame (Left Box - NOW SHOWING OFFICIAL IITRAM LOGO AS REQUESTED) */}
+              {/* Photo Frame (Left Box - SHOWING OFFICIAL IITRAM LOGO AS REQUESTED) */}
               <div className="relative w-24 sm:w-36 h-28 sm:h-40 rounded-sm border-2 border-[#7A152B] bg-slate-50 shrink-0 overflow-hidden shadow-xs flex flex-col items-center justify-center text-center p-1.5 group">
                 <img
                   src="/images/iitram-logo.png"
@@ -286,57 +290,98 @@ export default function AlumniICard({
         </div>
 
         {/* ════════════════════════════════════════════════════════════════════
-            BACK OF I-CARD (OFFICIAL DISCLAIMS, VERIFICATION & EMERGENCY CONTACT)
+            BACK OF I-CARD (EXACT REPLICA MATCH TO USER-PROVIDED BACK IMAGE SPEC)
            ════════════════════════════════════════════════════════════════════ */}
         <div
-          className={`absolute inset-0 w-full h-full bg-slate-900 rounded-2xl border border-slate-700 shadow-xl overflow-hidden flex flex-col justify-between p-4 sm:p-5 text-white backface-hidden [transform:rotateY(180deg)] ${
-            !isFlipped ? 'pointer-events-none' : ''
+          className={`absolute inset-0 w-full h-full bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between backface-hidden [transform:rotateY(180deg)] ${
+            !activeFlipped ? 'pointer-events-none' : ''
           }`}
+          style={{
+            boxShadow: '0 20px 40px -15px rgba(122, 21, 43, 0.18), 0 0 1px 1px rgba(0,0,0,0.05)',
+          }}
         >
-          {/* Header */}
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-amber-400" />
-              <span className="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wider">
-                Official Digital Identity Verification
-              </span>
-            </div>
-            <span className="text-[10px] text-slate-400 font-mono">IITRAM-2310400011011</span>
+          {/* Top Gold Accent Border */}
+          <div className="h-2 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
+
+          {/* Main Burgundy Header Bar */}
+          <div className="bg-[#7A152B] text-white py-3 sm:py-4 px-4 text-center shadow-xs">
+            <h2 className="text-base sm:text-2xl font-black tracking-wider uppercase font-serif">
+              IITRAM ALUMNI ASSOCIATION
+            </h2>
           </div>
 
-          {/* Details */}
-          <div className="grid grid-cols-2 gap-3 text-xs py-2">
+          {/* Body Section: Membership Privileges */}
+          <div className="px-5 sm:px-8 py-3 flex-1 flex flex-col justify-between">
             <div>
-              <span className="text-slate-400 block text-[10px] font-semibold uppercase">Member Name</span>
-              <span className="font-bold text-slate-100 truncate block">HEMANSHU TALA</span>
+              <h3 className="text-xs sm:text-base font-black text-[#7A152B] uppercase tracking-wide mb-2 sm:mb-3">
+                MEMBERSHIP PRIVILEGES
+              </h3>
+
+              <ul className="space-y-1.5 sm:space-y-2.5 text-[10px] sm:text-[13px] font-semibold text-slate-800">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#7A152B] font-bold text-sm leading-none">•</span>
+                  <span>Access to alumni networking and events</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#7A152B] font-bold text-sm leading-none">•</span>
+                  <span>Participation in institute/alumni activities</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#7A152B] font-bold text-sm leading-none">•</span>
+                  <span>Access to alumni communications and updates</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#7A152B] font-bold text-sm leading-none">•</span>
+                  <span>Opportunities for professional and academic networking</span>
+                </li>
+              </ul>
             </div>
 
-            <div>
-              <span className="text-slate-400 block text-[10px] font-semibold uppercase">Enrollment ID</span>
-              <span className="font-bold text-amber-400 block font-mono">2310400011011</span>
-            </div>
-
-            <div className="col-span-2">
-              <span className="text-slate-400 block text-[10px] font-semibold uppercase">Campus Address</span>
-              <span className="font-normal text-slate-300 block text-[11px] leading-relaxed">
-                Institute of Infrastructure, Technology, Research and Management (IITRAM)<br />
-                Near Khokhra Circle, Maninagar East, Ahmedabad, Gujarat 380026
-              </span>
-            </div>
-
-            <div className="col-span-2 bg-slate-800/80 p-2 rounded-lg border border-slate-700">
-              <p className="text-[10px] text-slate-300 leading-tight">
-                This digital card certifies active verified membership of <strong>HEMANSHU TALA</strong> (ID: 2310400011011) in the IITRAM Alumni Association.
+            {/* Horizontal Gold Line Separator */}
+            <div className="my-2">
+              <div className="h-[3px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-2" />
+              <p className="text-[9px] sm:text-[11px] font-medium text-slate-700 text-center">
+                This card certifies that the holder is a registered member of the IITRAM Alumni Association.
               </p>
             </div>
-          </div>
 
-          {/* Footer */}
-          <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
-            <span className="flex items-center gap-1 text-emerald-400 font-semibold">
-              <CheckCircle2 size={12} /> Status: Verified Member
-            </span>
-            <span className="text-slate-500">Click to flip back</span>
+            {/* Footer Row */}
+            <div className="flex items-center justify-between pt-1 pb-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenVerify?.();
+                }}
+                className="text-[10px] sm:text-xs font-bold text-[#7A152B] hover:underline cursor-pointer"
+              >
+                Verify membership
+              </button>
+
+              {/* QR Box */}
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenVerify?.();
+                }}
+                className="w-12 sm:w-16 h-10 sm:h-12 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-1 rounded-xs shadow-2xs cursor-pointer hover:bg-amber-50/50 transition-colors"
+                title="Click to view QR verification"
+              >
+                <span className="text-xs sm:text-sm font-black text-[#7A152B] uppercase tracking-wider">
+                  QR
+                </span>
+              </div>
+
+              <a
+                href="https://www.iitram.ac.in"
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="text-[10px] sm:text-xs font-bold text-[#7A152B] hover:underline"
+              >
+                www.iitram.ac.in
+              </a>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -352,7 +397,7 @@ export default function AlumniICard({
           onClick={onFlip}
           className="text-[#7A152B] hover:text-[#5a0f1f] font-bold hover:underline cursor-pointer"
         >
-          {isFlipped ? 'View Front Side' : 'View Back Side'}
+          {activeFlipped ? 'View Front Side' : 'View Back Side'}
         </button>
       </div>
     </div>

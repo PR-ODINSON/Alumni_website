@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Printer, Download, ShieldCheck, QrCode, Lock, CheckCircle2, Copy, Sparkles, Building2, Eye
+  Printer, Download, ShieldCheck, QrCode, Lock, CheckCircle2, Copy, Sparkles, Building2, Eye, LayoutGrid, Layers
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AlumniICard, { type ICardData } from './components/AlumniICard';
@@ -27,32 +27,29 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
     bloodGroup: 'O+',
   });
 
+  const [viewMode, setViewMode] = useState<'flip' | 'side-by-side'>('side-by-side');
   const [isFlipped, setIsFlipped] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
 
   // ══════════════════════════════════════════════════════════════════════════
-  // HD CANVAS PNG DOWNLOAD FUNCTION
-  // Draws the exact card artwork onto a 1600x1012 Canvas and downloads PNG
+  // HD CANVAS PNG DOWNLOAD - FRONT SIDE
   // ══════════════════════════════════════════════════════════════════════════
-  const handleDownloadPNG = () => {
-    toast.loading('Generating High-Resolution Official I-Card PNG...', { id: 'downloading' });
+  const handleDownloadFrontPNG = () => {
+    toast.loading('Generating Official Front I-Card PNG...', { id: 'dl-front' });
 
     const canvas = document.createElement('canvas');
     canvas.width = 1600;
     canvas.height = 1012;
     const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      toast.error('Canvas rendering failed.', { id: 'downloading' });
-      return;
-    }
+    if (!ctx) return;
 
-    // 1. White Card Background
+    // White Card Background
     ctx.fillStyle = '#FFFFFF';
     ctx.beginPath();
     ctx.roundRect(0, 0, 1600, 1012, 32);
     ctx.fill();
 
-    // 2. Top Gold Accent Strip
+    // Top Gold Accent Strip
     const goldGrad = ctx.createLinearGradient(0, 0, 1600, 0);
     goldGrad.addColorStop(0, '#C59B27');
     goldGrad.addColorStop(0.5, '#D4AF37');
@@ -60,13 +57,13 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
     ctx.fillStyle = goldGrad;
     ctx.fillRect(0, 0, 1600, 20);
 
-    // 3. Right Vertical Stripes (Gold & Burgundy)
+    // Right Vertical Stripes
     ctx.fillStyle = '#C59B27';
     ctx.fillRect(1460, 0, 30, 1012);
     ctx.fillStyle = '#7A152B';
     ctx.fillRect(1490, 0, 110, 1012);
 
-    // 4. Header Titles
+    // Header Titles
     ctx.fillStyle = '#7A152B';
     ctx.font = 'bold 52px serif';
     ctx.fillText('IITRAM ALUMNI ASSOCIATION', 220, 110);
@@ -83,7 +80,7 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
     ctx.fillStyle = '#C59B27';
     ctx.fillRect(50, 225, 1380, 8);
 
-    // 5. Main Details Section
+    // Main Details
     ctx.fillStyle = '#C59B27';
     ctx.font = 'bold 30px sans-serif';
     ctx.fillText('ALUMNI MEMBER', 480, 310);
@@ -92,8 +89,6 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
     ctx.font = 'bold 64px serif';
     ctx.fillText(cardData.fullName, 480, 390);
 
-    // Key-Value Rows
-    ctx.font = '500 30px sans-serif';
     const rows = [
       { label: 'Degree', val: cardData.degree },
       { label: 'Department', val: cardData.department },
@@ -122,7 +117,7 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
       startY += 55;
     });
 
-    // 6. Footer Maroon Bar
+    // Footer Banner
     ctx.fillStyle = '#7A152B';
     ctx.fillRect(0, 880, 1460, 132);
 
@@ -138,41 +133,137 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
     ctx.font = '28px sans-serif';
     ctx.fillText('Issuing Authority', 1180, 955);
 
-    // 7. Load & Draw IITRAM Logo in Header and Photo Frame Box
+    // Draw IITRAM Logo
     const logoImg = new Image();
     logoImg.crossOrigin = 'anonymous';
     logoImg.onload = () => {
-      // Header logo
       ctx.drawImage(logoImg, 50, 50, 140, 140);
 
-      // Photo frame box (Left)
+      // Photo frame box
       ctx.strokeStyle = '#7A152B';
       ctx.lineWidth = 6;
       ctx.strokeRect(50, 270, 360, 480);
       ctx.fillStyle = '#F8FAFC';
       ctx.fillRect(53, 273, 354, 474);
-
-      // IITRAM Logo inside photo box
       ctx.drawImage(logoImg, 80, 320, 300, 380);
 
-      // Download
       const link = document.createElement('a');
-      link.download = `IITRAM_Alumni_ICard_HEMANSHU_TALA.png`;
+      link.download = `IITRAM_Alumni_ICard_Front_HEMANSHU_TALA.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
-      toast.success('Official I-Card PNG downloaded successfully!', { id: 'downloading' });
+      toast.success('Front I-Card PNG downloaded!', { id: 'dl-front' });
     };
 
     logoImg.onerror = () => {
-      // Fallback download if logo fetch is blocked cross-origin
       const link = document.createElement('a');
-      link.download = `IITRAM_Alumni_ICard_HEMANSHU_TALA.png`;
+      link.download = `IITRAM_Alumni_ICard_Front_HEMANSHU_TALA.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
-      toast.success('Official I-Card PNG downloaded successfully!', { id: 'downloading' });
+      toast.success('Front I-Card PNG downloaded!', { id: 'dl-front' });
     };
 
     logoImg.src = '/images/iitram-logo.png';
+  };
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // HD CANVAS PNG DOWNLOAD - BACK SIDE (EXACT MATCH TO BACK IMAGE SPEC)
+  // ══════════════════════════════════════════════════════════════════════════
+  const handleDownloadBackPNG = () => {
+    toast.loading('Generating Official Back I-Card PNG...', { id: 'dl-back' });
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 1600;
+    canvas.height = 1012;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // White Card Background
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 1600, 1012, 32);
+    ctx.fill();
+
+    // Top Gold Accent Strip
+    const goldGrad = ctx.createLinearGradient(0, 0, 1600, 0);
+    goldGrad.addColorStop(0, '#C59B27');
+    goldGrad.addColorStop(0.5, '#D4AF37');
+    goldGrad.addColorStop(1, '#C59B27');
+    ctx.fillStyle = goldGrad;
+    ctx.fillRect(0, 0, 1600, 24);
+
+    // Top Full-width Burgundy Banner
+    ctx.fillStyle = '#7A152B';
+    ctx.fillRect(0, 24, 1600, 180);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 54px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('IITRAM ALUMNI ASSOCIATION', 800, 130);
+
+    // Body: Membership Privileges
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#7A152B';
+    ctx.font = 'bold 40px sans-serif';
+    ctx.fillText('MEMBERSHIP PRIVILEGES', 100, 280);
+
+    const privileges = [
+      'Access to alumni networking and events',
+      'Participation in institute/alumni activities',
+      'Access to alumni communications and updates',
+      'Opportunities for professional and academic networking',
+    ];
+
+    let bulletY = 360;
+    privileges.forEach((text) => {
+      ctx.fillStyle = '#7A152B';
+      ctx.font = 'bold 36px sans-serif';
+      ctx.fillText('•', 110, bulletY);
+
+      ctx.fillStyle = '#1E293B';
+      ctx.font = '500 32px sans-serif';
+      ctx.fillText(text, 150, bulletY);
+      bulletY += 75;
+    });
+
+    // Gold Separator Line
+    ctx.fillStyle = '#C59B27';
+    ctx.fillRect(100, 710, 1400, 8);
+
+    // Disclaimer
+    ctx.fillStyle = '#334155';
+    ctx.font = '500 28px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('This card certifies that the holder is a registered member of the IITRAM Alumni Association.', 800, 770);
+
+    // Footer Row
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#7A152B';
+    ctx.font = 'bold 30px sans-serif';
+    ctx.fillText('Verify membership', 100, 880);
+
+    // QR Box in center
+    ctx.strokeStyle = '#7A152B';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(700, 810, 200, 140);
+    ctx.fillStyle = '#FDFBF7';
+    ctx.fillRect(702, 812, 196, 136);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#7A152B';
+    ctx.font = 'bold 44px sans-serif';
+    ctx.fillText('QR', 800, 895);
+
+    // Right Website Link
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#7A152B';
+    ctx.font = 'bold 30px sans-serif';
+    ctx.fillText('www.iitram.ac.in', 1500, 880);
+
+    const link = document.createElement('a');
+    link.download = `IITRAM_Alumni_ICard_Back_HEMANSHU_TALA.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    toast.success('Back I-Card PNG downloaded!', { id: 'dl-back' });
   };
 
   const handlePrint = () => {
@@ -202,13 +293,13 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
         }
       `}</style>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
         
-        {/* ── HEADER BANNER ──────────────────────────────────────────────── */}
+        {/* ── HEADER BANNER (CLEAN & PROFESSIONAL WEBSITE THEME) ───────────── */}
         <div className="no-print bg-gradient-to-r from-[#7A152B] via-[#630f21] to-[#450916] rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#C59B27]/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 bg-[#C59B27]/20 border border-[#C59B27]/40 rounded-full text-amber-300 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
@@ -222,55 +313,126 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
                 IITRAM Alumni Identity Card
               </h1>
               <p className="text-xs text-slate-200 leading-relaxed max-w-lg">
-                Verified member: <strong>HEMANSHU TALA</strong> (Enrollment ID: <strong>2310400011011</strong>)
+                Member: <strong>HEMANSHU TALA</strong> &nbsp;|&nbsp; ID: <strong className="font-mono">2310400011011</strong>
               </p>
             </div>
 
-            {/* Direct Action Buttons */}
-            <div className="flex items-center gap-2.5 shrink-0 pt-2 sm:pt-0">
+            {/* View Switcher & Action Buttons */}
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 md:pt-0">
+              <div className="bg-white/10 p-1 rounded-xl flex items-center gap-1 border border-white/15">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('side-by-side')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    viewMode === 'side-by-side' ? 'bg-white text-[#7A152B] shadow-xs' : 'text-white/80 hover:text-white'
+                  }`}
+                >
+                  <LayoutGrid size={14} /> Both Sides
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('flip')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    viewMode === 'flip' ? 'bg-white text-[#7A152B] shadow-xs' : 'text-white/80 hover:text-white'
+                  }`}
+                >
+                  <Layers size={14} /> 3D Flip
+                </button>
+              </div>
+
               <button
                 type="button"
-                onClick={handleDownloadPNG}
-                className="px-4 py-2.5 bg-[#C59B27] hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                onClick={handleDownloadFrontPNG}
+                className="px-3.5 py-2 bg-[#C59B27] hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
               >
-                <Download size={16} />
-                <span>Download PNG</span>
+                <Download size={14} />
+                <span>Front PNG</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDownloadBackPNG}
+                className="px-3.5 py-2 bg-[#C59B27] hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+              >
+                <Download size={14} />
+                <span>Back PNG</span>
               </button>
 
               <button
                 type="button"
                 onClick={handlePrint}
-                className="px-4 py-2.5 bg-white text-[#7A152B] hover:bg-slate-100 rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                className="px-3.5 py-2 bg-white text-[#7A152B] hover:bg-slate-100 rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
               >
-                <Printer size={16} />
-                <span>Print Card</span>
+                <Printer size={14} />
+                <span>Print</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* ── OFFICIAL CARD CONTAINER ─────────────────────────────────────── */}
-        <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-md print-area">
-          <div className="flex items-center justify-between mb-4 no-print border-b border-slate-100 pb-3">
-            <div className="flex items-center gap-2">
-              <Sparkles size={16} className="text-[#7A152B]" />
-              <h3 className="text-sm font-bold text-slate-900 font-serif uppercase tracking-wide">
-                IITRAM Alumni Identity Card
-              </h3>
-            </div>
-            <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
-              <CheckCircle2 size={13} /> Active Verified Record
-            </span>
-          </div>
+        {/* ── CARD DISPLAY AREA ───────────────────────────────────────────── */}
+        <div className="print-area">
+          {viewMode === 'side-by-side' ? (
+            /* DUAL SIDE-BY-SIDE VIEW (FRONT CARD & BACK CARD) */
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                {/* FRONT SIDE */}
+                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between no-print border-b border-slate-100 pb-2.5">
+                    <span className="text-xs font-bold text-[#7A152B] uppercase tracking-wider flex items-center gap-1.5 font-serif">
+                      <Sparkles size={14} /> Front View
+                    </span>
+                    <span className="text-[11px] font-bold text-slate-400">Official Replica</span>
+                  </div>
+                  <AlumniICard
+                    data={cardData}
+                    side="front"
+                    onOpenVerify={() => setShowVerifyModal(true)}
+                    securityProtected={true}
+                  />
+                </div>
 
-          {/* Render Pixel-Perfect Official Alumni I-Card */}
-          <AlumniICard
-            data={cardData}
-            isFlipped={isFlipped}
-            onFlip={() => setIsFlipped(!isFlipped)}
-            onOpenVerify={() => setShowVerifyModal(true)}
-            securityProtected={true}
-          />
+                {/* BACK SIDE */}
+                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between no-print border-b border-slate-100 pb-2.5">
+                    <span className="text-xs font-bold text-[#7A152B] uppercase tracking-wider flex items-center gap-1.5 font-serif">
+                      <Sparkles size={14} /> Back View
+                    </span>
+                    <span className="text-[11px] font-bold text-slate-400">Official Privileges</span>
+                  </div>
+                  <AlumniICard
+                    data={cardData}
+                    side="back"
+                    onOpenVerify={() => setShowVerifyModal(true)}
+                    securityProtected={true}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* SINGLE INTERACTIVE 3D FLIP CARD VIEW */
+            <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-md">
+              <div className="flex items-center justify-between mb-4 no-print border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-[#7A152B]" />
+                  <h3 className="text-sm font-bold text-slate-900 font-serif uppercase tracking-wide">
+                    Interactive 3D Alumni I-Card
+                  </h3>
+                </div>
+                <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                  <CheckCircle2 size={13} /> Active Verified Record
+                </span>
+              </div>
+
+              <AlumniICard
+                data={cardData}
+                isFlipped={isFlipped}
+                onFlip={() => setIsFlipped(!isFlipped)}
+                onOpenVerify={() => setShowVerifyModal(true)}
+                securityProtected={true}
+              />
+            </div>
+          )}
         </div>
 
         {/* ── SECURITY FOOTER NOTICE ─────────────────────────────────────── */}
