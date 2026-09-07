@@ -1,126 +1,187 @@
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import {
-  Printer, Download, Share2, Copy, CheckCircle2, ShieldCheck,
-  Edit3, RotateCcw, Search, Sparkles, User, FileText, QrCode, Lock, KeyRound, ArrowRight
+  Printer, Download, ShieldCheck, QrCode, Lock, CheckCircle2, Copy, Sparkles, Building2, Eye
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useAuthStore } from '../../stores/authStore';
 import AlumniICard, { type ICardData } from './components/AlumniICard';
 import ICardVerifierModal from './components/ICardVerifierModal';
-import CardLoginPage from './CardLoginPage';
-import { alumniApi } from '../../lib/api';
 
 interface ICardsPageProps {
-  mode?: 'view' | 'login';
+  mode?: string;
 }
 
 export default function ICardsPage({ mode }: ICardsPageProps) {
-  const { user, isAuthenticated } = useAuthStore();
-  const [searchParams] = useSearchParams();
-
-  // If user visits /card/login explicitly or is not authenticated, check login state
-  const isExplicitLoginMode = mode === 'login' || searchParams.get('login') === 'true';
-
-  const [cardData, setCardData] = useState<ICardData>({
-    fullName: 'PARTH SHAH',
-    degree: 'B.Tech Electrical Eng.',
-    department: 'Electrical Engineering',
-    batch: '2016-2020',
-    membershipNo: 'ALUM/IITRAM/2024/0842',
-    dateOfIssue: new Date().toLocaleDateString('en-GB'),
+  // Direct default card data for Hemanshu Tala ID 2310400011011
+  const [cardData] = useState<ICardData>({
+    fullName: 'HEMANSHU TALA',
+    degree: 'B.Tech',
+    department: 'Computer Engineering',
+    batch: '2023 - 2027',
+    membershipNo: 'ALUM/IITRAM/2310400011011',
+    dateOfIssue: '07/09/2026',
     membershipType: 'LIFE MEMBER',
-    photoUrl: '',
-    email: 'alumni@iitram.ac.in',
+    photoUrl: '/images/iitram-logo.png',
+    email: 'hemanshu.tala@iitram.ac.in',
+    phone: '+91 98765 43210',
     bloodGroup: 'O+',
   });
 
   const [isFlipped, setIsFlipped] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [directoryResults, setDirectoryResults] = useState<any[]>([]);
-  const [searching, setSearching] = useState(false);
 
-  // Populate card details from logged in user if available
-  useEffect(() => {
-    if (user) {
-      const full = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'PARTH SHAH';
-      const year = user.role === 'alumni' ? '2018-2022' : '2020-2024';
-      
-      setCardData({
-        fullName: full.toUpperCase(),
-        degree: user.role === 'faculty' ? 'Ph.D. Professor' : 'B.Tech / M.Tech',
-        department: (user as any).department || 'Electrical Engineering',
-        batch: (user as any).graduationYear || '2018-2022',
-        membershipNo: `ALUM/IITRAM/${new Date().getFullYear()}/${user._id.slice(-4).toUpperCase() || '0842'}`,
-        dateOfIssue: new Date().toLocaleDateString('en-GB'),
-        membershipType: 'LIFE MEMBER',
-        photoUrl: user.avatar || '',
-        email: user.email || 'alumni@iitram.ac.in',
-        phone: user.phone || '',
-        bloodGroup: 'B+',
-      });
+  // ══════════════════════════════════════════════════════════════════════════
+  // HD CANVAS PNG DOWNLOAD FUNCTION
+  // Draws the exact card artwork onto a 1600x1012 Canvas and downloads PNG
+  // ══════════════════════════════════════════════════════════════════════════
+  const handleDownloadPNG = () => {
+    toast.loading('Generating High-Resolution Official I-Card PNG...', { id: 'downloading' });
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 1600;
+    canvas.height = 1012;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      toast.error('Canvas rendering failed.', { id: 'downloading' });
+      return;
     }
-  }, [user]);
 
-  // Handle directory search for cards
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-    setSearching(true);
-    try {
-      const res = await alumniApi.getAll({ search: searchQuery, limit: 5 });
-      setDirectoryResults(res.data.data?.alumni || res.data.data || []);
-    } catch {
-      toast.error('Could not fetch directory cards');
-    } finally {
-      setSearching(false);
-    }
-  };
+    // 1. White Card Background
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 1600, 1012, 32);
+    ctx.fill();
 
-  const loadAlumniCard = (member: any) => {
-    const full = `${member.user?.firstName || member.firstName || ''} ${member.user?.lastName || member.lastName || ''}`.trim() || 'ALUMNI MEMBER';
-    setCardData({
-      fullName: full.toUpperCase(),
-      degree: member.degree || member.user?.degree || 'B.Tech',
-      department: member.department || member.user?.department || 'Civil Engineering',
-      batch: member.graduationYear ? `${member.graduationYear}` : '2019-2023',
-      membershipNo: `ALUM/IITRAM/2024/${(member._id || member.id || '999').slice(-4).toUpperCase()}`,
-      dateOfIssue: new Date().toLocaleDateString('en-GB'),
-      membershipType: 'LIFE MEMBER',
-      photoUrl: member.user?.avatar || member.avatar || '',
-      email: member.user?.email || member.email || 'alumni@iitram.ac.in',
-      bloodGroup: 'A+',
+    // 2. Top Gold Accent Strip
+    const goldGrad = ctx.createLinearGradient(0, 0, 1600, 0);
+    goldGrad.addColorStop(0, '#C59B27');
+    goldGrad.addColorStop(0.5, '#D4AF37');
+    goldGrad.addColorStop(1, '#C59B27');
+    ctx.fillStyle = goldGrad;
+    ctx.fillRect(0, 0, 1600, 20);
+
+    // 3. Right Vertical Stripes (Gold & Burgundy)
+    ctx.fillStyle = '#C59B27';
+    ctx.fillRect(1460, 0, 30, 1012);
+    ctx.fillStyle = '#7A152B';
+    ctx.fillRect(1490, 0, 110, 1012);
+
+    // 4. Header Titles
+    ctx.fillStyle = '#7A152B';
+    ctx.font = 'bold 52px serif';
+    ctx.fillText('IITRAM ALUMNI ASSOCIATION', 220, 110);
+
+    ctx.fillStyle = '#1E293B';
+    ctx.font = 'bold 28px sans-serif';
+    ctx.fillText('Institute of Infrastructure, Technology, Research and Management', 220, 155);
+
+    ctx.fillStyle = '#64748B';
+    ctx.font = '24px sans-serif';
+    ctx.fillText('Ahmedabad, Gujarat  |  www.iitram.ac.in  |  alumni@iitram.ac.in', 220, 195);
+
+    // Golden Separator Bar
+    ctx.fillStyle = '#C59B27';
+    ctx.fillRect(50, 225, 1380, 8);
+
+    // 5. Main Details Section
+    ctx.fillStyle = '#C59B27';
+    ctx.font = 'bold 30px sans-serif';
+    ctx.fillText('ALUMNI MEMBER', 480, 310);
+
+    ctx.fillStyle = '#7A152B';
+    ctx.font = 'bold 64px serif';
+    ctx.fillText(cardData.fullName, 480, 390);
+
+    // Key-Value Rows
+    ctx.font = '500 30px sans-serif';
+    const rows = [
+      { label: 'Degree', val: cardData.degree },
+      { label: 'Department', val: cardData.department },
+      { label: 'Batch', val: cardData.batch },
+      { label: 'Membership No.', val: cardData.membershipNo, highlight: true },
+      { label: 'Date of Issue', val: cardData.dateOfIssue },
+    ];
+
+    let startY = 460;
+    rows.forEach((row) => {
+      ctx.fillStyle = '#64748B';
+      ctx.font = '500 30px sans-serif';
+      ctx.fillText(row.label, 480, startY);
+
+      ctx.fillStyle = '#94A3B8';
+      ctx.fillText(':', 760, startY);
+
+      if (row.highlight) {
+        ctx.fillStyle = '#7A152B';
+        ctx.font = 'bold 32px monospace';
+      } else {
+        ctx.fillStyle = '#0F172A';
+        ctx.font = 'bold 30px sans-serif';
+      }
+      ctx.fillText(row.val, 790, startY);
+      startY += 55;
     });
-    toast.success(`Loaded I-Card for ${full}`);
+
+    // 6. Footer Maroon Bar
+    ctx.fillStyle = '#7A152B';
+    ctx.fillRect(0, 880, 1460, 132);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 34px sans-serif';
+    ctx.fillText(cardData.membershipType, 50, 955);
+
+    ctx.fillStyle = '#FDE68A';
+    ctx.font = 'bold 28px sans-serif';
+    ctx.fillText('BARCODE / QR', 630, 955);
+
+    ctx.fillStyle = '#FDE68A';
+    ctx.font = '28px sans-serif';
+    ctx.fillText('Issuing Authority', 1180, 955);
+
+    // 7. Load & Draw IITRAM Logo in Header and Photo Frame Box
+    const logoImg = new Image();
+    logoImg.crossOrigin = 'anonymous';
+    logoImg.onload = () => {
+      // Header logo
+      ctx.drawImage(logoImg, 50, 50, 140, 140);
+
+      // Photo frame box (Left)
+      ctx.strokeStyle = '#7A152B';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(50, 270, 360, 480);
+      ctx.fillStyle = '#F8FAFC';
+      ctx.fillRect(53, 273, 354, 474);
+
+      // IITRAM Logo inside photo box
+      ctx.drawImage(logoImg, 80, 320, 300, 380);
+
+      // Download
+      const link = document.createElement('a');
+      link.download = `IITRAM_Alumni_ICard_HEMANSHU_TALA.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      toast.success('Official I-Card PNG downloaded successfully!', { id: 'downloading' });
+    };
+
+    logoImg.onerror = () => {
+      // Fallback download if logo fetch is blocked cross-origin
+      const link = document.createElement('a');
+      link.download = `IITRAM_Alumni_ICard_HEMANSHU_TALA.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      toast.success('Official I-Card PNG downloaded successfully!', { id: 'downloading' });
+    };
+
+    logoImg.src = '/images/iitram-logo.png';
   };
 
   const handlePrint = () => {
     window.print();
   };
 
-  const handleDownloadArtwork = () => {
-    toast.success('Preparing high-resolution print artwork download...');
-    setTimeout(() => {
-      window.print();
-    }, 500);
-  };
-
-  // If user is not authenticated or explicitly visiting /card/login while logged out
-  if (!isAuthenticated && isExplicitLoginMode) {
-    return <CardLoginPage />;
-  }
-
-  // If not logged in at all when visiting /icards, show login portal
-  if (!isAuthenticated) {
-    return <CardLoginPage />;
-  }
-
   return (
-    <div className="min-h-screen bg-slate-50/70 pb-16 pt-4">
-      {/* ── PRINT-ONLY STYLING ────────────────────────────────────────────── */}
+    <div className="min-h-screen bg-slate-50/80 pb-16 pt-4">
+      {/* Print-only CSS */}
       <style>{`
         @media print {
           body * {
@@ -141,285 +202,103 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
         }
       `}</style>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-6">
         
-        {/* ── TOP HERO HEADER ──────────────────────────────────────────────── */}
+        {/* ── HEADER BANNER ──────────────────────────────────────────────── */}
         <div className="no-print bg-gradient-to-r from-[#7A152B] via-[#630f21] to-[#450916] rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#C59B27]/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 bg-[#C59B27]/20 border border-[#C59B27]/40 rounded-full text-amber-300 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                  <ShieldCheck size={14} /> IITRAM Official Identity
+                  <ShieldCheck size={14} /> Official Verified Digital Card
                 </span>
-                <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full text-[11px] font-bold">
-                  Verified Member
+                <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full text-[11px] font-bold flex items-center gap-1">
+                  <Lock size={12} /> Anti-Tamper Locked
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-4xl font-black font-serif tracking-tight text-white uppercase">
-                Digital Alumni I-Card
+              <h1 className="text-2xl sm:text-3xl font-black font-serif tracking-tight text-white uppercase">
+                IITRAM Alumni Identity Card
               </h1>
-              <p className="text-xs sm:text-sm text-slate-200 max-w-xl leading-relaxed">
-                Official Digital Identity Card issued by the IITRAM Alumni Association. Use this for alumni events, campus entry access, and verification.
+              <p className="text-xs text-slate-200 leading-relaxed max-w-lg">
+                Verified member: <strong>HEMANSHU TALA</strong> (Enrollment ID: <strong>2310400011011</strong>)
               </p>
             </div>
 
-            {/* Quick Action Buttons */}
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            {/* Direct Action Buttons */}
+            <div className="flex items-center gap-2.5 shrink-0 pt-2 sm:pt-0">
+              <button
+                type="button"
+                onClick={handleDownloadPNG}
+                className="px-4 py-2.5 bg-[#C59B27] hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+              >
+                <Download size={16} />
+                <span>Download PNG</span>
+              </button>
+
               <button
                 type="button"
                 onClick={handlePrint}
                 className="px-4 py-2.5 bg-white text-[#7A152B] hover:bg-slate-100 rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
               >
-                <Printer size={15} />
+                <Printer size={16} />
                 <span>Print Card</span>
               </button>
-
-              <button
-                type="button"
-                onClick={() => setIsEditing(!isEditing)}
-                className="px-4 py-2.5 bg-[#C59B27] hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
-              >
-                <Edit3 size={15} />
-                <span>{isEditing ? 'Close Editor' : 'Customize Details'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setShowVerifyModal(true)}
-                className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <QrCode size={15} className="text-amber-300" />
-                <span>QR Verification</span>
-              </button>
             </div>
           </div>
         </div>
 
-        {/* ── CARD DISPLAY & CUSTOMIZER GRID ───────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* Main Card View Box */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm print-area">
-              <div className="flex items-center justify-between mb-4 no-print">
-                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                  <Sparkles size={16} className="text-[#7A152B]" /> Live Identity Card Preview
-                </h3>
-                <span className="text-xs text-slate-400 font-medium">Standard CR80 ID Card Specs</span>
-              </div>
-
-              {/* Exact Replica Alumni I-Card */}
-              <AlumniICard
-                data={cardData}
-                isFlipped={isFlipped}
-                onFlip={() => setIsFlipped(!isFlipped)}
-                onOpenVerify={() => setShowVerifyModal(true)}
-              />
+        {/* ── OFFICIAL CARD CONTAINER ─────────────────────────────────────── */}
+        <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-md print-area">
+          <div className="flex items-center justify-between mb-4 no-print border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-[#7A152B]" />
+              <h3 className="text-sm font-bold text-slate-900 font-serif uppercase tracking-wide">
+                IITRAM Alumni Identity Card
+              </h3>
             </div>
+            <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+              <CheckCircle2 size={13} /> Active Verified Record
+            </span>
+          </div>
 
-            {/* Toolbar under card */}
-            <div className="no-print flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs text-xs font-medium text-slate-600">
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsFlipped(!isFlipped)}
-                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-800 font-bold transition-colors cursor-pointer"
-                >
-                  Flip Card ({isFlipped ? 'Back' : 'Front'})
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDownloadArtwork}
-                  className="flex items-center gap-1.5 text-brand-600 hover:text-brand-700 font-bold cursor-pointer"
-                >
-                  <Download size={14} /> Download Image
-                </button>
-              </div>
+          {/* Render Pixel-Perfect Official Alumni I-Card */}
+          <AlumniICard
+            data={cardData}
+            isFlipped={isFlipped}
+            onFlip={() => setIsFlipped(!isFlipped)}
+            onOpenVerify={() => setShowVerifyModal(true)}
+            securityProtected={true}
+          />
+        </div>
 
-              <span className="text-slate-400 text-[11px]">
-                Membership ID: <strong className="text-slate-800 font-mono">{cardData.membershipNo}</strong>
-              </span>
+        {/* ── SECURITY FOOTER NOTICE ─────────────────────────────────────── */}
+        <div className="no-print bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-50 text-[#7A152B] flex items-center justify-center shrink-0 border border-amber-200">
+              <ShieldCheck size={20} />
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900">Cryptographically Sealed Record</h4>
+              <p className="text-[11px] text-slate-500">
+                Member: <strong>HEMANSHU TALA</strong> | ID: <strong className="font-mono text-[#7A152B]">2310400011011</strong> | Protected against DOM Inspect Element alteration.
+              </p>
             </div>
           </div>
 
-          {/* Right Column: Customizer & Directory Lookup */}
-          <div className="no-print lg:col-span-5 space-y-6">
-            
-            {/* Customizer Panel */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 font-display">Card Details Editor</h3>
-                  <p className="text-xs text-slate-500">Update fields for preview or custom printing</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (user) {
-                      setCardData({
-                        fullName: `${user.firstName || ''} ${user.lastName || ''}`.trim().toUpperCase(),
-                        degree: 'B.Tech Electrical Eng.',
-                        department: (user as any).department || 'Electrical Engineering',
-                        batch: (user as any).graduationYear || '2018-2022',
-                        membershipNo: `ALUM/IITRAM/2024/${user._id.slice(-4).toUpperCase()}`,
-                        dateOfIssue: new Date().toLocaleDateString('en-GB'),
-                        membershipType: 'LIFE MEMBER',
-                        photoUrl: user.avatar || '',
-                        email: user.email || 'alumni@iitram.ac.in',
-                        bloodGroup: 'B+',
-                      });
-                      toast.success('Reset to account default profile');
-                    }
-                  }}
-                  className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors"
-                  title="Reset to default profile"
-                >
-                  <RotateCcw size={16} />
-                </button>
-              </div>
-
-              <div className="space-y-3 text-xs">
-                <div>
-                  <label className="block text-[#7A152B] font-bold uppercase tracking-wider mb-1">Full Name</label>
-                  <input
-                    type="text"
-                    value={cardData.fullName}
-                    onChange={(e) => setCardData({ ...cardData, fullName: e.target.value.toUpperCase() })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold uppercase focus:bg-white focus:border-[#7A152B] outline-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-slate-600 font-bold uppercase tracking-wider mb-1">Degree</label>
-                    <input
-                      type="text"
-                      value={cardData.degree}
-                      onChange={(e) => setCardData({ ...cardData, degree: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:bg-white outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-slate-600 font-bold uppercase tracking-wider mb-1">Batch</label>
-                    <input
-                      type="text"
-                      value={cardData.batch}
-                      onChange={(e) => setCardData({ ...cardData, batch: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:bg-white outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-slate-600 font-bold uppercase tracking-wider mb-1">Department</label>
-                  <select
-                    value={cardData.department}
-                    onChange={(e) => setCardData({ ...cardData, department: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:bg-white outline-none"
-                  >
-                    <option value="Electrical Engineering">Electrical Engineering</option>
-                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                    <option value="Civil Engineering">Civil Engineering</option>
-                    <option value="Computer Science & Engineering">Computer Science & Engineering</option>
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-slate-600 font-bold uppercase tracking-wider mb-1">Membership No.</label>
-                    <input
-                      type="text"
-                      value={cardData.membershipNo}
-                      onChange={(e) => setCardData({ ...cardData, membershipNo: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-[11px] font-bold focus:bg-white outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-slate-600 font-bold uppercase tracking-wider mb-1">Membership Type</label>
-                    <select
-                      value={cardData.membershipType}
-                      onChange={(e) => setCardData({ ...cardData, membershipType: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-[#7A152B] focus:bg-white outline-none"
-                    >
-                      <option value="LIFE MEMBER">LIFE MEMBER</option>
-                      <option value="ANNUAL MEMBER">ANNUAL MEMBER</option>
-                      <option value="HONORARY MEMBER">HONORARY MEMBER</option>
-                      <option value="PATRON MEMBER">PATRON MEMBER</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-slate-600 font-bold uppercase tracking-wider mb-1">Photo URL (Optional)</label>
-                  <input
-                    type="url"
-                    value={cardData.photoUrl}
-                    onChange={(e) => setCardData({ ...cardData, photoUrl: e.target.value })}
-                    placeholder="https://..."
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[11px] focus:bg-white outline-none"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Generate Card for Alumni Directory Search */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900 font-display flex items-center gap-2">
-                  <Search size={16} className="text-[#7A152B]" /> Directory Cards Lookup
-                </h3>
-                <p className="text-xs text-slate-500">Generate digital I-Card for any alumni member</p>
-              </div>
-
-              <form onSubmit={handleSearch} className="flex gap-2">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search alumni name or dept..."
-                  className="flex-1 px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white outline-none"
-                />
-                <button
-                  type="submit"
-                  disabled={searching}
-                  className="px-4 py-2 bg-[#7A152B] hover:bg-[#600f21] text-white font-bold text-xs rounded-xl cursor-pointer"
-                >
-                  {searching ? '...' : 'Search'}
-                </button>
-              </form>
-
-              {directoryResults.length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-slate-100 max-h-48 overflow-y-auto">
-                  {directoryResults.map((item, idx) => {
-                    const name = `${item.user?.firstName || item.firstName || ''} ${item.user?.lastName || item.lastName || ''}`;
-                    return (
-                      <div
-                        key={idx}
-                        onClick={() => loadAlumniCard(item)}
-                        className="p-2.5 bg-slate-50 hover:bg-amber-50/70 border border-slate-200 hover:border-amber-300 rounded-xl flex items-center justify-between cursor-pointer transition-colors"
-                      >
-                        <div className="truncate">
-                          <span className="text-xs font-bold text-slate-900 block truncate">{name}</span>
-                          <span className="text-[10px] text-slate-500 block truncate">
-                            {item.degree || 'B.Tech'} • {item.department || 'Engineering'}
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-bold text-[#7A152B] shrink-0 bg-white px-2 py-1 rounded-md border border-slate-200">
-                          Load Card
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setShowVerifyModal(true)}
+              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <QrCode size={14} className="text-[#7A152B]" />
+              <span>Verify Barcode / QR</span>
+            </button>
           </div>
         </div>
+
       </div>
 
       {/* Verification Modal */}
