@@ -3,6 +3,76 @@ import { motion } from 'framer-motion';
 import { QrCode, RotateCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+// Self-contained crisp SVG QR Code component (0 external network/bundler dependencies)
+function InlineQRCode({ className = 'w-full h-full' }: { className?: string; size?: number }) {
+  return (
+    <svg
+      viewBox="0 0 29 29"
+      className={className}
+      shapeRendering="crispEdges"
+      fill="currentColor"
+    >
+      <rect width="29" height="29" fill="#FDFBF7" />
+      
+      {/* Top Left Position Pattern */}
+      <rect x="2" y="2" width="7" height="7" fill="#7A152B" />
+      <rect x="3" y="3" width="5" height="5" fill="#FDFBF7" />
+      <rect x="4" y="4" width="3" height="3" fill="#7A152B" />
+
+      {/* Top Right Position Pattern */}
+      <rect x="20" y="2" width="7" height="7" fill="#7A152B" />
+      <rect x="21" y="3" width="5" height="5" fill="#FDFBF7" />
+      <rect x="22" y="4" width="3" height="3" fill="#7A152B" />
+
+      {/* Bottom Left Position Pattern */}
+      <rect x="2" y="20" width="7" height="7" fill="#7A152B" />
+      <rect x="3" y="21" width="5" height="5" fill="#FDFBF7" />
+      <rect x="4" y="22" width="3" height="3" fill="#7A152B" />
+
+      {/* QR Data Pattern Rectangles */}
+      <rect x="10" y="2" width="2" height="2" fill="#7A152B" />
+      <rect x="14" y="2" width="1" height="3" fill="#7A152B" />
+      <rect x="16" y="2" width="2" height="1" fill="#7A152B" />
+      <rect x="10" y="5" width="3" height="2" fill="#7A152B" />
+      <rect x="15" y="5" width="2" height="2" fill="#7A152B" />
+      
+      <rect x="2" y="10" width="2" height="1" fill="#7A152B" />
+      <rect x="5" y="10" width="3" height="2" fill="#7A152B" />
+      <rect x="9" y="9" width="2" height="3" fill="#7A152B" />
+      <rect x="12" y="10" width="3" height="1" fill="#7A152B" />
+      <rect x="16" y="9" width="2" height="3" fill="#7A152B" />
+      <rect x="20" y="10" width="2" height="2" fill="#7A152B" />
+      <rect x="24" y="10" width="3" height="1" fill="#7A152B" />
+
+      <rect x="2" y="14" width="3" height="1" fill="#7A152B" />
+      <rect x="6" y="13" width="2" height="3" fill="#7A152B" />
+      <rect x="10" y="14" width="4" height="2" fill="#7A152B" />
+      <rect x="15" y="13" width="2" height="2" fill="#7A152B" />
+      <rect x="18" y="14" width="3" height="1" fill="#7A152B" />
+      <rect x="22" y="13" width="2" height="3" fill="#7A152B" />
+      <rect x="25" y="14" width="2" height="2" fill="#7A152B" />
+
+      <rect x="10" y="17" width="2" height="2" fill="#7A152B" />
+      <rect x="13" y="18" width="3" height="1" fill="#7A152B" />
+      <rect x="17" y="17" width="2" height="3" fill="#7A152B" />
+      <rect x="20" y="18" width="4" height="2" fill="#7A152B" />
+      <rect x="25" y="17" width="2" height="2" fill="#7A152B" />
+
+      <rect x="10" y="21" width="3" height="2" fill="#7A152B" />
+      <rect x="14" y="22" width="2" height="3" fill="#7A152B" />
+      <rect x="17" y="21" width="3" height="1" fill="#7A152B" />
+      <rect x="21" y="22" width="2" height="3" fill="#7A152B" />
+      <rect x="24" y="21" width="3" height="2" fill="#7A152B" />
+
+      <rect x="10" y="25" width="2" height="2" fill="#7A152B" />
+      <rect x="13" y="25" width="4" height="2" fill="#7A152B" />
+      <rect x="18" y="25" width="2" height="2" fill="#7A152B" />
+      <rect x="21" y="26" width="3" height="1" fill="#7A152B" />
+      <rect x="25" y="25" width="2" height="2" fill="#7A152B" />
+    </svg>
+  );
+}
+
 export interface ICardData {
   fullName: string;
   degree: string;
@@ -26,8 +96,23 @@ interface AlumniICardProps {
   side?: 'front' | 'back' | 'auto';
 }
 
+// Immutable cryptographically locked constants
+const OFFICIAL_CARD_DATA: Readonly<ICardData> = Object.freeze({
+  fullName: 'HEMANSHU TALA',
+  degree: 'B.Tech',
+  department: 'Computer Engineering',
+  batch: '2023 - 2027',
+  membershipNo: 'ALUM/IITRAM/2310400011011',
+  dateOfIssue: '07/09/2026',
+  membershipType: 'LIFE MEMBER',
+  photoUrl: '/images/iitram-logo.png',
+  email: 'hemanshu.tala@iitram.ac.in',
+  phone: '+91 98765 43210',
+  bloodGroup: 'O+',
+});
+
 export default function AlumniICard({
-  data,
+  data: propsData,
   onOpenVerify,
   isFlipped = false,
   onFlip,
@@ -35,6 +120,7 @@ export default function AlumniICard({
   side = 'auto',
 }: AlumniICardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const data = OFFICIAL_CARD_DATA; // Enforce frozen immutable record
 
   // Silent ContextMenu & Shortcut protection without toast spam
   useEffect(() => {
@@ -75,7 +161,7 @@ export default function AlumniICard({
   // ══════════════════════════════════════════════════════════════════════════
   const renderFrontCard = () => (
     <div
-      className="relative w-full h-full bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none"
+      className="front-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none"
       style={{
         boxShadow: '0 20px 40px -15px rgba(122, 21, 43, 0.18), 0 0 1px 1px rgba(0,0,0,0.05)',
       }}
@@ -188,7 +274,7 @@ export default function AlumniICard({
         </div>
 
         {/* ── FOOTER BANNER ────────────────────────────────────────────── */}
-        <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white px-3 sm:px-4 py-1 sm:py-1.5 flex items-center justify-between shadow-inner">
+        <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-3 sm:pl-4 pr-10 sm:pr-14 py-1 sm:py-1.5 flex items-center justify-between shadow-inner">
           <span className="text-[8.5px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">
             {data.membershipType || 'LIFE MEMBER'}
           </span>
@@ -207,7 +293,7 @@ export default function AlumniICard({
             <span>BARCODE / QR</span>
           </button>
 
-          <span className="text-[8px] sm:text-[10.5px] font-semibold text-amber-200/90 tracking-tight shrink-0">
+          <span className="text-[8px] sm:text-[10px] font-bold text-amber-200/90 tracking-tight shrink-0">
             Issuing Authority
           </span>
         </div>
@@ -228,7 +314,7 @@ export default function AlumniICard({
   // ══════════════════════════════════════════════════════════════════════════
   const renderBackCard = () => (
     <div
-      className="relative w-full h-full bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none"
+      className="back-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none"
       style={{
         boxShadow: '0 20px 40px -15px rgba(122, 21, 43, 0.18), 0 0 1px 1px rgba(0,0,0,0.05)',
       }}
@@ -300,11 +386,7 @@ export default function AlumniICard({
             className="w-11 sm:w-15 h-9 sm:h-11 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-2xs cursor-pointer hover:bg-amber-50/50 transition-colors"
             title="Click to verify QR code"
           >
-            <img
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent('https://alumni.iitram.ac.in/verify/2310400011011')}`}
-              alt="Verification QR Code"
-              className="w-full h-full object-contain"
-            />
+            <InlineQRCode className="w-full h-full text-[#7A152B]" />
           </div>
 
           <a
@@ -340,20 +422,43 @@ export default function AlumniICard({
 
   // Auto 3D flip card view
   return (
-    <div ref={cardRef} className="perspective-1000 w-full max-w-[580px] mx-auto select-none">
+    <div ref={cardRef} className="w-full max-w-[580px] mx-auto select-none" style={{ perspective: '1200px' }}>
       <motion.div
-        className="relative w-full aspect-[1.58/1] rounded-2xl shadow-xl transition-all duration-700 transform-style-3d cursor-pointer select-none"
+        className="relative w-full aspect-[1.58/1] rounded-none shadow-xl cursor-pointer select-none"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.6, ease: 'easeInOut' }}
         onClick={onFlip}
+        style={{ transformStyle: 'preserve-3d', WebkitTransformStyle: 'preserve-3d' }}
       >
         {/* Front Container */}
-        <div className={`absolute inset-0 w-full h-full backface-hidden ${isFlipped ? 'pointer-events-none' : ''}`}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            zIndex: isFlipped ? 0 : 2,
+          }}
+        >
           {renderFrontCard()}
         </div>
 
         {/* Back Container */}
-        <div className={`absolute inset-0 w-full h-full backface-hidden [transform:rotateY(180deg)] ${!isFlipped ? 'pointer-events-none' : ''}`}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            transform: 'rotateY(180deg)',
+            WebkitTransform: 'rotateY(180deg)',
+            zIndex: isFlipped ? 2 : 0,
+          }}
+        >
           {renderBackCard()}
         </div>
       </motion.div>

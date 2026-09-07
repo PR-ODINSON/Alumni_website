@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import {
-  Printer, Download, ShieldCheck, QrCode, Lock, CheckCircle2, LayoutGrid, Layers, Sparkles
+  Download, ShieldCheck, QrCode, Lock, CheckCircle2, LayoutGrid, Layers, Sparkles, FileText
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { toPng } from 'html-to-image';
+import jsPDF from 'jspdf';
 import AlumniICard, { type ICardData } from './components/AlumniICard';
 import ICardVerifierModal from './components/ICardVerifierModal';
 
@@ -30,290 +32,185 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // HD CANVAS PNG DOWNLOAD - FRONT SIDE
-  // ══════════════════════════════════════════════════════════════════════════
-  const handleDownloadFrontPNG = () => {
-    toast.loading('Generating Official Front I-Card PNG...', { id: 'dl-front' });
-
-    const canvas = document.createElement('canvas');
-    canvas.width = 1600;
-    canvas.height = 1012;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // White Card Background
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.roundRect(0, 0, 1600, 1012, 32);
-    ctx.fill();
-
-    // Top Gold Accent Strip
-    const goldGrad = ctx.createLinearGradient(0, 0, 1600, 0);
-    goldGrad.addColorStop(0, '#C59B27');
-    goldGrad.addColorStop(0.5, '#D4AF37');
-    goldGrad.addColorStop(1, '#C59B27');
-    ctx.fillStyle = goldGrad;
-    ctx.fillRect(0, 0, 1600, 20);
-
-    // Right Vertical Stripes
-    ctx.fillStyle = '#C59B27';
-    ctx.fillRect(1460, 0, 30, 1012);
-    ctx.fillStyle = '#7A152B';
-    ctx.fillRect(1490, 0, 110, 1012);
-
-    // Header Titles
-    ctx.fillStyle = '#7A152B';
-    ctx.font = 'bold 52px serif';
-    ctx.fillText('IITRAM ALUMNI ASSOCIATION', 220, 110);
-
-    ctx.fillStyle = '#1E293B';
-    ctx.font = 'bold 28px sans-serif';
-    ctx.fillText('Institute of Infrastructure, Technology, Research and Management', 220, 155);
-
-    ctx.fillStyle = '#64748B';
-    ctx.font = '24px sans-serif';
-    ctx.fillText('Ahmedabad, Gujarat  |  www.iitram.ac.in  |  alumni@iitram.ac.in', 220, 195);
-
-    // Golden Separator Bar
-    ctx.fillStyle = '#C59B27';
-    ctx.fillRect(50, 225, 1380, 8);
-
-    // Main Details
-    ctx.fillStyle = '#C59B27';
-    ctx.font = 'bold 30px sans-serif';
-    ctx.fillText('ALUMNI MEMBER', 480, 310);
-
-    ctx.fillStyle = '#7A152B';
-    ctx.font = 'bold 64px serif';
-    ctx.fillText(cardData.fullName, 480, 390);
-
-    const rows = [
-      { label: 'Degree', val: cardData.degree },
-      { label: 'Department', val: cardData.department },
-      { label: 'Batch', val: cardData.batch },
-      { label: 'Membership No.', val: cardData.membershipNo, highlight: true },
-      { label: 'Date of Issue', val: cardData.dateOfIssue },
-    ];
-
-    let startY = 460;
-    rows.forEach((row) => {
-      ctx.fillStyle = '#64748B';
-      ctx.font = '500 30px sans-serif';
-      ctx.fillText(row.label, 480, startY);
-
-      ctx.fillStyle = '#94A3B8';
-      ctx.fillText(':', 760, startY);
-
-      if (row.highlight) {
-        ctx.fillStyle = '#7A152B';
-        ctx.font = 'bold 32px monospace';
-      } else {
-        ctx.fillStyle = '#0F172A';
-        ctx.font = 'bold 30px sans-serif';
+  // Helper to find valid capture element
+  const getCaptureElement = (id: string, selectorClass: string): HTMLElement | null => {
+    const offscreenEl = document.getElementById(id);
+    if (offscreenEl && offscreenEl.offsetWidth > 0) {
+      return offscreenEl;
+    }
+    const visibleEls = document.querySelectorAll(selectorClass);
+    for (let i = 0; i < visibleEls.length; i++) {
+      const el = visibleEls[i] as HTMLElement;
+      if (el.offsetWidth > 0 && el.offsetHeight > 0) {
+        return el;
       }
-      ctx.fillText(row.val, 790, startY);
-      startY += 55;
-    });
+    }
+    return offscreenEl || (document.querySelector(selectorClass) as HTMLElement);
+  };
 
-    // Footer Banner
-    ctx.fillStyle = '#7A152B';
-    ctx.fillRect(0, 880, 1460, 132);
-
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 34px sans-serif';
-    ctx.fillText(cardData.membershipType, 50, 955);
-
-    ctx.fillStyle = '#FDE68A';
-    ctx.font = 'bold 28px sans-serif';
-    ctx.fillText('BARCODE / QR', 630, 955);
-
-    ctx.fillStyle = '#FDE68A';
-    ctx.font = '28px sans-serif';
-    ctx.fillText('Issuing Authority', 1180, 955);
-
-    // Draw IITRAM Logo
-    const logoImg = new Image();
-    logoImg.crossOrigin = 'anonymous';
-    logoImg.onload = () => {
-      ctx.drawImage(logoImg, 50, 50, 140, 140);
-
-      // Photo frame box
-      ctx.strokeStyle = '#7A152B';
-      ctx.lineWidth = 6;
-      ctx.strokeRect(50, 270, 360, 480);
-      ctx.fillStyle = '#F8FAFC';
-      ctx.fillRect(53, 273, 354, 474);
-      ctx.drawImage(logoImg, 80, 320, 300, 380);
-
-      const link = document.createElement('a');
-      link.download = `IITRAM_Alumni_ICard_Front_HEMANSHU_TALA.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      toast.success('Front I-Card PNG downloaded!', { id: 'dl-front' });
-    };
-
-    logoImg.onerror = () => {
-      const link = document.createElement('a');
-      link.download = `IITRAM_Alumni_ICard_Front_HEMANSHU_TALA.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      toast.success('Front I-Card PNG downloaded!', { id: 'dl-front' });
-    };
-
-    logoImg.src = '/images/iitram-logo.png';
+  // Filter function for html-to-image to skip extension-injected nodes
+  const captureFilter = (node: HTMLElement) => {
+    if (!node.tagName) return true;
+    const tag = node.tagName.toUpperCase();
+    if (tag === 'IFRAME' || tag === 'EMBED' || tag === 'OBJECT' || tag === 'SCRIPT' || tag === 'NOSCRIPT') {
+      return false;
+    }
+    const src = (node.getAttribute?.('src') || '').toLowerCase();
+    const href = (node.getAttribute?.('href') || '').toLowerCase();
+    if (src.includes('chrome-extension:') || src.includes('moz-extension:') || src.includes('invalid') || src.includes('jobright')) {
+      return false;
+    }
+    if (href.includes('chrome-extension:') || href.includes('moz-extension:') || href.includes('invalid') || href.includes('jobright')) {
+      return false;
+    }
+    return true;
   };
 
   // ══════════════════════════════════════════════════════════════════════════
-  // HD CANVAS PNG DOWNLOAD - BACK SIDE (EXACT MATCH TO BACK IMAGE SPEC)
+  // DIRECT HIGH-RES PDF DOWNLOAD (JSPDF + HTML-TO-IMAGE)
   // ══════════════════════════════════════════════════════════════════════════
-  const handleDownloadBackPNG = () => {
-    toast.loading('Generating Official Back I-Card PNG...', { id: 'dl-back' });
+  const handleDownloadPDF = async () => {
+    toast.loading('Generating Official Both-Sides PDF Document...', { id: 'pdf-gen' });
 
-    const canvas = document.createElement('canvas');
-    canvas.width = 1600;
-    canvas.height = 1012;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    try {
+      const frontEl = getCaptureElement('capture-front-node', '.front-card-node');
+      const backEl = getCaptureElement('capture-back-node', '.back-card-node');
 
-    // White Card Background
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.roundRect(0, 0, 1600, 1012, 32);
-    ctx.fill();
+      if (!frontEl || !backEl) {
+        toast.error('Card artwork nodes not ready for capture.', { id: 'pdf-gen' });
+        return;
+      }
 
-    // Top Gold Accent Strip
-    const goldGrad = ctx.createLinearGradient(0, 0, 1600, 0);
-    goldGrad.addColorStop(0, '#C59B27');
-    goldGrad.addColorStop(0.5, '#D4AF37');
-    goldGrad.addColorStop(1, '#C59B27');
-    ctx.fillStyle = goldGrad;
-    ctx.fillRect(0, 0, 1600, 24);
+      // Convert DOM nodes natively using SVG foreignObject (0 oklch parser bugs)
+      const frontImgData = await toPng(frontEl, { quality: 1, pixelRatio: 3, filter: captureFilter });
+      const backImgData = await toPng(backEl, { quality: 1, pixelRatio: 3, filter: captureFilter });
 
-    // Top Full-width Burgundy Banner
-    ctx.fillStyle = '#7A152B';
-    ctx.fillRect(0, 24, 1600, 180);
+      // Create PDF Document (A4 Portrait)
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
 
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 54px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('IITRAM ALUMNI ASSOCIATION', 800, 130);
+      const pageWidth = pdf.internal.pageSize.getWidth(); // 210mm
+      const margin = 15; // 15mm
+      const cardWidth = pageWidth - margin * 2; // 180mm
+      const cardHeight = Math.round((cardWidth * 1) / 1.58); // ~114mm
 
-    // Body: Membership Privileges
-    ctx.textAlign = 'left';
-    ctx.fillStyle = '#7A152B';
-    ctx.font = 'bold 40px sans-serif';
-    ctx.fillText('MEMBERSHIP PRIVILEGES', 100, 280);
+      // ── PDF HEADER ───────────────────────────────────────────────────────
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(13);
+      pdf.setTextColor(122, 21, 43); // Maroon #7A152B
+      pdf.text('INSTITUTE OF INFRASTRUCTURE, TECHNOLOGY, RESEARCH AND MANAGEMENT', pageWidth / 2, 18, { align: 'center' });
 
-    const privileges = [
-      'Access to alumni networking and events',
-      'Participation in institute/alumni activities',
-      'Access to alumni communications and updates',
-      'Opportunities for professional and academic networking',
-    ];
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text('OFFICIAL ALUMNI ASSOCIATION DIGITAL IDENTITY CARD DOCUMENT | ID: 2310400011011', pageWidth / 2, 24, { align: 'center' });
 
-    let bulletY = 360;
-    privileges.forEach((text) => {
-      ctx.fillStyle = '#7A152B';
-      ctx.font = 'bold 36px sans-serif';
-      ctx.fillText('•', 110, bulletY);
+      pdf.setLineWidth(0.5);
+      pdf.setDrawColor(197, 155, 39); // Gold #C59B27
+      pdf.line(margin, 27, pageWidth - margin, 27);
 
-      ctx.fillStyle = '#1E293B';
-      ctx.font = '500 32px sans-serif';
-      ctx.fillText(text, 150, bulletY);
-      bulletY += 75;
-    });
+      // ── FRONT CARD SECTION ───────────────────────────────────────────────
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(122, 21, 43);
+      pdf.text('FRONT VIEW (OFFICIAL IDENTITY ARTWORK)', margin, 34);
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text('Holder: HEMANSHU TALA', pageWidth - margin, 34, { align: 'right' });
 
-    // Gold Separator Line
-    ctx.fillStyle = '#C59B27';
-    ctx.fillRect(100, 710, 1400, 8);
+      pdf.addImage(frontImgData, 'PNG', margin, 37, cardWidth, cardHeight);
 
-    // Disclaimer
-    ctx.fillStyle = '#334155';
-    ctx.font = '500 28px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('This card certifies that the holder is a registered member of the IITRAM Alumni Association.', 800, 770);
+      // ── BACK CARD SECTION ────────────────────────────────────────────────
+      const backSectionY = 37 + cardHeight + 10;
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(122, 21, 43);
+      pdf.text('BACK VIEW (MEMBERSHIP PRIVILEGES & VERIFICATION)', margin, backSectionY);
+      pdf.setFontSize(8);
+      pdf.setTextColor(16, 185, 129); // Emerald
+      pdf.text('Status: Active Verified Member', pageWidth - margin, backSectionY, { align: 'right' });
 
-    // Footer Row
-    ctx.textAlign = 'left';
-    ctx.fillStyle = '#7A152B';
-    ctx.font = 'bold 30px sans-serif';
-    ctx.fillText('Verify membership', 100, 880);
+      pdf.addImage(backImgData, 'PNG', margin, backSectionY + 3, cardWidth, cardHeight);
 
-    // QR Box in center
-    ctx.strokeStyle = '#7A152B';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(710, 800, 180, 150);
-    ctx.fillStyle = '#FDFBF7';
-    ctx.fillRect(712, 802, 176, 146);
+      // ── PDF FOOTER ───────────────────────────────────────────────────────
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(148, 163, 184);
+      pdf.text('Cryptographically Verified Document. Issued by IITRAM Alumni Association, Ahmedabad, Gujarat.', pageWidth / 2, 285, { align: 'center' });
 
-    // Right Website Link
-    ctx.textAlign = 'right';
-    ctx.fillStyle = '#7A152B';
-    ctx.font = 'bold 30px sans-serif';
-    ctx.fillText('www.iitram.ac.in', 1500, 885);
-
-    // Draw QR Code Image inside Box
-    const qrImg = new Image();
-    qrImg.crossOrigin = 'anonymous';
-    qrImg.onload = () => {
-      ctx.drawImage(qrImg, 722, 807, 156, 136);
-      const link = document.createElement('a');
-      link.download = `IITRAM_Alumni_ICard_Back_HEMANSHU_TALA.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      toast.success('Back I-Card PNG downloaded!', { id: 'dl-back' });
-    };
-    qrImg.onerror = () => {
-      const link = document.createElement('a');
-      link.download = `IITRAM_Alumni_ICard_Back_HEMANSHU_TALA.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      toast.success('Back I-Card PNG downloaded!', { id: 'dl-back' });
-    };
-    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent('https://alumni.iitram.ac.in/verify/2310400011011')}`;
+      // Save PDF file directly to downloads
+      pdf.save('IITRAM_Alumni_ICard_HEMANSHU_TALA_2310400011011.pdf');
+      toast.success('Downloaded Official PDF Document!', { id: 'pdf-gen' });
+    } catch (err) {
+      console.error('PDF Export Error:', err);
+      toast.error(`PDF generation failed: ${err instanceof Error ? err.message : String(err)}`, { id: 'pdf-gen' });
+    }
   };
 
-  const handlePrint = () => {
-    window.print();
+  // ══════════════════════════════════════════════════════════════════════════
+  // EXACT DOM FRONT PNG DOWNLOAD (HTML-TO-IMAGE)
+  // ══════════════════════════════════════════════════════════════════════════
+  const handleDownloadFrontPNG = async () => {
+    toast.loading('Downloading Exact Front I-Card Image...', { id: 'dl-front' });
+    try {
+      const frontEl = getCaptureElement('capture-front-node', '.front-card-node');
+      if (!frontEl) {
+        toast.error('Front card not visible for download.', { id: 'dl-front' });
+        return;
+      }
+      const dataUrl = await toPng(frontEl, { quality: 1, pixelRatio: 3, filter: captureFilter });
+      const link = document.createElement('a');
+      link.download = `IITRAM_Alumni_ICard_Front_HEMANSHU_TALA.png`;
+      link.href = dataUrl;
+      link.click();
+      toast.success('Downloaded Front I-Card Image!', { id: 'dl-front' });
+    } catch (err) {
+      console.error('Front PNG Download Error:', err);
+      toast.error(`Failed to download Front image: ${err instanceof Error ? err.message : String(err)}`, { id: 'dl-front' });
+    }
+  };
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // EXACT DOM BACK PNG DOWNLOAD (HTML-TO-IMAGE)
+  // ══════════════════════════════════════════════════════════════════════════
+  const handleDownloadBackPNG = async () => {
+    toast.loading('Downloading Exact Back I-Card Image...', { id: 'dl-back' });
+    try {
+      const backEl = getCaptureElement('capture-back-node', '.back-card-node');
+      if (!backEl) {
+        toast.error('Back card not visible for download.', { id: 'dl-back' });
+        return;
+      }
+      const dataUrl = await toPng(backEl, { quality: 1, pixelRatio: 3, filter: captureFilter });
+      const link = document.createElement('a');
+      link.download = `IITRAM_Alumni_ICard_Back_HEMANSHU_TALA.png`;
+      link.href = dataUrl;
+      link.click();
+      toast.success('Downloaded Back I-Card Image!', { id: 'dl-back' });
+    } catch (err) {
+      console.error('Back PNG Download Error:', err);
+      toast.error(`Failed to download Back image: ${err instanceof Error ? err.message : String(err)}`, { id: 'dl-back' });
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-50/60 pb-16 pt-6">
-      {/* Print-only CSS */}
-      <style>{`
-        @media print {
-          body * {
-            visibility: hidden;
-          }
-          .print-area, .print-area * {
-            visibility: visible;
-          }
-          .print-area {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-          }
-          .no-print {
-            display: none !important;
-          }
-        }
-      `}</style>
-
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
         
-        {/* ── CLEAN & ELEGANT TOP BAR ────────────────────────────────────── */}
-        <div className="no-print bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* ── CLEAN TOP BAR ────────────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="px-2.5 py-0.5 bg-amber-50 border border-amber-200 text-[#7A152B] rounded-full text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
-                <ShieldCheck size={13} className="text-[#C59B27]" /> IITRAM Verified Alumni Card
+                <ShieldCheck size={13} className="text-[#C59B27]" /> IITRAM Official Alumni Card
               </span>
               <span className="text-xs text-slate-400 font-mono">ID: 2310400011011</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900 font-display tracking-tight">
-              Official Digital Identity Card
+              Digital Identity Card Document
             </h1>
           </div>
 
@@ -343,29 +240,29 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
 
             <button
               type="button"
-              onClick={handleDownloadFrontPNG}
-              className="px-3.5 py-2 bg-[#7A152B] hover:bg-[#600f21] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+              onClick={handleDownloadPDF}
+              className="px-4 py-2 bg-[#7A152B] hover:bg-[#600f21] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
-              <Download size={14} className="text-amber-300" />
+              <FileText size={15} className="text-amber-300" />
+              <span>Download PDF</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDownloadFrontPNG}
+              className="px-3.5 py-2 bg-[#C59B27] hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+            >
+              <Download size={14} />
               <span>Front PNG</span>
             </button>
 
             <button
               type="button"
               onClick={handleDownloadBackPNG}
-              className="px-3.5 py-2 bg-[#7A152B] hover:bg-[#600f21] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 bg-[#C59B27] hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
-              <Download size={14} className="text-amber-300" />
+              <Download size={14} />
               <span>Back PNG</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all border border-slate-200 flex items-center gap-1.5 cursor-pointer"
-            >
-              <Printer size={14} />
-              <span>Print</span>
             </button>
           </div>
         </div>
@@ -377,7 +274,7 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                 {/* FRONT SIDE */}
-                <div className="bg-white p-5 sm:p-7 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+                <div className="bg-white p-5 sm:p-7 rounded-none border border-slate-200 shadow-xs space-y-3">
                   <div className="flex items-center justify-between no-print border-b border-slate-100 pb-2">
                     <span className="text-xs font-bold text-[#7A152B] uppercase tracking-wider flex items-center gap-1.5 font-serif">
                       <Sparkles size={14} /> Front View
@@ -393,7 +290,7 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
                 </div>
 
                 {/* BACK SIDE */}
-                <div className="bg-white p-5 sm:p-7 rounded-3xl border border-slate-200 shadow-xs space-y-3">
+                <div className="bg-white p-5 sm:p-7 rounded-none border border-slate-200 shadow-xs space-y-3">
                   <div className="flex items-center justify-between no-print border-b border-slate-100 pb-2">
                     <span className="text-xs font-bold text-[#7A152B] uppercase tracking-wider flex items-center gap-1.5 font-serif">
                       <Sparkles size={14} /> Back View
@@ -411,7 +308,7 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
             </div>
           ) : (
             /* SINGLE INTERACTIVE 3D FLIP CARD VIEW */
-            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs">
+            <div className="bg-white p-6 sm:p-8 rounded-none border border-slate-200 shadow-xs">
               <div className="flex items-center justify-between mb-4 no-print border-b border-slate-100 pb-2.5">
                 <div className="flex items-center gap-2">
                   <Sparkles size={16} className="text-[#7A152B]" />
@@ -467,6 +364,29 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
         onClose={() => setShowVerifyModal(false)}
         data={cardData}
       />
+
+      {/* Off-screen clean nodes reserved for 100% reliable 3x capture */}
+      <div
+        className="no-print pointer-events-none"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '580px',
+          opacity: 0.01,
+          zIndex: -9999,
+          pointerEvents: 'none',
+          overflow: 'hidden',
+          height: '1px',
+        }}
+      >
+        <div id="capture-front-node" style={{ width: '580px', height: '367px', backgroundColor: '#ffffff' }}>
+          <AlumniICard data={cardData} side="front" securityProtected={false} />
+        </div>
+        <div id="capture-back-node" style={{ width: '580px', height: '367px', backgroundColor: '#ffffff', marginTop: '20px' }}>
+          <AlumniICard data={cardData} side="back" securityProtected={false} />
+        </div>
+      </div>
     </div>
   );
 }
