@@ -74,10 +74,11 @@ export default function Hero({ stats, isAuthenticated }: HeroProps) {
           className="mt-8 sm:mt-12 relative max-w-4xl mx-auto"
         >
           <div className="relative rounded-2xl overflow-hidden shadow-sm bg-white border border-slate-200 p-1.5 sm:p-2">
-            <img 
-              src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-              alt="IITRAM Community" 
+            <img
+              src="/images/136743c964bbf4569aec074e5b7004a0.webp"
+              alt="IITRAM campus"
               className="w-full h-[200px] xs:h-[260px] sm:h-[340px] md:h-[400px] object-cover rounded-xl"
+              loading="lazy"
             />
             
             {/* Stats card over image */}
