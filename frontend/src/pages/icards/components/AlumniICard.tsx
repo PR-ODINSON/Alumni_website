@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { QrCode, RotateCw } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { toPng } from 'html-to-image';
 
 // Self-contained crisp SVG QR Code component (0 external network/bundler dependencies)
 function InlineQRCode({ className = 'w-full h-full' }: { className?: string; size?: number }) {
@@ -120,9 +121,56 @@ export default function AlumniICard({
   side = 'auto',
 }: AlumniICardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const data = OFFICIAL_CARD_DATA; // Enforce frozen immutable record
+  const offscreenFrontRef = useRef<HTMLDivElement>(null);
+  const offscreenBackRef = useRef<HTMLDivElement>(null);
+  const [tamperKey, setTamperKey] = useState(0);
+  const [frontCanvasUrl, setFrontCanvasUrl] = useState<string | null>(null);
+  const [backCanvasUrl, setBackCanvasUrl] = useState<string | null>(null);
+  const data = Object.freeze(propsData || OFFICIAL_CARD_DATA);
 
-  // Silent ContextMenu & Shortcut protection without toast spam
+  // Generate high-resolution 3x flattened Canvas PNG snapshots for anti-inspect protection
+  useEffect(() => {
+    let isMounted = true;
+    const generateCanvasSnapshots = async () => {
+      try {
+        if (offscreenFrontRef.current) {
+          const frontUrl = await toPng(offscreenFrontRef.current, {
+            quality: 1,
+            pixelRatio: 3,
+            filter: (node) => {
+              if (!node.tagName) return true;
+              const tag = node.tagName.toUpperCase();
+              return tag !== 'IFRAME' && tag !== 'EMBED' && tag !== 'SCRIPT';
+            },
+          });
+          if (isMounted) setFrontCanvasUrl(frontUrl);
+        }
+
+        if (offscreenBackRef.current) {
+          const backUrl = await toPng(offscreenBackRef.current, {
+            quality: 1,
+            pixelRatio: 3,
+            filter: (node) => {
+              if (!node.tagName) return true;
+              const tag = node.tagName.toUpperCase();
+              return tag !== 'IFRAME' && tag !== 'EMBED' && tag !== 'SCRIPT';
+            },
+          });
+          if (isMounted) setBackCanvasUrl(backUrl);
+        }
+      } catch (err) {
+        console.error('Canvas snapshot generation error:', err);
+      }
+    };
+
+    const timer = setTimeout(generateCanvasSnapshots, 100);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [data, tamperKey]);
+
+  // Active MutationObserver & Event protection against DevTools DOM inspection / editing
   useEffect(() => {
     if (!securityProtected || !cardRef.current) return;
     const targetNode = cardRef.current;
@@ -141,14 +189,36 @@ export default function AlumniICard({
       }
     };
 
+    const observer = new MutationObserver((mutations) => {
+      let isTampered = false;
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList' || mutation.type === 'characterData' || mutation.type === 'attributes') {
+          isTampered = true;
+          break;
+        }
+      }
+      if (isTampered) {
+        // Silently reset and re-render card state without annoying toast alerts
+        setTamperKey((prev) => prev + 1);
+      }
+    });
+
+    observer.observe(targetNode, {
+      attributes: true,
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
+
     targetNode.addEventListener('contextmenu', handleContextMenu);
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      observer.disconnect();
       targetNode.removeEventListener('contextmenu', handleContextMenu);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [securityProtected]);
+  }, [securityProtected, tamperKey]);
 
   const handleCopyId = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -159,13 +229,30 @@ export default function AlumniICard({
   // ══════════════════════════════════════════════════════════════════════════
   // 1. FRONT SIDE MARKUP (EXACT 1:1 REPLICA MATCH WITH ZERO CUTOFFS)
   // ══════════════════════════════════════════════════════════════════════════
-  const renderFrontCard = () => (
-    <div
-      className="front-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none"
-      style={{
-        boxShadow: '0 20px 40px -15px rgba(122, 21, 43, 0.18), 0 0 1px 1px rgba(0,0,0,0.05)',
-      }}
-    >
+  const renderFrontCard = () => {
+    if (securityProtected && frontCanvasUrl) {
+      return (
+        <div className="front-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden select-none">
+          <img
+            src={frontCanvasUrl}
+            alt="Official IITRAM Alumni Identity Card - Front View"
+            className="w-full h-full object-cover pointer-events-none select-none"
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
+          />
+        </div>
+      );
+    }
+    return (
+      <div
+        className="front-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none"
+        style={{
+          boxShadow: '0 20px 40px -15px rgba(122, 21, 43, 0.18), 0 0 1px 1px rgba(0,0,0,0.05)',
+        }}
+      >
+      {/* Invisible Security Protection Layer (Catches Inspect Element Picker) */}
+      <div className="absolute inset-0 z-30 bg-transparent pointer-events-auto select-none" />
+
       {/* Top Gold Accent Border */}
       <div className="h-1.5 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
 
@@ -208,14 +295,14 @@ export default function AlumniICard({
         {/* ── MAIN BODY SECTION ─────────────────────────────────────────── */}
         <div className="flex items-stretch gap-3 sm:gap-4 py-2 sm:py-3 my-auto">
           
-          {/* Photo Frame (Left Box - SHOWING OFFICIAL IITRAM LOGO AS REQUESTED) */}
-          <div className="relative w-22 sm:w-32 h-26 sm:h-36 rounded-xs border-2 border-[#7A152B] bg-slate-50 shrink-0 overflow-hidden shadow-2xs flex flex-col items-center justify-center text-center p-1 group">
+          {/* Photo Frame (Left Box - Showing Convocation Student Photo / Logo) */}
+          <div className="relative w-22 sm:w-32 h-26 sm:h-36 rounded-xs border-2 border-[#7A152B] bg-slate-50 shrink-0 overflow-hidden shadow-2xs flex flex-col items-center justify-center text-center p-0.5 group">
             <img
-              src="/images/iitram-logo.png"
-              alt="IITRAM Official Logo"
-              className="w-full h-full object-contain p-1"
+              src={data.photoUrl || '/images/iitram-logo.png'}
+              alt={data.fullName || 'Alumni Photo'}
+              className="w-full h-full object-cover rounded-xs"
               onError={(e) => {
-                (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/en/2/25/Institute_of_Infrastructure_Technology_Research_and_Management_logo.png';
+                (e.target as HTMLImageElement).src = '/images/iitram-logo.png';
               }}
             />
           </div>
@@ -307,18 +394,35 @@ export default function AlumniICard({
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   // ══════════════════════════════════════════════════════════════════════════
   // 2. BACK SIDE MARKUP (EXACT 1:1 REPLICA MATCH WITH REAL QR CODE)
   // ══════════════════════════════════════════════════════════════════════════
-  const renderBackCard = () => (
-    <div
-      className="back-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none"
-      style={{
-        boxShadow: '0 20px 40px -15px rgba(122, 21, 43, 0.18), 0 0 1px 1px rgba(0,0,0,0.05)',
-      }}
-    >
+  const renderBackCard = () => {
+    if (securityProtected && backCanvasUrl) {
+      return (
+        <div className="back-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden select-none">
+          <img
+            src={backCanvasUrl}
+            alt="Official IITRAM Alumni Identity Card - Back View"
+            className="w-full h-full object-cover pointer-events-none select-none"
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
+          />
+        </div>
+      );
+    }
+    return (
+      <div
+        className="back-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none"
+        style={{
+          boxShadow: '0 20px 40px -15px rgba(122, 21, 43, 0.18), 0 0 1px 1px rgba(0,0,0,0.05)',
+        }}
+      >
+      {/* Invisible Security Protection Layer (Catches Inspect Element Picker) */}
+      <div className="absolute inset-0 z-30 bg-transparent pointer-events-auto select-none" />
       {/* Top Gold Accent Border */}
       <div className="h-1.5 sm:h-2 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
 
@@ -402,6 +506,7 @@ export default function AlumniICard({
       </div>
     </div>
   );
+};
 
   // If explicit side is requested (e.g. side-by-side mode)
   if (side === 'front') {
@@ -476,6 +581,90 @@ export default function AlumniICard({
         >
           {isFlipped ? 'View Front Side' : 'View Back Side'}
         </button>
+      </div>
+
+      {/* Offscreen Raw Templates for High-Res 3x Canvas Snapshotting */}
+      <div
+        className="pointer-events-none opacity-0 fixed top-0 left-0 -z-50 overflow-hidden"
+        style={{ width: '580px', height: '367px', pointerEvents: 'none' }}
+      >
+        <div ref={offscreenFrontRef} style={{ width: '580px', height: '367px', backgroundColor: '#ffffff' }}>
+          {/* Raw Front Layout */}
+          <div className="front-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none">
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
+            <div className="relative flex-1 flex flex-col justify-between pl-3 sm:pl-4 pr-11 sm:pr-14 pt-2.5 sm:pt-3 pb-0">
+              <div>
+                <div className="flex items-center gap-2.5 sm:gap-3.5 pb-2">
+                  <div className="w-11 h-11 sm:w-15 sm:h-15 shrink-0 rounded-full p-0.5 bg-white shadow-2xs border border-slate-100 flex items-center justify-center">
+                    <img src="/images/iitram-logo.png" alt="IITRAM Logo" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-sm sm:text-xl font-black tracking-tight text-[#7A152B] font-serif leading-tight uppercase">IITRAM ALUMNI ASSOCIATION</h2>
+                    <p className="text-[9px] sm:text-xs font-semibold text-slate-800 leading-tight mt-0.5">Institute of Infrastructure, Technology, Research and Management</p>
+                    <p className="text-[8px] sm:text-[10px] font-medium text-slate-500 leading-tight mt-0.5 tracking-tight truncate">Ahmedabad, Gujarat &nbsp;|&nbsp; www.iitram.ac.in &nbsp;|&nbsp; alumni@iitram.ac.in</p>
+                  </div>
+                </div>
+                <div className="h-[3px] w-full bg-[#C59B27] rounded-full shadow-2xs" />
+              </div>
+              <div className="flex items-stretch gap-3 sm:gap-4 py-2 sm:py-3 my-auto">
+                <div className="relative w-22 sm:w-32 h-26 sm:h-36 rounded-xs border-2 border-[#7A152B] bg-slate-50 shrink-0 overflow-hidden shadow-2xs flex flex-col items-center justify-center text-center p-0.5 group">
+                  <img src={data.photoUrl || '/images/iitram-logo.png'} alt={data.fullName} className="w-full h-full object-cover rounded-xs" />
+                </div>
+                <div className="flex-1 flex flex-col justify-center min-w-0 pr-1">
+                  <span className="text-[9px] sm:text-[11px] font-bold text-[#C59B27] uppercase tracking-widest block mb-0.5">ALUMNI MEMBER</span>
+                  <h1 className="text-sm sm:text-xl font-black text-[#7A152B] uppercase tracking-tight leading-tight truncate mb-1.5 sm:mb-2 font-serif">{data.fullName}</h1>
+                  <div className="space-y-0.5 sm:space-y-1 text-[8.5px] sm:text-[11.5px] font-semibold text-slate-700">
+                    <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Degree</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-bold text-slate-900 truncate">{data.degree}</span></div>
+                    <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Department</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-bold text-slate-900 truncate">{data.department}</span></div>
+                    <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Batch</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-bold text-slate-900 truncate">{data.batch}</span></div>
+                    <div className="flex items-center"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Membership No.</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-extrabold text-[#7A152B] tracking-tight font-mono text-[8.5px] sm:text-[10.5px]">{data.membershipNo}</span></div>
+                    <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Date of Issue</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-semibold text-slate-800">{data.dateOfIssue}</span></div>
+                  </div>
+                </div>
+              </div>
+              <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-3 sm:pl-4 pr-10 sm:pr-14 py-1 sm:py-1.5 flex items-center justify-between shadow-inner">
+                <span className="text-[8.5px] sm:text-xs font-black uppercase tracking-wider text-white shrink-0">{data.membershipType || 'LIFE MEMBER'}</span>
+                <span className="text-[8px] sm:text-[10px] font-bold text-amber-200/90 tracking-tight shrink-0">Issuing Authority</span>
+              </div>
+              <div className="absolute top-0 bottom-0 right-0 flex h-full pointer-events-none">
+                <div className="w-2 sm:w-2.5 h-full bg-[#C59B27]" />
+                <div className="w-7 sm:w-9 h-full bg-[#7A152B]" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div ref={offscreenBackRef} style={{ width: '580px', height: '367px', backgroundColor: '#ffffff', marginTop: '20px' }}>
+          {/* Raw Back Layout */}
+          <div className="back-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none">
+            <div className="h-1.5 sm:h-2 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
+            <div className="bg-[#7A152B] text-white py-2.5 sm:py-3.5 px-4 text-center shadow-2xs">
+              <h2 className="text-sm sm:text-xl font-black tracking-wider uppercase font-serif">IITRAM ALUMNI ASSOCIATION</h2>
+            </div>
+            <div className="px-4 sm:px-7 py-2 sm:py-3 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 className="text-xs sm:text-sm font-black text-[#7A152B] uppercase tracking-wide mb-1.5 sm:mb-2">MEMBERSHIP PRIVILEGES</h3>
+                <ul className="space-y-1 sm:space-y-2 text-[9px] sm:text-[11.5px] font-semibold text-slate-800">
+                  <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Access to alumni networking and events</span></li>
+                  <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Participation in institute/alumni activities</span></li>
+                  <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Access to alumni communications and updates</span></li>
+                  <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Opportunities for professional and academic networking</span></li>
+                </ul>
+              </div>
+              <div className="my-1 sm:my-1.5">
+                <div className="h-[2.5px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1" />
+                <p className="text-[8px] sm:text-[10px] font-medium text-slate-700 text-center">This card certifies that the holder is a registered member of the IITRAM Alumni Association.</p>
+              </div>
+              <div className="flex items-center justify-between pt-0.5 pb-0.5">
+                <span className="text-[9px] sm:text-[11px] font-bold text-[#7A152B]">Verify membership</span>
+                <div className="w-11 sm:w-15 h-9 sm:h-11 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-2xs">
+                  <InlineQRCode className="w-full h-full text-[#7A152B]" />
+                </div>
+                <span className="text-[9px] sm:text-[11px] font-bold text-[#7A152B]">www.iitram.ac.in</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

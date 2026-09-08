@@ -1,32 +1,56 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  Download, ShieldCheck, QrCode, Lock, CheckCircle2, LayoutGrid, Layers, Sparkles, FileText
+  Download, ShieldCheck, QrCode, Lock, CheckCircle2, LayoutGrid, Layers, Sparkles, FileText, AlertCircle, HeartHandshake, LogIn
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 import AlumniICard, { type ICardData } from './components/AlumniICard';
 import ICardVerifierModal from './components/ICardVerifierModal';
+import { useAuthStore } from '../../stores/authStore';
 
 interface ICardsPageProps {
   mode?: string;
 }
 
 export default function ICardsPage({ mode }: ICardsPageProps) {
-  // Direct default card data for Hemanshu Tala ID 2310400011011
-  const [cardData] = useState<ICardData>({
-    fullName: 'HEMANSHU TALA',
-    degree: 'B.Tech',
-    department: 'Computer Engineering',
-    batch: '2023 - 2027',
-    membershipNo: 'ALUM/IITRAM/2310400011011',
-    dateOfIssue: '07/09/2026',
-    membershipType: 'LIFE MEMBER',
-    photoUrl: '/images/iitram-logo.png',
-    email: 'hemanshu.tala@iitram.ac.in',
-    phone: '+91 98765 43210',
-    bloodGroup: 'O+',
-  });
+  const { user, isAuthenticated } = useAuthStore();
+
+  // Dynamic card data derived from authenticated donor user or default record
+  const cardData: ICardData = React.useMemo(() => {
+    if (user) {
+      const uAny = user as any;
+      const fullName = (user.fullName || `${user.firstName} ${user.lastName}`).toUpperCase();
+      const enr = user.enrollmentNumber || '2310400011011';
+      return {
+        fullName,
+        degree: uAny.degreeType || 'B.Tech',
+        department: uAny.branch || uAny.department || 'Mechanical Engineering',
+        batch: uAny.graduationYear ? `${uAny.graduationYear - 4} - ${uAny.graduationYear}` : '2023 - 2027',
+        membershipNo: `ALUM/IITRAM/${enr}`,
+        dateOfIssue: user.donationDate ? new Date(user.donationDate).toLocaleDateString('en-GB') : '07/09/2026',
+        membershipType: 'LIFE MEMBER',
+        photoUrl: user.avatar || '/images/iitram-logo.png',
+        email: user.email,
+        phone: user.phone || '+91 98765 43210',
+        bloodGroup: 'O+',
+      };
+    }
+    return {
+      fullName: 'HEMANSHU TALA',
+      degree: 'B.Tech',
+      department: 'Computer Engineering',
+      batch: '2023 - 2027',
+      membershipNo: 'ALUM/IITRAM/2310400011011',
+      dateOfIssue: '07/09/2026',
+      membershipType: 'LIFE MEMBER',
+      photoUrl: '/images/iitram-logo.png',
+      email: 'hemanshu.tala@iitram.ac.in',
+      phone: '+91 98765 43210',
+      bloodGroup: 'O+',
+    };
+  }, [user]);
 
   const [viewMode, setViewMode] = useState<'side-by-side' | 'flip'>('side-by-side');
   const [isFlipped, setIsFlipped] = useState(false);
@@ -195,6 +219,65 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
       toast.error(`Failed to download Back image: ${err instanceof Error ? err.message : String(err)}`, { id: 'dl-back' });
     }
   };
+
+  // RESTRICTED ACCESS GUARD: Only allow users who have donated (hasDonated === true)
+  if (!isAuthenticated || !user?.hasDonated) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center p-4">
+        <div className="max-w-lg w-full bg-white rounded-3xl p-8 border border-slate-200 shadow-xl text-center space-y-6">
+          <div className="w-20 h-20 bg-amber-50 rounded-3xl mx-auto flex items-center justify-center border border-amber-200 text-[#7A152B] shadow-inner">
+            <Lock size={38} className="text-[#7A152B]" />
+          </div>
+          <div>
+            <span className="px-3 py-1 bg-[#7A152B]/10 text-[#7A152B] rounded-full text-xs font-extrabold uppercase tracking-wider inline-flex items-center gap-1.5 mb-3">
+              <ShieldCheck size={14} className="text-[#C59B27]" /> Donor Restricted Feature
+            </span>
+            <h2 className="text-2xl font-black text-slate-900 font-display tracking-tight">
+              Alumni ID Card Access Restricted
+            </h2>
+            <p className="text-sm text-slate-600 mt-2 leading-relaxed font-medium">
+              Official Digital Alumni Identity Cards are exclusively reserved for verified <strong>Alumni Donors</strong> who have contributed to the IITRAM Alumni Association Fund.
+            </p>
+          </div>
+
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 text-left text-xs text-slate-600 space-y-1">
+            {isAuthenticated ? (
+              <>
+                <p className="font-bold text-slate-800 flex items-center gap-1.5">
+                  <AlertCircle size={14} className="text-amber-600" /> Account: {user?.fullName} ({user?.email})
+                </p>
+                <p className="text-slate-500">
+                  No donation record is associated with your current account. If you contributed, please sign in using your donor Enrollment Number.
+                </p>
+              </>
+            ) : (
+              <p className="text-slate-600 text-center font-medium">
+                Please log in with your <strong>Enrollment Number</strong> and password to unlock your official Alumni ID Card.
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            {!isAuthenticated ? (
+              <Link
+                to="/login"
+                className="flex-1 py-3 px-4 bg-[#7A152B] hover:bg-[#600f21] text-white font-bold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2"
+              >
+                <LogIn size={16} /> Sign In with Enrollment No.
+              </Link>
+            ) : (
+              <Link
+                to="/feed"
+                className="flex-1 py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2"
+              >
+                Return to Community Feed
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/60 pb-16 pt-6">

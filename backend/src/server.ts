@@ -76,6 +76,29 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
 
+// Static Assets (Convocation Photos & Uploads with Auto-Sync)
+import path from 'path';
+import fs from 'fs';
+
+const convSource = path.join(__dirname, '../../20260903_8th_Convocation_Students_Images');
+const convDest = path.join(__dirname, '../../frontend/public/convocation_photos');
+if (fs.existsSync(convSource)) {
+  try {
+    fs.mkdirSync(convDest, { recursive: true });
+    fs.readdirSync(convSource).forEach((file) => {
+      if (/\.(jpg|jpeg|png|webp)$/i.test(file)) {
+        fs.copyFileSync(path.join(convSource, file), path.join(convDest, file));
+      }
+    });
+  } catch (err) {
+    console.error('Error auto-syncing photos:', err);
+  }
+}
+
+app.use('/convocation_photos', express.static(convSource));
+app.use('/convocation_photos', express.static(convDest));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 // Rate Limiting
 app.use('/api/', rateLimiter);
 

@@ -8,19 +8,23 @@ import { sendEmail, emailTemplates } from '../utils/email';
 import { AppError, asyncHandler } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
 
-const sendTokenResponse = (user: any, statusCode: number, res: Response): void => {
+const sendTokenResponse = async (user: any, statusCode: number, res: Response): Promise<void> => {
   const accessToken = generateAccessToken(user._id.toString(), user.role);
   const refreshToken = generateRefreshToken(user._id.toString());
 
-  user.refreshToken = refreshToken;
-  user.lastLogin = new Date();
-  user.loginCount = (user.loginCount || 0) + 1;
-  user.save({ validateBeforeSave: false });
+  await User.findByIdAndUpdate(user._id, {
+    refreshToken,
+    lastLogin: new Date(),
+    $inc: { loginCount: 1 },
+  });
+
+  const alumniProfile = await Alumni.findOne({ user: user._id }).lean();
 
   const userData = {
     _id: user._id,
     firstName: user.firstName,
     lastName: user.lastName,
+    fullName: user.fullName || `${user.firstName} ${user.lastName}`,
     email: user.email,
     role: user.role,
     avatar: user.avatar,
@@ -35,6 +39,14 @@ const sendTokenResponse = (user: any, statusCode: number, res: Response): void =
     verificationStatus: user.verificationStatus,
     mentorStatus: user.mentorStatus,
     notificationPreferences: user.notificationPreferences,
+    enrollmentNumber: user.enrollmentNumber || alumniProfile?.enrollmentNumber,
+    hasDonated: !!(user.hasDonated || alumniProfile?.hasDonated),
+    donationAmount: user.donationAmount || alumniProfile?.donationAmount || 0,
+    donationDate: user.donationDate,
+    donationPurpose: user.donationPurpose,
+    degreeType: alumniProfile?.degreeType || 'B.Tech',
+    department: alumniProfile?.department || 'Mechanical Engineering',
+    graduationYear: alumniProfile?.graduationYear || 2023,
   };
 
   res.status(statusCode).json({
@@ -121,17 +133,38 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response, next
   user.emailVerificationExpires = undefined;
   await user.save({ validateBeforeSave: false });
 
-  sendTokenResponse(user, 200, res);
+  await sendTokenResponse(user, 200, res);
 });
 
 export const login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
+  const { email, password, identifier } = req.body;
+  const loginKey = (identifier || email || '').trim();
 
-  if (!email || !password) return next(new AppError('Please provide email and password.', 400));
+  if (!loginKey || !password) return next(new AppError('Please provide email or enrollment number and password.', 400));
 
-  const user = await User.findOne({ email }).select('+password');
+  let user = await User.findOne({
+    $or: [
+      { email: loginKey.toLowerCase() },
+      { enrollmentNumber: loginKey },
+      { enrollmentNumber: loginKey.toUpperCase() },
+      { enrollmentNumber: loginKey.toLowerCase() }
+    ]
+  }).select('+password');
+
+  if (!user) {
+    const alumni = await Alumni.findOne({
+      $or: [
+        { enrollmentNumber: loginKey },
+        { enrollmentNumber: loginKey.toUpperCase() }
+      ]
+    });
+    if (alumni && alumni.user) {
+      user = await User.findById(alumni.user).select('+password');
+    }
+  }
+
   if (!user || !(await user.comparePassword(password))) {
-    return next(new AppError('Invalid email or password.', 401));
+    return next(new AppError('Invalid email/enrollment number or password.', 401));
   }
 
   if (!user.isEmailVerified) {
@@ -142,7 +175,7 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
     return next(new AppError(`Account suspended: ${user.banReason || 'Contact support.'}`, 403));
   }
 
-  sendTokenResponse(user, 200, res);
+  await sendTokenResponse(user, 200, res);
 });
 
 export const googleCallback = asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -225,7 +258,7 @@ export const resetPassword = asyncHandler(async (req: Request, res: Response, ne
   user.refreshToken = undefined;
   await user.save();
 
-  sendTokenResponse(user, 200, res);
+  await sendTokenResponse(user, 200, res);
 });
 
 export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {

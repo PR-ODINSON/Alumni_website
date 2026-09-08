@@ -21,8 +21,15 @@ router.post('/register', authLimiter, [
 ], validateRequest, register);
 
 router.post('/login', authLimiter, [
-  body('email').isEmail().withMessage('Valid email required'),
+  body('email').optional().notEmpty(),
+  body('identifier').optional().notEmpty(),
   body('password').notEmpty().withMessage('Password required'),
+  body().custom((_, { req }) => {
+    if (!req.body.email && !req.body.identifier) {
+      throw new Error('Email or Enrollment Number is required');
+    }
+    return true;
+  }),
 ], validateRequest, login);
 
 router.get('/verify-email/:token', verifyEmail);

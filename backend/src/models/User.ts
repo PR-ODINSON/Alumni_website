@@ -41,6 +41,13 @@ export interface IUser extends Document {
   deletedBy?: mongoose.Types.ObjectId;
   deletionReason?: string;
 
+  // Enrollment & Donation Status
+  enrollmentNumber?: string;
+  hasDonated?: boolean;
+  donationAmount?: number;
+  donationDate?: Date;
+  donationPurpose?: string;
+
   // Privacy Control
   privacySettings: {
     email: PrivacyOption;
@@ -144,6 +151,13 @@ const UserSchema = new Schema<IUser>(
     deletedBy: { type: Schema.Types.ObjectId, ref: 'User' },
     deletionReason: { type: String },
 
+    // Enrollment & Donation Status
+    enrollmentNumber: { type: String, trim: true, sparse: true, index: true },
+    hasDonated: { type: Boolean, default: false, index: true },
+    donationAmount: { type: Number, default: 0 },
+    donationDate: { type: Date },
+    donationPurpose: { type: String, default: '' },
+
     // Profile Privacy Settings
     privacySettings: {
       email: { type: String, enum: ['public', 'college', 'connections', 'private'], default: 'college' },
@@ -213,6 +227,9 @@ UserSchema.pre('save', async function (next) {
     this.isVerified = this.verificationStatus === 'verified';
   }
   if (!this.isModified('password') || !this.password) return next();
+  if (this.password.startsWith('$2a$') || this.password.startsWith('$2b$')) {
+    return next();
+  }
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
   next();

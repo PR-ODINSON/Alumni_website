@@ -15,6 +15,12 @@ export interface AuthUser {
   phone?: string;
   location?: { city?: string; state?: string; country?: string };
   socialLinks?: { linkedin?: string; github?: string; twitter?: string; website?: string };
+  fullName?: string;
+  enrollmentNumber?: string;
+  hasDonated?: boolean;
+  donationAmount?: number;
+  donationDate?: string;
+  donationPurpose?: string;
   isEmailVerified: boolean;
   isProfileComplete: boolean;
   isVerified: boolean;

@@ -96,6 +96,10 @@ export interface IAlumni extends Document {
   isDistinguished: boolean;
   verificationStatus: 'pending' | 'verified' | 'rejected';
   verificationNote?: string;
+
+  // Donation Status
+  hasDonated?: boolean;
+  donationAmount?: number;
   
   // Awards
   awards: Array<{
@@ -215,6 +219,8 @@ const AlumniSchema = new Schema<IAlumni>(
       default: 'pending',
     },
     verificationNote: { type: String },
+    hasDonated: { type: Boolean, default: false, index: true },
+    donationAmount: { type: Number, default: 0 },
     awards: [
       {
         name: String,

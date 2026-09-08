@@ -123,3 +123,9 @@ backend/node_modules
 # Frontend specific
 frontend/dist
 frontend/node_modules
+
+# Scratch scripts & sensitive credentials
+check_pwd.py
+alumni_credentials.csv
+alumni_donors_data.json
+

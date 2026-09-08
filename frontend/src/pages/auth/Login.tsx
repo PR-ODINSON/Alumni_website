@@ -9,7 +9,7 @@ import { authApi } from '../../lib/api';
 import { useAuthStore } from '../../stores/authStore';
 
 const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
+  email: z.string().min(1, 'Please enter your email or enrollment number'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const res = await authApi.login(data);
+      const res = await authApi.login({ identifier: data.email, password: data.password });
       setAuth(res.data.user, res.data.accessToken, res.data.refreshToken);
       toast.success(`Welcome back, ${res.data.user.firstName}!`);
       navigate('/feed');
@@ -46,7 +46,7 @@ export default function LoginPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold font-display text-slate-900 mb-2 tracking-tight">Welcome Back</h1>
-        <p className="text-sm text-slate-500">Sign in to your IITRAM Alumni account</p>
+        <p className="text-sm text-slate-500">Sign in with your Email or Enrollment Number</p>
       </div>
 
       {/* Google OAuth */}
@@ -68,18 +68,18 @@ export default function LoginPage() {
           <div className="w-full border-t border-slate-200/60" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-white/80 border border-slate-100 px-4 py-0.5 rounded-full text-xs text-slate-400 font-semibold shadow-2xs">or continue with email</span>
+          <span className="bg-white/80 border border-slate-100 px-4 py-0.5 rounded-full text-xs text-slate-400 font-semibold shadow-2xs">or sign in with credentials</span>
         </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">Email Address</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1.5">Email Address or Enrollment Number</label>
           <input
             {...register('email')}
-            type="email"
+            type="text"
             className={`input ${errors.email ? 'input-error' : ''}`}
-            placeholder="you@example.com"
+            placeholder="e.g. 161030011004 or name@iitram.ac.in"
           />
           {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
         </div>
