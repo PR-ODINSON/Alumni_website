@@ -375,26 +375,28 @@ export default function AlumniICard({
         </div>
 
         {/* ── FOOTER BANNER (Reference style: 2 signatures) ─────────────── */}
-        <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-4 sm:pl-6 pr-12 sm:pr-16 py-2 flex items-center justify-between shadow-inner">
+        <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-4 sm:pl-6 pr-14 sm:pr-18 py-1.5 sm:py-2 flex items-center justify-between shadow-inner">
 
-          {/* Left: Issuing Authority */}
+          {/* Left: Issuing Authority / Hon. Secretary */}
           <div className="flex flex-col items-start shrink-0">
             <svg viewBox="0 0 60 16" className="w-12 sm:w-16 h-3.5 sm:h-4" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3,12 C6,5 10,3 13,8 C15,11 17,9 19,6 C21,4 23,7 25,10 C27,14 29,8 32,5 C34,3 36,6 38,10" />
               <path d="M3,14 Q20,13 38,14" strokeWidth="0.5" opacity="0.4" />
             </svg>
             <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-            <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90">Issuing Authority</span>
+            <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90 leading-none">Issuing Authority</span>
+            <span className="text-[5.5px] sm:text-[7px] font-medium text-amber-200/90 leading-tight mt-0.5">Hon. Secretary</span>
           </div>
 
-          {/* Right: Card Holder Signature */}
+          {/* Right: Authorized Signatory / Hon. Dean */}
           <div className="flex flex-col items-end shrink-0">
             <svg viewBox="0 0 60 16" className="w-12 sm:w-16 h-3.5 sm:h-4" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3,12 C5,4 8,3 11,6 C13,9 15,11 17,8 C19,5 21,3 24,7 C26,11 28,6 31,4 C34,3 37,5 39,9 C41,13 43,8 46,6 C48,4 51,8 54,11" />
               <path d="M3,14 Q28,13 54,14" strokeWidth="0.5" opacity="0.4" />
             </svg>
             <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-            <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90">Signature of Card Holder</span>
+            <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90 leading-none">Authorized Signatory</span>
+            <span className="text-[5.5px] sm:text-[7px] font-medium text-amber-200/90 leading-tight mt-0.5">Hon. Dean</span>
           </div>
 
         </div>
@@ -640,14 +642,15 @@ export default function AlumniICard({
                   </div>
                 </div>
               </div>
-              <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-4 sm:pl-6 pr-12 sm:pr-16 py-2 flex items-center justify-between shadow-inner">
+              <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-4 sm:pl-6 pr-14 sm:pr-18 py-1.5 sm:py-2 flex items-center justify-between shadow-inner">
                 <div className="flex flex-col items-start shrink-0">
                   <svg viewBox="0 0 60 16" className="w-12 sm:w-16 h-3.5 sm:h-4" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M3,12 C6,5 10,3 13,8 C15,11 17,9 19,6 C21,4 23,7 25,10 C27,14 29,8 32,5 C34,3 36,6 38,10" />
                     <path d="M3,14 Q20,13 38,14" strokeWidth="0.5" opacity="0.4" />
                   </svg>
                   <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-                  <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90">Issuing Authority</span>
+                  <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90 leading-none">Issuing Authority</span>
+                  <span className="text-[5.5px] sm:text-[7px] font-medium text-amber-200/90 leading-tight mt-0.5">Hon. Secretary</span>
                 </div>
                 <div className="flex flex-col items-end shrink-0">
                   <svg viewBox="0 0 60 16" className="w-12 sm:w-16 h-3.5 sm:h-4" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
@@ -655,7 +658,8 @@ export default function AlumniICard({
                     <path d="M3,14 Q28,13 54,14" strokeWidth="0.5" opacity="0.4" />
                   </svg>
                   <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-                  <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90">Signature of Card Holder</span>
+                  <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90 leading-none">Authorized Signatory</span>
+                  <span className="text-[5.5px] sm:text-[7px] font-medium text-amber-200/90 leading-tight mt-0.5">Hon. Dean</span>
                 </div>
               </div>
               <div className="absolute top-0 bottom-0 right-0 flex h-full pointer-events-none">
