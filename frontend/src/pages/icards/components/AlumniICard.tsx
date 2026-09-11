@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { QrCode, RotateCw, Mail, Phone } from 'lucide-react';
+import { QrCode, RotateCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { toPng } from 'html-to-image';
 import { QRCodeSVG } from 'qrcode.react';
@@ -450,13 +450,13 @@ export default function AlumniICard({
       </div>
 
       {/* Body Section: Membership Privileges */}
-      <div className="px-4 sm:px-7 py-2 sm:py-3 flex-1 flex flex-col justify-between">
+      <div className="px-4 sm:px-7 pt-2 sm:pt-3 pb-1 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-xs sm:text-sm font-black text-[#7A152B] uppercase tracking-wide mb-1.5 sm:mb-2">
+          <h3 className="text-xs sm:text-sm font-black text-[#7A152B] uppercase tracking-wide mb-1.5 sm:mb-2 font-serif">
             MEMBERSHIP PRIVILEGES
           </h3>
 
-          <ul className="space-y-1 sm:space-y-2 text-[9px] sm:text-[11.5px] font-semibold text-slate-800">
+          <ul className="space-y-1 sm:space-y-1.5 text-[9px] sm:text-[11.5px] font-semibold text-slate-800">
             <li className="flex items-start gap-1.5">
               <span className="text-[#7A152B] font-bold text-xs leading-none">•</span>
               <span>Access to alumni networking and events</span>
@@ -476,60 +476,50 @@ export default function AlumniICard({
           </ul>
         </div>
 
-        {/* Horizontal Gold Line Separator */}
-        <div className="my-1 sm:my-1.5">
-          <div className="h-[2.5px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1" />
-          <p className="text-[8px] sm:text-[10px] font-medium text-slate-700 text-center">
+        {/* Certification Statement */}
+        <div className="my-1">
+          <div className="h-[2px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1" />
+          <p className="text-[7.5px] sm:text-[9.5px] font-medium text-slate-600 text-center">
             This card certifies that the holder is a registered member of IITRAM Alumni Relations.
           </p>
         </div>
+      </div>
 
-        {/* Footer Banner: Maroon with Gold Accent Line, Icons & QR Code */}
-        <div className="-mx-4 sm:-mx-7 bg-[#7A152B] border-t-2 border-[#C59B27] text-white py-1.5 sm:py-2.5 px-4 sm:px-6 relative flex items-center justify-between shadow-inner">
+      {/* ── BACK FOOTER BANNER (Burgundy Bar with Gold Accent Top Line) ──── */}
+      <div className="relative bg-[#7A152B] border-t-2 border-[#C59B27] text-white px-4 sm:px-6 py-1.5 flex items-center justify-between shadow-inner">
 
-          {/* Left: Email with Mail Icon */}
-          <div className="flex items-center gap-1.5 min-w-0 max-w-[38%]">
-            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
-              <Mail className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-300" />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-[5.5px] sm:text-[7px] font-bold text-amber-200/90 uppercase tracking-wider leading-none">Email</span>
-              <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white truncate leading-tight mt-0.5">
-                {data.email || 'alumni@iitram.ac.in'}
-              </span>
-            </div>
-          </div>
-
-          {/* Center: QR Code in Gold Frame (100% Dead Center) */}
-          <div
-            onClick={(e) => { e.stopPropagation(); onOpenVerify?.(); }}
-            className="absolute left-1/2 -translate-x-1/2 w-10 sm:w-13 h-9 sm:h-11 border-2 border-[#C59B27] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded shadow-md cursor-pointer hover:scale-105 transition-transform"
-            title="Click to verify QR code"
-          >
-            <QRCodeSVG
-              value={data.membershipNo || 'ALUM/IITRAM/231040011011'}
-              size={44}
-              bgColor="#FDFBF7"
-              fgColor="#7A152B"
-              level="M"
-              style={{ width: '100%', height: '100%' }}
-            />
-          </div>
-
-          {/* Right: Mobile with Phone Icon */}
-          <div className="flex items-center gap-1.5 min-w-0 max-w-[38%] shrink-0">
-            <div className="flex flex-col items-end min-w-0">
-              <span className="text-[5.5px] sm:text-[7px] font-bold text-amber-200/90 uppercase tracking-wider leading-none">Mobile</span>
-              <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white leading-tight mt-0.5">
-                {data.phone || '+91 98765 43210'}
-              </span>
-            </div>
-            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
-              <Phone className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-300" />
-            </div>
-          </div>
-
+        {/* Left: Email */}
+        <div className="flex flex-col items-start min-w-0 max-w-[38%]">
+          <span className="text-[5.5px] sm:text-[7.5px] font-bold text-amber-200/80 uppercase tracking-wider">Email</span>
+          <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white truncate leading-tight w-full">
+            {data.email || 'alumni@iitram.ac.in'}
+          </span>
         </div>
+
+        {/* Center: QR Code (100% Dead Center Box with Gold Border) */}
+        <div
+          onClick={(e) => { e.stopPropagation(); onOpenVerify?.(); }}
+          className="absolute left-1/2 -translate-x-1/2 w-10 sm:w-13 h-9 sm:h-11 border-2 border-[#C59B27] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-md cursor-pointer hover:scale-105 transition-transform"
+          title="Click to verify QR code"
+        >
+          <QRCodeSVG
+            value={data.membershipNo || 'ALUM/IITRAM/231040011011'}
+            size={44}
+            bgColor="#FDFBF7"
+            fgColor="#7A152B"
+            level="M"
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+
+        {/* Right: Mobile */}
+        <div className="flex flex-col items-end min-w-0 max-w-[38%] shrink-0">
+          <span className="text-[5.5px] sm:text-[7.5px] font-bold text-amber-200/80 uppercase tracking-wider">Mobile</span>
+          <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white leading-tight">
+            {data.phone || '+91 98765 43210'}
+          </span>
+        </div>
+
       </div>
     </div>
   );
@@ -687,49 +677,39 @@ export default function AlumniICard({
             <div className="bg-[#7A152B] text-white py-2.5 sm:py-3.5 px-4 text-center shadow-2xs">
               <h2 className="text-sm sm:text-xl font-black tracking-wider uppercase font-serif">IITRAM ALUMNI RELATIONS</h2>
             </div>
-            <div className="px-4 sm:px-7 py-2 sm:py-3 flex-1 flex flex-col justify-between">
+            <div className="px-4 sm:px-7 pt-2 sm:pt-3 pb-1 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="text-xs sm:text-sm font-black text-[#7A152B] uppercase tracking-wide mb-1.5 sm:mb-2">MEMBERSHIP PRIVILEGES</h3>
-                <ul className="space-y-1 sm:space-y-2 text-[9px] sm:text-[11.5px] font-semibold text-slate-800">
+                <h3 className="text-xs sm:text-sm font-black text-[#7A152B] uppercase tracking-wide mb-1.5 sm:mb-2 font-serif">MEMBERSHIP PRIVILEGES</h3>
+                <ul className="space-y-1 sm:space-y-1.5 text-[9px] sm:text-[11.5px] font-semibold text-slate-800">
                   <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Access to alumni networking and events</span></li>
                   <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Participation in institute/alumni activities</span></li>
                   <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Access to alumni communications and updates</span></li>
                   <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Opportunities for professional and academic networking</span></li>
                 </ul>
               </div>
-              <div className="my-1 sm:my-1.5">
-                <div className="h-[2.5px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1" />
-                <p className="text-[8px] sm:text-[10px] font-medium text-slate-700 text-center">This card certifies that the holder is a registered member of IITRAM Alumni Relations.</p>
+              <div className="my-1">
+                <div className="h-[2px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1" />
+                <p className="text-[7.5px] sm:text-[9.5px] font-medium text-slate-600 text-center">This card certifies that the holder is a registered member of IITRAM Alumni Relations.</p>
               </div>
-              <div className="-mx-4 sm:-mx-7 bg-[#7A152B] border-t-2 border-[#C59B27] text-white py-1.5 sm:py-2.5 px-4 sm:px-6 relative flex items-center justify-between shadow-inner">
-                <div className="flex items-center gap-1.5 min-w-0 max-w-[38%]">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
-                    <Mail className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-300" />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[5.5px] sm:text-[7px] font-bold text-amber-200/90 uppercase tracking-wider leading-none">Email</span>
-                    <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white truncate leading-tight mt-0.5">{data.email || 'alumni@iitram.ac.in'}</span>
-                  </div>
-                </div>
-                <div className="absolute left-1/2 -translate-x-1/2 w-10 sm:w-13 h-9 sm:h-11 border-2 border-[#C59B27] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded shadow-md">
-                  <QRCodeSVG
-                    value={data.membershipNo || 'ALUM/IITRAM/231040011011'}
-                    size={44}
-                    bgColor="#FDFBF7"
-                    fgColor="#7A152B"
-                    level="M"
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                </div>
-                <div className="flex items-center gap-1.5 min-w-0 max-w-[38%] shrink-0">
-                  <div className="flex flex-col items-end min-w-0">
-                    <span className="text-[5.5px] sm:text-[7px] font-bold text-amber-200/90 uppercase tracking-wider leading-none">Mobile</span>
-                    <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white leading-tight mt-0.5">{data.phone || '+91 98765 43210'}</span>
-                  </div>
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/20">
-                    <Phone className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-300" />
-                  </div>
-                </div>
+            </div>
+            <div className="relative bg-[#7A152B] border-t-2 border-[#C59B27] text-white px-4 sm:px-6 py-1.5 flex items-center justify-between shadow-inner">
+              <div className="flex flex-col items-start min-w-0 max-w-[38%]">
+                <span className="text-[5.5px] sm:text-[7.5px] font-bold text-amber-200/80 uppercase tracking-wider">Email</span>
+                <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white truncate leading-tight w-full">{data.email || 'alumni@iitram.ac.in'}</span>
+              </div>
+              <div className="absolute left-1/2 -translate-x-1/2 w-10 sm:w-13 h-9 sm:h-11 border-2 border-[#C59B27] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-md">
+                <QRCodeSVG
+                  value={data.membershipNo || 'ALUM/IITRAM/231040011011'}
+                  size={44}
+                  bgColor="#FDFBF7"
+                  fgColor="#7A152B"
+                  level="M"
+                  style={{ width: '100%', height: '100%' }}
+                />
+              </div>
+              <div className="flex flex-col items-end min-w-0 max-w-[38%] shrink-0">
+                <span className="text-[5.5px] sm:text-[7.5px] font-bold text-amber-200/80 uppercase tracking-wider">Mobile</span>
+                <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white leading-tight">{data.phone || '+91 98765 43210'}</span>
               </div>
             </div>
           </div>
