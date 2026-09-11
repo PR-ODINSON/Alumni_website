@@ -480,25 +480,25 @@ export default function AlumniICard({
         <div className="my-1 sm:my-1.5">
           <div className="h-[2.5px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1" />
           <p className="text-[8px] sm:text-[10px] font-medium text-slate-700 text-center">
-            This card certifies that the holder is a registered member of the IITRAM Alumni Association.
+            This card certifies that the holder is a registered member of IITRAM Alumni Relations.
           </p>
         </div>
 
-        {/* Footer Row: email | QR | phone */}
-        <div className="flex items-center justify-between py-1 px-4 sm:px-6 gap-3">
+        {/* Footer Row: email (left) | QR (absolute center) | phone (right) */}
+        <div className="relative flex items-center justify-between py-1 px-4 sm:px-6">
 
           {/* Left: Email */}
-          <div className="flex flex-col items-start shrink-0 min-w-0">
+          <div className="flex flex-col items-start min-w-0 max-w-[38%]">
             <span className="text-[6px] sm:text-[7.5px] font-bold text-slate-400 uppercase tracking-wider">Email</span>
-            <span className="text-[6.5px] sm:text-[8.5px] font-bold text-[#7A152B] truncate max-w-[125px] sm:max-w-[170px] leading-tight">
+            <span className="text-[6.5px] sm:text-[8.5px] font-bold text-[#7A152B] truncate leading-tight w-full">
               {data.email || 'alumni@iitram.ac.in'}
             </span>
           </div>
 
-          {/* Center: QR Code */}
+          {/* Center: QR Code (100% Dead Center) */}
           <div
             onClick={(e) => { e.stopPropagation(); onOpenVerify?.(); }}
-            className="w-10 sm:w-13 h-9 sm:h-11 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-2xs cursor-pointer hover:bg-amber-50/50 transition-colors shrink-0"
+            className="absolute left-1/2 -translate-x-1/2 w-10 sm:w-13 h-9 sm:h-11 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-2xs cursor-pointer hover:bg-amber-50/50 transition-colors"
             title="Click to verify QR code"
           >
             <QRCodeSVG
@@ -512,7 +512,7 @@ export default function AlumniICard({
           </div>
 
           {/* Right: Mobile */}
-          <div className="flex flex-col items-end shrink-0">
+          <div className="flex flex-col items-end min-w-0 max-w-[38%] shrink-0">
             <span className="text-[6px] sm:text-[7.5px] font-bold text-slate-400 uppercase tracking-wider">Mobile</span>
             <span className="text-[6.5px] sm:text-[8.5px] font-bold text-[#7A152B] leading-tight">
               {data.phone || '+91 98765 43210'}
@@ -689,14 +689,14 @@ export default function AlumniICard({
               </div>
               <div className="my-1 sm:my-1.5">
                 <div className="h-[2.5px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1" />
-                <p className="text-[8px] sm:text-[10px] font-medium text-slate-700 text-center">This card certifies that the holder is a registered member of the IITRAM Alumni Association.</p>
+                <p className="text-[8px] sm:text-[10px] font-medium text-slate-700 text-center">This card certifies that the holder is a registered member of IITRAM Alumni Relations.</p>
               </div>
-              <div className="flex items-center justify-between py-1 px-4 sm:px-6 gap-3">
-                <div className="flex flex-col items-start shrink-0 min-w-0">
+              <div className="relative flex items-center justify-between py-1 px-4 sm:px-6">
+                <div className="flex flex-col items-start min-w-0 max-w-[38%]">
                   <span className="text-[6px] sm:text-[7.5px] font-bold text-slate-400 uppercase tracking-wider">Email</span>
-                  <span className="text-[6.5px] sm:text-[8.5px] font-bold text-[#7A152B] truncate max-w-[125px] sm:max-w-[170px] leading-tight">{data.email || 'alumni@iitram.ac.in'}</span>
+                  <span className="text-[6.5px] sm:text-[8.5px] font-bold text-[#7A152B] truncate leading-tight w-full">{data.email || 'alumni@iitram.ac.in'}</span>
                 </div>
-                <div className="w-10 sm:w-13 h-9 sm:h-11 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-2xs shrink-0">
+                <div className="absolute left-1/2 -translate-x-1/2 w-10 sm:w-13 h-9 sm:h-11 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-2xs">
                   <QRCodeSVG
                     value={data.membershipNo || 'ALUM/IITRAM/231040011011'}
                     size={44}
@@ -706,7 +706,7 @@ export default function AlumniICard({
                     style={{ width: '100%', height: '100%' }}
                   />
                 </div>
-                <div className="flex flex-col items-end shrink-0">
+                <div className="flex flex-col items-end min-w-0 max-w-[38%] shrink-0">
                   <span className="text-[6px] sm:text-[7.5px] font-bold text-slate-400 uppercase tracking-wider">Mobile</span>
                   <span className="text-[6.5px] sm:text-[8.5px] font-bold text-[#7A152B] leading-tight">{data.phone || '+91 98765 43210'}</span>
                 </div>
