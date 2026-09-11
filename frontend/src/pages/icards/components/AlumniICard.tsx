@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { QrCode, RotateCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { toPng } from 'html-to-image';
+import alumniLogo from '../../../assets/alumani.jpg';
 
 // Self-contained crisp SVG QR Code component (0 external network/bundler dependencies)
 function InlineQRCode({ className = 'w-full h-full' }: { className?: string; size?: number }) {
@@ -261,9 +262,9 @@ export default function AlumniICard({
         
         {/* ── HEADER SECTION ────────────────────────────────────────────── */}
         <div>
-          <div className="flex items-center gap-2.5 sm:gap-3.5 pb-2">
-            {/* IITRAM Official Circular Header Logo */}
-            <div className="w-11 h-11 sm:w-15 sm:h-15 shrink-0 rounded-full p-0.5 bg-white shadow-2xs border border-slate-100 flex items-center justify-center">
+          <div className="flex items-center gap-2 sm:gap-3 pb-2">
+            {/* IITRAM Official Circular Header Logo (Left) */}
+            <div className="w-10 h-10 sm:w-14 sm:h-14 shrink-0 rounded-full p-0.5 bg-white shadow-2xs border border-slate-100 flex items-center justify-center">
               <img
                 src="/images/iitram-logo.png"
                 alt="IITRAM Logo"
@@ -274,17 +275,29 @@ export default function AlumniICard({
               />
             </div>
 
-            {/* Header Titles */}
+            {/* Header Titles (Center) */}
             <div className="flex-1 min-w-0">
-              <h2 className="text-sm sm:text-xl font-black tracking-tight text-[#7A152B] font-serif leading-tight uppercase">
+              <h2 className="text-xs sm:text-lg font-black tracking-tight text-[#7A152B] font-serif leading-tight uppercase">
                 IITRAM ALUMNI ASSOCIATION
               </h2>
-              <p className="text-[9px] sm:text-xs font-semibold text-slate-800 leading-tight mt-0.5">
+              <p className="text-[8.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight mt-0.5">
                 Institute of Infrastructure, Technology, Research and Management
               </p>
-              <p className="text-[8px] sm:text-[10px] font-medium text-slate-500 leading-tight mt-0.5 tracking-tight truncate">
+              <p className="text-[7.5px] sm:text-[9.5px] font-medium text-slate-500 leading-tight mt-0.5 tracking-tight truncate">
                 Ahmedabad, Gujarat &nbsp;|&nbsp; www.iitram.ac.in &nbsp;|&nbsp; alumni@iitram.ac.in
               </p>
+            </div>
+
+            {/* IITRAM Alumni Relations Logo (Top Right) */}
+            <div className="w-11 h-11 sm:w-15 sm:h-15 shrink-0 bg-white p-0.5 flex items-center justify-center">
+              <img
+                src={alumniLogo}
+                alt="IITRAM Alumni Relations Logo"
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/images/alumni-logo.jpg';
+                }}
+              />
             </div>
           </div>
 
@@ -594,14 +607,17 @@ export default function AlumniICard({
             <div className="h-1.5 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
             <div className="relative flex-1 flex flex-col justify-between pl-3 sm:pl-4 pr-11 sm:pr-14 pt-2.5 sm:pt-3 pb-0">
               <div>
-                <div className="flex items-center gap-2.5 sm:gap-3.5 pb-2">
-                  <div className="w-11 h-11 sm:w-15 sm:h-15 shrink-0 rounded-full p-0.5 bg-white shadow-2xs border border-slate-100 flex items-center justify-center">
+                <div className="flex items-center gap-2 sm:gap-3 pb-2">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 shrink-0 rounded-full p-0.5 bg-white shadow-2xs border border-slate-100 flex items-center justify-center">
                     <img src="/images/iitram-logo.png" alt="IITRAM Logo" className="w-full h-full object-contain" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h2 className="text-sm sm:text-xl font-black tracking-tight text-[#7A152B] font-serif leading-tight uppercase">IITRAM ALUMNI ASSOCIATION</h2>
-                    <p className="text-[9px] sm:text-xs font-semibold text-slate-800 leading-tight mt-0.5">Institute of Infrastructure, Technology, Research and Management</p>
-                    <p className="text-[8px] sm:text-[10px] font-medium text-slate-500 leading-tight mt-0.5 tracking-tight truncate">Ahmedabad, Gujarat &nbsp;|&nbsp; www.iitram.ac.in &nbsp;|&nbsp; alumni@iitram.ac.in</p>
+                    <h2 className="text-xs sm:text-lg font-black tracking-tight text-[#7A152B] font-serif leading-tight uppercase">IITRAM ALUMNI ASSOCIATION</h2>
+                    <p className="text-[8.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight mt-0.5">Institute of Infrastructure, Technology, Research and Management</p>
+                    <p className="text-[7.5px] sm:text-[9.5px] font-medium text-slate-500 leading-tight mt-0.5 tracking-tight truncate">Ahmedabad, Gujarat &nbsp;|&nbsp; www.iitram.ac.in &nbsp;|&nbsp; alumni@iitram.ac.in</p>
+                  </div>
+                  <div className="w-11 h-11 sm:w-15 sm:h-15 shrink-0 bg-white p-0.5 flex items-center justify-center">
+                    <img src={alumniLogo} alt="IITRAM Alumni Relations Logo" className="w-full h-full object-contain" />
                   </div>
                 </div>
                 <div className="h-[3px] w-full bg-[#C59B27] rounded-full shadow-2xs" />
