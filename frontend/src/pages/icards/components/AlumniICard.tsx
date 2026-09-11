@@ -307,10 +307,10 @@ export default function AlumniICard({
         </div>
 
         {/* ── MAIN BODY SECTION ─────────────────────────────────────────── */}
-        <div className="flex items-stretch gap-3 sm:gap-4 py-1.5 sm:py-2 my-auto">
+        <div className="flex items-stretch gap-3 sm:gap-4 py-1 sm:py-1.5 my-auto">
           
           {/* Photo Frame (Left Box - Showing Convocation Student Photo / Logo) */}
-          <div className="relative w-20 sm:w-28 h-24 sm:h-34 rounded-xs border-2 border-[#7A152B] bg-slate-50 shrink-0 overflow-hidden shadow-2xs flex flex-col items-center justify-center text-center p-0.5 group">
+          <div className="relative w-18 sm:w-26 h-22 sm:h-30 rounded-xs border-2 border-[#7A152B] bg-slate-50 shrink-0 overflow-hidden shadow-2xs flex flex-col items-center justify-center text-center p-0.5 group">
             <img
               src={data.photoUrl || '/images/iitram-logo.png'}
               alt={data.fullName || 'Alumni Photo'}
@@ -324,7 +324,7 @@ export default function AlumniICard({
           {/* Alumni Details Column (Right Side) */}
           <div className="flex-1 flex flex-col justify-center min-w-0 pr-1">
             {/* Member Category Badge */}
-            <span className="text-[8.5px] sm:text-[10.5px] font-bold text-[#C59B27] uppercase tracking-widest block mb-0.5">
+            <span className="text-[8px] sm:text-[10px] font-bold text-[#C59B27] uppercase tracking-widest block mb-0.5">
               ALUMNI MEMBER
             </span>
 
@@ -334,7 +334,7 @@ export default function AlumniICard({
             </h1>
 
             {/* Information Grid */}
-            <div className="space-y-0.5 sm:space-y-1 text-[8px] sm:text-[11px] font-semibold text-slate-700">
+            <div className="space-y-0.5 sm:space-y-1 text-[8px] sm:text-[10.5px] font-semibold text-slate-700">
               <div className="flex items-baseline">
                 <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Degree</span>
                 <span className="mr-1.5 text-slate-400 font-normal">:</span>
@@ -375,28 +375,28 @@ export default function AlumniICard({
         </div>
 
         {/* ── FOOTER BANNER (Reference style: 2 signatures) ─────────────── */}
-        <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-4 sm:pl-6 pr-14 sm:pr-18 py-1.5 sm:py-2 flex items-center justify-between shadow-inner">
+        <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-4 sm:pl-6 pr-14 sm:pr-18 pt-1 pb-1.5 sm:pb-2 flex items-center justify-between shadow-inner">
 
           {/* Left: Issuing Authority / Hon. Dean */}
           <div className="flex flex-col items-start shrink-0">
-            <svg viewBox="0 0 60 16" className="w-12 sm:w-16 h-3.5 sm:h-4" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3,12 C6,5 10,3 13,8 C15,11 17,9 19,6 C21,4 23,7 25,10 C27,14 29,8 32,5 C34,3 36,6 38,10" />
-              <path d="M3,14 Q20,13 38,14" strokeWidth="0.5" opacity="0.4" />
+            <svg viewBox="0 0 60 14" className="w-11 sm:w-15 h-3 sm:h-3.5" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3,11 C6,4 10,3 13,7 C15,10 17,8 19,5 C21,3 23,6 25,9 C27,13 29,7 32,5 C34,3 36,5 38,9" />
+              <path d="M3,13 Q20,12 38,13" strokeWidth="0.5" opacity="0.4" />
             </svg>
             <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-            <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90 leading-none">Issuing Authority</span>
-            <span className="text-[5.5px] sm:text-[7px] font-medium text-amber-200/90 leading-tight mt-0.5">Hon. Dean</span>
+            <span className="text-[6px] sm:text-[8px] font-bold text-white leading-none">Issuing Authority</span>
+            <span className="text-[5px] sm:text-[6.5px] font-medium text-amber-200 leading-none mt-0.5">Hon. Dean</span>
           </div>
 
           {/* Right: Signature of Card Holder */}
           <div className="flex flex-col items-end shrink-0">
-            <svg viewBox="0 0 60 16" className="w-12 sm:w-16 h-3.5 sm:h-4" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3,12 C5,4 8,3 11,6 C13,9 15,11 17,8 C19,5 21,3 24,7 C26,11 28,6 31,4 C34,3 37,5 39,9 C41,13 43,8 46,6 C48,4 51,8 54,11" />
-              <path d="M3,14 Q28,13 54,14" strokeWidth="0.5" opacity="0.4" />
+            <svg viewBox="0 0 60 14" className="w-11 sm:w-15 h-3 sm:h-3.5" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3,11 C5,4 8,3 11,6 C13,9 15,11 17,8 C19,5 21,3 24,7 C26,11 28,6 31,4 C34,3 37,5 39,8 C41,12 43,8 46,6 C48,4 51,7 54,10" />
+              <path d="M3,13 Q28,12 54,13" strokeWidth="0.5" opacity="0.4" />
             </svg>
             <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-            <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90 leading-none">Signature of</span>
-            <span className="text-[5.5px] sm:text-[7px] font-medium text-amber-200/90 leading-tight mt-0.5">Card Holder</span>
+            <span className="text-[6px] sm:text-[8px] font-bold text-white leading-none">Signature of</span>
+            <span className="text-[5px] sm:text-[6.5px] font-medium text-amber-200 leading-none mt-0.5">Card Holder</span>
           </div>
 
         </div>
@@ -626,14 +626,14 @@ export default function AlumniICard({
                 </div>
                 <div className="h-[3px] w-full bg-[#C59B27] rounded-full shadow-2xs" />
               </div>
-              <div className="flex items-stretch gap-3 sm:gap-4 py-1.5 sm:py-2 my-auto">
-                <div className="relative w-20 sm:w-28 h-24 sm:h-34 rounded-xs border-2 border-[#7A152B] bg-slate-50 shrink-0 overflow-hidden shadow-2xs flex flex-col items-center justify-center text-center p-0.5 group">
+              <div className="flex items-stretch gap-3 sm:gap-4 py-1 sm:py-1.5 my-auto">
+                <div className="relative w-18 sm:w-26 h-22 sm:h-30 rounded-xs border-2 border-[#7A152B] bg-slate-50 shrink-0 overflow-hidden shadow-2xs flex flex-col items-center justify-center text-center p-0.5 group">
                   <img src={data.photoUrl || '/images/iitram-logo.png'} alt={data.fullName} className="w-full h-full object-cover rounded-xs" />
                 </div>
                 <div className="flex-1 flex flex-col justify-center min-w-0 pr-1">
-                  <span className="text-[8.5px] sm:text-[10.5px] font-bold text-[#C59B27] uppercase tracking-widest block mb-0.5">ALUMNI MEMBER</span>
+                  <span className="text-[8px] sm:text-[10px] font-bold text-[#C59B27] uppercase tracking-widest block mb-0.5">ALUMNI MEMBER</span>
                   <h1 className="text-xs sm:text-lg font-black text-[#7A152B] uppercase tracking-tight leading-tight truncate mb-1 sm:mb-1.5 font-serif">{data.fullName}</h1>
-                  <div className="space-y-0.5 sm:space-y-1 text-[8px] sm:text-[11px] font-semibold text-slate-700">
+                  <div className="space-y-0.5 sm:space-y-1 text-[8px] sm:text-[10.5px] font-semibold text-slate-700">
                     <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Degree</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-bold text-slate-900 truncate">{data.degree}</span></div>
                     <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Department</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-bold text-slate-900 truncate">{data.department}</span></div>
                     <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Batch</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-bold text-slate-900 truncate">{data.batch}</span></div>
@@ -642,24 +642,24 @@ export default function AlumniICard({
                   </div>
                 </div>
               </div>
-              <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-4 sm:pl-6 pr-14 sm:pr-18 py-1.5 sm:py-2 flex items-center justify-between shadow-inner">
+              <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-4 sm:pl-6 pr-14 sm:pr-18 pt-1 pb-1.5 sm:pb-2 flex items-center justify-between shadow-inner">
                 <div className="flex flex-col items-start shrink-0">
-                  <svg viewBox="0 0 60 16" className="w-12 sm:w-16 h-3.5 sm:h-4" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3,12 C6,5 10,3 13,8 C15,11 17,9 19,6 C21,4 23,7 25,10 C27,14 29,8 32,5 C34,3 36,6 38,10" />
-                    <path d="M3,14 Q20,13 38,14" strokeWidth="0.5" opacity="0.4" />
+                  <svg viewBox="0 0 60 14" className="w-11 sm:w-15 h-3 sm:h-3.5" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3,11 C6,4 10,3 13,7 C15,10 17,8 19,5 C21,3 23,6 25,9 C27,13 29,7 32,5 C34,3 36,5 38,9" />
+                    <path d="M3,13 Q20,12 38,13" strokeWidth="0.5" opacity="0.4" />
                   </svg>
                   <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-                  <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90 leading-none">Issuing Authority</span>
-                  <span className="text-[5.5px] sm:text-[7px] font-medium text-amber-200/90 leading-tight mt-0.5">Hon. Dean</span>
+                  <span className="text-[6px] sm:text-[8px] font-bold text-white leading-none">Issuing Authority</span>
+                  <span className="text-[5px] sm:text-[6.5px] font-medium text-amber-200 leading-none mt-0.5">Hon. Dean</span>
                 </div>
                 <div className="flex flex-col items-end shrink-0">
-                  <svg viewBox="0 0 60 16" className="w-12 sm:w-16 h-3.5 sm:h-4" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3,12 C5,4 8,3 11,6 C13,9 15,11 17,8 C19,5 21,3 24,7 C26,11 28,6 31,4 C34,3 37,5 39,9 C41,13 43,8 46,6 C48,4 51,8 54,11" />
-                    <path d="M3,14 Q28,13 54,14" strokeWidth="0.5" opacity="0.4" />
+                  <svg viewBox="0 0 60 14" className="w-11 sm:w-15 h-3 sm:h-3.5" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3,11 C5,4 8,3 11,6 C13,9 15,11 17,8 C19,5 21,3 24,7 C26,11 28,6 31,4 C34,3 37,5 39,8 C41,12 43,8 46,6 C48,4 51,8 54,10" />
+                    <path d="M3,13 Q28,12 54,13" strokeWidth="0.5" opacity="0.4" />
                   </svg>
                   <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-                  <span className="text-[6.5px] sm:text-[8.5px] font-bold text-white/90 leading-none">Signature of</span>
-                  <span className="text-[5.5px] sm:text-[7px] font-medium text-amber-200/90 leading-tight mt-0.5">Card Holder</span>
+                  <span className="text-[6px] sm:text-[8px] font-bold text-white leading-none">Signature of</span>
+                  <span className="text-[5px] sm:text-[6.5px] font-medium text-amber-200 leading-none mt-0.5">Card Holder</span>
                 </div>
               </div>
               <div className="absolute top-0 bottom-0 right-0 flex h-full pointer-events-none">
