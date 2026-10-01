@@ -23,9 +23,17 @@ export interface ICardData {
 
 const CARD_WIDTH = 1050;
 const CARD_HEIGHT = 600;
+/** Inset so scaled cards are not clipped on the left/right by subpixel overflow. */
+const VIEWPORT_INSET_X = 3;
 
 /** Fits a fixed 1050×600 card design into any responsive container without overflow. */
-function CardScaleViewport({ children }: { children: React.ReactNode }) {
+function CardScaleViewport({
+  children,
+  frameBorder = false,
+}: {
+  children: React.ReactNode;
+  frameBorder?: boolean;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
@@ -33,8 +41,9 @@ function CardScaleViewport({ children }: { children: React.ReactNode }) {
     const node = containerRef.current;
     if (!node) return;
     const update = () => {
-      const w = node.clientWidth;
-      setScale(w > 0 ? w / CARD_WIDTH : 1);
+      const w = node.getBoundingClientRect().width;
+      const innerW = Math.max(0, w - VIEWPORT_INSET_X * 2);
+      setScale(innerW > 0 ? innerW / CARD_WIDTH : 1);
     };
     update();
     const obs = new ResizeObserver(update);
@@ -52,6 +61,11 @@ function CardScaleViewport({ children }: { children: React.ReactNode }) {
         overflow: 'hidden',
         background: '#FFFFFF',
         isolation: 'isolate',
+        boxSizing: 'border-box',
+        padding: `0 ${VIEWPORT_INSET_X}px`,
+        ...(frameBorder
+          ? { boxShadow: 'inset 0 0 0 1px rgba(15, 23, 42, 0.9)' }
+          : {}),
       }}
     >
       <div
@@ -60,10 +74,9 @@ function CardScaleViewport({ children }: { children: React.ReactNode }) {
           height: `${CARD_HEIGHT}px`,
           position: 'absolute',
           top: 0,
-          left: 0,
+          left: VIEWPORT_INSET_X,
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
-          overflow: 'hidden',
           boxSizing: 'border-box',
         }}
       >
@@ -386,7 +399,7 @@ function BackCard({ data }: { data: ICardData }) {
   const buildingClipId = `buildingClip-${React.useId().replace(/:/g, '')}`;
 
   return (
-    <CardScaleViewport>
+    <CardScaleViewport frameBorder>
       <div
         style={{
           position: 'relative',
@@ -394,9 +407,8 @@ function BackCard({ data }: { data: ICardData }) {
           height: `${CARD_HEIGHT}px`,
           background: '#FFFFFF',
           fontFamily: "'Arial', 'Helvetica', sans-serif",
-          overflow: 'hidden',
           boxSizing: 'border-box',
-          border: '1px solid #CBD5E1',
+          overflow: 'visible',
         }}
       >
         {/* 1. TOP-LEFT ALUMNI RELATIONS BANNER */}
@@ -411,43 +423,44 @@ function BackCard({ data }: { data: ICardData }) {
           position: 'absolute',
           left: '0px',
           top: '90px',
-          width: '65px',
+          width: '72px',
           height: '510px',
-          borderRadius: '0 30px 0 0',
+          borderRadius: '0 32px 0 0',
           background: '#E0F2F5',
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '4px',
-          padding: '4px 0',
+          gap: '2px',
+          padding: '8px 6px',
           boxSizing: 'border-box',
-          overflow: 'hidden',
           zIndex: 2,
         }}>
           <span style={{
             writingMode: 'vertical-rl',
-            transform: 'rotate(180deg)',
-            fontSize: '13.5px',
+            textOrientation: 'mixed',
+            fontSize: '12px',
             fontWeight: 800,
             color: '#073F7C',
-            letterSpacing: '1px',
+            letterSpacing: '0.5px',
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
             userSelect: 'none',
+            lineHeight: 1.1,
           }}>
             INSTITUTE OF INFRASTRUCTURE, TECHNOLOGY,
           </span>
           <span style={{
             writingMode: 'vertical-rl',
-            transform: 'rotate(180deg)',
-            fontSize: '13.5px',
+            textOrientation: 'mixed',
+            fontSize: '12px',
             fontWeight: 800,
             color: '#073F7C',
-            letterSpacing: '1px',
+            letterSpacing: '0.5px',
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
             userSelect: 'none',
+            lineHeight: 1.1,
           }}>
             RESEARCH AND MANAGEMENT
           </span>
@@ -456,7 +469,7 @@ function BackCard({ data }: { data: ICardData }) {
         {/* 3. FADED IITRAM WATERMARK LOGO */}
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '88px',
           top: '130px',
           width: '390px',
           height: '390px',
@@ -474,7 +487,7 @@ function BackCard({ data }: { data: ICardData }) {
         {/* 4. STUDENT INFORMATION FIELDS */}
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '88px',
           top: '135px',
           fontSize: '24px',
           color: '#000000',
@@ -487,10 +500,10 @@ function BackCard({ data }: { data: ICardData }) {
 
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '88px',
           top: '220px',
-          width: '420px',
-          maxWidth: '420px',
+          width: '430px',
+          maxWidth: '430px',
           fontSize: (data.email || '').length > 32 ? '18px' : (data.email || '').length > 25 ? '20px' : '24px',
           color: '#000000',
           lineHeight: '1.25',
@@ -503,7 +516,7 @@ function BackCard({ data }: { data: ICardData }) {
 
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '88px',
           top: '305px',
           fontSize: '24px',
           color: '#000000',
@@ -516,9 +529,9 @@ function BackCard({ data }: { data: ICardData }) {
 
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '88px',
           top: '382px',
-          width: '410px',
+          width: '420px',
           fontSize: '21px',
           color: '#000000',
           lineHeight: '1.2',
@@ -533,9 +546,9 @@ function BackCard({ data }: { data: ICardData }) {
         {/* 5. DISCLAIMER TEXT */}
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '88px',
           bottom: '12px',
-          width: '420px',
+          width: '430px',
           fontSize: '13px',
           color: '#333333',
           fontStyle: 'italic',

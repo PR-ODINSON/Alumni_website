@@ -11,6 +11,7 @@ import AlumniICard, { type ICardData } from "./components/AlumniICard";
 import ICardVerifierModal from "./components/ICardVerifierModal";
 import { convocationPhotoCandidates } from '../../lib/convocationPhoto';
 import { useAuthStore } from "../../stores/authStore";
+import { PermissionGuard } from "../../components/auth/guards";
 
 interface ICardsPageProps {
   mode?: string;
@@ -266,9 +267,11 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
                 <Layers size={14} /> 3D Flip
               </button>
             </div>
-            <Link to="/icards/bulk" className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5">
-              <Users2 size={15} className="text-amber-300" /> Bulk Generator
-            </Link>
+            <PermissionGuard permission="admin:panel_access">
+              <Link to="/icards/bulk" className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5">
+                <Users2 size={15} className="text-amber-300" /> Bulk Generator
+              </Link>
+            </PermissionGuard>
             <button type="button" onClick={handleDownloadPNG}
               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer">
               <Image size={15} /> Download PNG

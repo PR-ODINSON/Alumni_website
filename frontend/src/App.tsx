@@ -164,7 +164,7 @@ export default function App() {
         <Route path="/cards"               element={<Navigate to="/icards" replace />} />
         <Route path="/card/login"          element={<ICardsPage mode="login" />} />
         <Route path="/cards/login"         element={<ICardsPage mode="login" />} />
-        <Route path="/icards/bulk"         element={<BulkICardGenerator />} />
+        <Route path="/icards/bulk"         element={<ProtectedRoute permission="admin:panel_access"><BulkICardGenerator /></ProtectedRoute>} />
 
         {/* ── Analytics (admin-gated; non-admins see locked message) ──────── */}
         <Route path="/analytics"           element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
