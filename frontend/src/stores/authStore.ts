@@ -3,6 +3,27 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 
 export type UserRole = 'student' | 'alumni' | 'faculty' | 'admin';
 
+export interface AuthCareerEntry {
+  _id?: string;
+  company: string;
+  title: string;
+  location?: string;
+  startDate?: string;
+  endDate?: string;
+  isCurrent?: boolean;
+  description?: string;
+}
+
+export interface AuthEducationEntry {
+  _id?: string;
+  institution: string;
+  degree: string;
+  field?: string;
+  startYear?: number | string;
+  endYear?: number | string;
+  grade?: string;
+}
+
 export interface AuthUser {
   _id: string;
   firstName: string;
@@ -11,12 +32,32 @@ export interface AuthUser {
   role: UserRole;
   avatar?: string;
   coverImage?: string;
+  signatureUrl?: string;
   bio?: string;
   phone?: string;
+  headline?: string;
+  skills?: string[];
+  career?: AuthCareerEntry[];
+  education?: AuthEducationEntry[];
+  permanentAddress?: string;
+  department?: string;
+  branch?: string;
+  degreeType?: string;
+  batch?: number | string;
+  graduationYear?: number | string;
+  currentYear?: number | string;
+  currentSemester?: number | string;
   location?: { city?: string; state?: string; country?: string };
-  socialLinks?: { linkedin?: string; github?: string; twitter?: string; website?: string };
+  socialLinks?: {
+    linkedin?: string;
+    github?: string;
+    twitter?: string;
+    website?: string;
+    instagram?: string;
+  };
   fullName?: string;
   enrollmentNumber?: string;
+  mustChangePassword?: boolean;
   hasDonated?: boolean;
   donationAmount?: number;
   donationDate?: string;
