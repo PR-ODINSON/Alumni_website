@@ -57,6 +57,7 @@ import StartupEcosystemPage from './pages/startups/StartupEcosystem';
 import OnboardingPage from './pages/onboarding/Onboarding';
 import NotFoundPage from './pages/NotFound';
 import ICardsPage from './pages/icards/ICardsPage';
+import BulkICardGenerator from './pages/icards/BulkICardGenerator';
 
 // ── Institute (verified IITRAM institutional information) ───────────────────
 import InstituteLayout from './pages/institute/InstituteLayout';
@@ -163,6 +164,7 @@ export default function App() {
         <Route path="/cards"               element={<Navigate to="/icards" replace />} />
         <Route path="/card/login"          element={<ICardsPage mode="login" />} />
         <Route path="/cards/login"         element={<ICardsPage mode="login" />} />
+        <Route path="/icards/bulk"         element={<BulkICardGenerator />} />
 
         {/* ── Analytics (admin-gated; non-admins see locked message) ──────── */}
         <Route path="/analytics"           element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />

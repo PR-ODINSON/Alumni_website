@@ -7,6 +7,7 @@ export interface IStudent extends Document {
   department: string;
   program: string;
   degreeType: 'B.Tech' | 'M.Tech' | 'MBA' | 'PhD' | 'Diploma';
+  graduationYear?: number;
   currentYear: number;
   currentSemester: number;
   cgpa?: number;
@@ -90,6 +91,7 @@ const StudentSchema = new Schema<IStudent>(
       enum: ['B.Tech', 'M.Tech', 'MBA', 'PhD', 'Diploma'],
       required: true,
     },
+    graduationYear: { type: Number, min: 1980, max: 2100 },
     currentYear: { type: Number, min: 1, max: 6 },
     currentSemester: { type: Number, min: 1, max: 12 },
     cgpa: { type: Number, min: 0, max: 10 },
@@ -154,6 +156,9 @@ const StudentSchema = new Schema<IStudent>(
 
 StudentSchema.index({ batch: 1 });
 StudentSchema.index({ department: 1 });
+StudentSchema.index({ currentYear: 1 });
+StudentSchema.index({ degreeType: 1 });
+StudentSchema.index({ department: 1, currentYear: 1 });
 StudentSchema.index({ openToWork: 1 });
 StudentSchema.index({ seekingMentor: 1 });
 

@@ -236,6 +236,9 @@ const AlumniSchema = new Schema<IAlumni>(
 // Indexes
 AlumniSchema.index({ batch: 1 });
 AlumniSchema.index({ department: 1 });
+AlumniSchema.index({ graduationYear: 1 });
+AlumniSchema.index({ degreeType: 1 });
+AlumniSchema.index({ department: 1, graduationYear: 1 });
 AlumniSchema.index({ currentIndustry: 1 });
 AlumniSchema.index({ currentCompany: 1 });
 AlumniSchema.index({ isMentor: 1 });

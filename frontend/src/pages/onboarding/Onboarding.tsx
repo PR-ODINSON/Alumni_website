@@ -68,6 +68,7 @@ export default function OnboardingPage() {
   const [form, setForm] = useState({
     department: '',
     batch: '',
+    graduationYear: '',
     degreeType: 'B.Tech',
     currentYear: '1',
     currentSemester: '1',
@@ -98,6 +99,10 @@ export default function OnboardingPage() {
       toast.error('Please fill in your department and batch year.');
       return;
     }
+    if (selectedRole === 'alumni' && !form.graduationYear) {
+      toast.error('Please enter your passing year.');
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -112,6 +117,7 @@ export default function OnboardingPage() {
         payload.department = form.department;
         payload.batch = form.batch;
         payload.degreeType = form.degreeType;
+        if (form.graduationYear) payload.graduationYear = parseInt(form.graduationYear);
         if (selectedRole === 'student') {
           payload.currentYear = parseInt(form.currentYear);
           payload.currentSemester = parseInt(form.currentSemester);
@@ -297,7 +303,7 @@ export default function OnboardingPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                        {selectedRole === 'alumni' ? 'Graduation Batch' : 'Admission Batch'} <span className="text-red-500">*</span>
+                        Admission / Start Year <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="number"
@@ -323,6 +329,22 @@ export default function OnboardingPage() {
                       <option value="">Select department</option>
                       {DEPARTMENTS.map(d => <option key={d}>{d}</option>)}
                     </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                      {selectedRole === 'alumni' ? 'Passing Year' : 'Expected Passing Year (optional)'}
+                      {selectedRole === 'alumni' && <span className="text-red-500"> *</span>}
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 2026"
+                      value={form.graduationYear}
+                      onChange={e => setForm(f => ({ ...f, graduationYear: e.target.value }))}
+                      className="input"
+                      min="1980"
+                      max="2100"
+                    />
                   </div>
 
                   {selectedRole === 'student' && (

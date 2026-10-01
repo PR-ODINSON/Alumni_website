@@ -61,12 +61,12 @@ export default function Features() {
           viewport={{ once: true }}
           className="text-center mb-12 sm:mb-16"
         >
-          <span className="badge badge-primary mb-3">Platform Capabilities</span>
+          <span className="badge badge-primary mb-3">Institutional Pillars</span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-display text-slate-900 mb-3 tracking-tight">
-            Everything an Institutional<br />Alumni Platform Should Be
+            Connecting Academia, Industry<br />and Alumni Success
           </h2>
           <p className="text-slate-500 text-xs sm:text-sm max-w-xl mx-auto font-medium">
-            A purpose-built ecosystem for IITRAM — far beyond a simple alumni directory.
+            Fostering lifelong professional connections, infrastructure research collaborations, student career mentorship, and technical innovation.
           </p>
         </motion.div>
 

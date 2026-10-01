@@ -32,31 +32,30 @@ export default function Hero({ stats, isAuthenticated }: HeroProps) {
     <section ref={heroRef} className="relative min-h-[80vh] flex items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-12 sm:pb-16 bg-slate-50 border-b border-slate-200">
       <motion.div style={{ opacity: heroOpacity, y: heroY }} className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-2 sm:mt-6">
         <div>
-          <span ref={badgeRef} className="inline-flex items-center gap-1.5 justify-center px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-bold mb-5 opacity-0 shadow-2xs">
-            <FaGraduationCap className="text-brand-500" size={14} />
-            IITRAM Alumni Community — Est. 2013
+          <span ref={badgeRef} className="inline-flex items-center gap-1.5 justify-center px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-bold mb-4 sm:mb-5 shadow-2xs">
+            <FaGraduationCap className="text-[#0169FC]" size={14} />
+            IITRAM — Autonomous State University, Govt. of Gujarat
           </span>
-          <h1 ref={titleRef} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display text-slate-900 tracking-tight leading-[1.15] mb-4 sm:mb-6 opacity-0">
-            Beyond Graduation Starts <br className="hidden sm:block" />
+          <h1 ref={titleRef} className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display text-slate-900 tracking-tight leading-[1.18] sm:leading-[1.15] mb-3 sm:mb-5">
+            Official Alumni &amp; <br className="hidden sm:block" />
             <span className="text-[#001f54]">
-              Your Real Growth
+              Student Network
             </span>
           </h1>
           
-          <p ref={descRef} className="text-xs sm:text-sm md:text-base text-slate-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed opacity-0 font-medium px-2">
-            Connect with {stats?.totalAlumni?.toLocaleString() || '5,000+'} alumni worldwide. 
-            Find mentors, discover opportunities, and shape the IITRAM legacy together.
+          <p ref={descRef} className="text-xs sm:text-sm md:text-base text-slate-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed font-medium px-2">
+            Connecting IITRAM graduates, researchers, and students across disciplines and industries worldwide. Discover career opportunities, find mentors, and celebrate our institutional heritage.
           </p>
 
-          <div ref={ctaRef} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 opacity-0 max-w-md mx-auto">
+          <div ref={ctaRef} className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 max-w-md mx-auto">
             {isAuthenticated ? (
               <Link to="/directory" className="btn btn-primary btn-lg w-full sm:w-auto shadow-xs">
-                Explore Network
+                Explore Directory
               </Link>
             ) : (
               <>
                 <Link to="/register" className="btn btn-primary btn-lg w-full sm:w-auto shadow-xs">
-                  Explore Community
+                  Join Alumni Network
                 </Link>
                 <Link to="/login" className="btn btn-outline btn-lg w-full sm:w-auto">
                   Sign In

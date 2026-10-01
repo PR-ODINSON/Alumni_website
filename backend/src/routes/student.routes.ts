@@ -26,15 +26,39 @@ router.get('/', optionalAuth, asyncHandler(async (req: AuthRequest, res) => {
     Student.countDocuments(filter),
   ]);
 
-  res.json({ success: true, data: students, pagination: { total, page: Number(page), pages: Math.ceil(total / Number(limit)) } });
+  const publicRows = req.user?.role === 'admin' ? students : students.map((student: any) => ({
+    _id: student._id,
+    user: student.user ? {
+      _id: student.user._id,
+      firstName: student.user.firstName,
+      lastName: student.user.lastName,
+      role: student.user.role,
+      avatar: student.user.avatar,
+      coverImage: student.user.coverImage,
+    } : null,
+    department: student.department,
+    graduationYear: student.graduationYear,
+  }));
+
+  res.json({ success: true, data: publicRows, pagination: { total, page: Number(page), pages: Math.ceil(total / Number(limit)) } });
 }));
 
 router.get('/:userId', optionalAuth, asyncHandler(async (req: AuthRequest, res, next) => {
   const student = await Student.findOne({ user: req.params.userId })
-    .populate('user', '-password -refreshToken');
+    .populate('user', 'firstName lastName role avatar coverImage');
   if (!student) return next(new AppError('Student profile not found.', 404));
-  if (req.user && req.user._id.toString() !== req.params.userId) {
+  const isOwner = req.user?._id.toString() === req.params.userId;
+  const isAdmin = req.user?.role === 'admin';
+  if (!isOwner && !isAdmin) {
     await Student.findByIdAndUpdate(student._id, { $inc: { profileViews: 1 } });
+    return res.json({
+      success: true,
+      data: {
+        user: student.user,
+        department: student.department,
+        graduationYear: student.graduationYear,
+      },
+    });
   }
   res.json({ success: true, data: student });
 }));

@@ -1,80 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { QrCode, RotateCw } from 'lucide-react';
+import { RotateCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { toPng } from 'html-to-image';
-import { QRCodeSVG } from 'qrcode.react';
-import alumniLogo from '../../../assets/alumani.jpg';
-
-// Self-contained crisp SVG QR Code component (0 external network/bundler dependencies)
-function InlineQRCode({ className = 'w-full h-full' }: { className?: string; size?: number }) {
-  return (
-    <svg
-      viewBox="0 0 29 29"
-      className={className}
-      shapeRendering="crispEdges"
-      fill="currentColor"
-    >
-      <rect width="29" height="29" fill="#FDFBF7" />
-      
-      {/* Top Left Position Pattern */}
-      <rect x="2" y="2" width="7" height="7" fill="#7A152B" />
-      <rect x="3" y="3" width="5" height="5" fill="#FDFBF7" />
-      <rect x="4" y="4" width="3" height="3" fill="#7A152B" />
-
-      {/* Top Right Position Pattern */}
-      <rect x="20" y="2" width="7" height="7" fill="#7A152B" />
-      <rect x="21" y="3" width="5" height="5" fill="#FDFBF7" />
-      <rect x="22" y="4" width="3" height="3" fill="#7A152B" />
-
-      {/* Bottom Left Position Pattern */}
-      <rect x="2" y="20" width="7" height="7" fill="#7A152B" />
-      <rect x="3" y="21" width="5" height="5" fill="#FDFBF7" />
-      <rect x="4" y="22" width="3" height="3" fill="#7A152B" />
-
-      {/* QR Data Pattern Rectangles */}
-      <rect x="10" y="2" width="2" height="2" fill="#7A152B" />
-      <rect x="14" y="2" width="1" height="3" fill="#7A152B" />
-      <rect x="16" y="2" width="2" height="1" fill="#7A152B" />
-      <rect x="10" y="5" width="3" height="2" fill="#7A152B" />
-      <rect x="15" y="5" width="2" height="2" fill="#7A152B" />
-      
-      <rect x="2" y="10" width="2" height="1" fill="#7A152B" />
-      <rect x="5" y="10" width="3" height="2" fill="#7A152B" />
-      <rect x="9" y="9" width="2" height="3" fill="#7A152B" />
-      <rect x="12" y="10" width="3" height="1" fill="#7A152B" />
-      <rect x="16" y="9" width="2" height="3" fill="#7A152B" />
-      <rect x="20" y="10" width="2" height="2" fill="#7A152B" />
-      <rect x="24" y="10" width="3" height="1" fill="#7A152B" />
-
-      <rect x="2" y="14" width="3" height="1" fill="#7A152B" />
-      <rect x="6" y="13" width="2" height="3" fill="#7A152B" />
-      <rect x="10" y="14" width="4" height="2" fill="#7A152B" />
-      <rect x="15" y="13" width="2" height="2" fill="#7A152B" />
-      <rect x="18" y="14" width="3" height="1" fill="#7A152B" />
-      <rect x="22" y="13" width="2" height="3" fill="#7A152B" />
-      <rect x="25" y="14" width="2" height="2" fill="#7A152B" />
-
-      <rect x="10" y="17" width="2" height="2" fill="#7A152B" />
-      <rect x="13" y="18" width="3" height="1" fill="#7A152B" />
-      <rect x="17" y="17" width="2" height="3" fill="#7A152B" />
-      <rect x="20" y="18" width="4" height="2" fill="#7A152B" />
-      <rect x="25" y="17" width="2" height="2" fill="#7A152B" />
-
-      <rect x="10" y="21" width="3" height="2" fill="#7A152B" />
-      <rect x="14" y="22" width="2" height="3" fill="#7A152B" />
-      <rect x="17" y="21" width="3" height="1" fill="#7A152B" />
-      <rect x="21" y="22" width="2" height="3" fill="#7A152B" />
-      <rect x="24" y="21" width="3" height="2" fill="#7A152B" />
-
-      <rect x="10" y="25" width="2" height="2" fill="#7A152B" />
-      <rect x="13" y="25" width="4" height="2" fill="#7A152B" />
-      <rect x="18" y="25" width="2" height="2" fill="#7A152B" />
-      <rect x="21" y="26" width="3" height="1" fill="#7A152B" />
-      <rect x="25" y="25" width="2" height="2" fill="#7A152B" />
-    </svg>
-  );
-}
 
 export interface ICardData {
   fullName: string;
@@ -88,6 +16,8 @@ export interface ICardData {
   email?: string;
   phone?: string;
   bloodGroup?: string;
+  enrollmentNumber?: string;
+  address?: string;
 }
 
 interface AlumniICardProps {
@@ -99,7 +29,6 @@ interface AlumniICardProps {
   side?: 'front' | 'back' | 'auto';
 }
 
-// Immutable cryptographically locked constants
 const OFFICIAL_CARD_DATA: Readonly<ICardData> = Object.freeze({
   fullName: 'HEMANSHU TALA',
   degree: 'B.Tech',
@@ -108,11 +37,542 @@ const OFFICIAL_CARD_DATA: Readonly<ICardData> = Object.freeze({
   membershipNo: 'ALUM/IITRAM/2310400011011',
   dateOfIssue: '07/09/2026',
   membershipType: 'LIFE MEMBER',
-  photoUrl: '/images/iitram-logo.png',
+  photoUrl: '/convocation_photos/2310400011011.jpeg',
   email: 'hemanshu.tala@iitram.ac.in',
   phone: '+91 98765 43210',
   bloodGroup: 'O+',
+  enrollmentNumber: '2310400011011',
+  address: 'Ahmedabad, Gujarat - 380026',
 });
+
+function AlumniBanner({
+  width = 685,
+  height = 74,
+  style,
+  text = 'ALUMNI RELATIONS, IITRAM',
+}: {
+  width?: number;
+  height?: number;
+  style?: React.CSSProperties;
+  text?: string;
+}) {
+  return (
+    <div style={{ position: 'absolute', zIndex: 4, width: `${width}px`, height: `${height}px`, ...style }}>
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 685 79"
+        preserveAspectRatio="none"
+        style={{ position: 'absolute', inset: 0 }}
+      >
+        <path
+          d="M 0 14 Q 171.25 7 342.5 0 Q 513.75 7 685 14 L 685 65 Q 513.75 72 342.5 79 Q 171.25 72 0 65 Z"
+          fill="#D6DF8E"
+        />
+        <text
+          x="342.5"
+          y="49"
+          textAnchor="middle"
+          fill="#000000"
+          fontFamily="'Arial', 'Helvetica', sans-serif"
+          fontSize="26px"
+          fontWeight="bold"
+          letterSpacing="1.5px"
+        >
+          {text}
+        </text>
+      </svg>
+    </div>
+  );
+}
+
+function FrontCard({ data }: { data: ICardData }) {
+  const enr = data.enrollmentNumber || (data.membershipNo || '').replace('ALUM/IITRAM/', '');
+  const yearOfCompletion = 2026;
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const updateScale = () => {
+      if (containerRef.current) {
+        const w = containerRef.current.clientWidth;
+        setScale(w >= 1000 ? 1 : w / 1050);
+      }
+    };
+    updateScale();
+    const obs = new ResizeObserver(updateScale);
+    obs.observe(containerRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div style={{
+      width: '1050px',
+      height: '600px',
+      position: 'relative',
+      overflow: 'hidden',
+      margin: 0,
+      padding: 0,
+      background: '#FFFFFF',
+      fontFamily: "'Arial', 'Helvetica', sans-serif",
+      boxSizing: 'border-box',
+    }}>
+
+        {/* 1. TOP HEADER CONTAINER - WITH 25PX TOP MARGIN */}
+        <div style={{
+          position: 'absolute',
+          left: '30px',
+          top: '25px',
+          width: '990px',
+          height: '138px',
+          borderRadius: '24px',
+          background: '#DFF3F5',
+          overflow: 'hidden',
+        }} />
+
+        {/* 2. IITRAM LOGO IN HEADER */}
+        <div style={{
+          position: 'absolute',
+          left: '35px',
+          top: '32px',
+          width: '124px',
+          height: '124px',
+          borderRadius: '50%',
+          overflow: 'hidden',
+          zIndex: 2,
+          background: '#FFFFFF',
+        }}>
+          <img
+            src="/new/iitram cdr logo.png"
+            alt="IITRAM Logo"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            onError={e => {
+              (e.target as HTMLImageElement).src = '/images/iitram-logo.png';
+            }}
+          />
+        </div>
+
+        {/* 3 & 4. HEADER TITLE & SUBTITLE */}
+        <div style={{
+          position: 'absolute',
+          left: '170px',
+          top: '34px',
+          width: '830px',
+          textAlign: 'center',
+          zIndex: 2,
+        }}>
+          <div style={{
+            fontSize: '34px',
+            fontWeight: 700,
+            color: '#073F7C',
+            lineHeight: '1.15',
+            whiteSpace: 'nowrap',
+          }}>
+            INSTITUTE OF INFRASTRUCTURE, TECHNOLOGY,
+          </div>
+          <div style={{
+            fontSize: '34px',
+            fontWeight: 700,
+            color: '#073F7C',
+            lineHeight: '1.15',
+            whiteSpace: 'nowrap',
+          }}>
+            RESEARCH AND MANAGEMENT
+          </div>
+          <div style={{
+            fontSize: '20px',
+            fontStyle: 'italic',
+            fontWeight: 600,
+            color: '#073F7C',
+            marginTop: '4px',
+            whiteSpace: 'nowrap',
+          }}>
+            (An Autonomous University Established by Government of Gujarat)
+          </div>
+        </div>
+
+        {/* 5. ALUMNUS VERTICAL TEXT */}
+        <div style={{
+          position: 'absolute',
+          left: '48px',
+          top: '205px',
+          width: '50px',
+          height: '215px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10,
+        }}>
+          <span style={{
+            writingMode: 'vertical-rl',
+            transform: 'rotate(180deg)',
+            fontSize: '36px',
+            fontWeight: 700,
+            color: '#1597A2',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
+            userSelect: 'none',
+          }}>
+            ALUMNUS
+          </span>
+        </div>
+
+        {/* 6. STUDENT PHOTO */}
+        <div style={{
+          position: 'absolute',
+          left: '116px',
+          top: '199px',
+          width: '176px',
+          height: '210px',
+          background: '#EEF5F8',
+          overflow: 'hidden',
+          zIndex: 2,
+        }}>
+          <img
+            src={data.photoUrl || '/images/iitram-logo.png'}
+            alt={data.fullName}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={e => { (e.target as HTMLImageElement).src = '/images/iitram-logo.png'; }}
+          />
+        </div>
+
+        {/* 7. MAIN INFORMATION AREA */}
+        <div style={{
+          position: 'absolute',
+          left: '307px',
+          top: '212px',
+          width: '430px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          zIndex: 3,
+        }}>
+          <div style={{ fontSize: '26px', color: '#000000', lineHeight: '1.2' }}>
+            <span style={{ fontWeight: 700 }}>ID Number:</span>{' '}
+            <span style={{ fontWeight: 500 }}>{enr}</span>
+          </div>
+          <div style={{ fontSize: '26px', color: '#000000', lineHeight: '1.2' }}>
+            <span style={{ fontWeight: 700 }}>Name :</span>{' '}
+            <span style={{ fontWeight: 500 }}>{data.fullName}</span>
+          </div>
+          <div style={{ fontSize: '26px', color: '#000000', lineHeight: '1.25' }}>
+            <span style={{ fontWeight: 700 }}>Academic Program:</span>{' '}
+            <span style={{ fontWeight: 500 }}>{data.degree} –</span>
+            <br />
+            <span style={{ fontWeight: 500 }}>{data.department}</span>
+          </div>
+          <div style={{ fontSize: '26px', color: '#000000', lineHeight: '1.2' }}>
+            <span style={{ fontWeight: 700 }}>Year of Completion:</span>{' '}
+            <span style={{ fontWeight: 500 }}>{yearOfCompletion}</span>
+          </div>
+        </div>
+
+        {/* 8 & 9. RIGHT WATERMARK LOGO & RIBBON */}
+        <div style={{
+          position: 'absolute',
+          left: '715px',
+          top: '155px',
+          width: '295px',
+          height: '330px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          opacity: 0.22,
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}>
+          <img
+            src="/new/alumani.jpeg"
+            alt="Alumni Relations IITRAM"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          />
+        </div>
+
+        {/* 10. SIGNATURE */}
+        <div style={{
+          position: 'absolute',
+          left: '143px',
+          top: '430px',
+          width: '120px',
+          height: '45px',
+          zIndex: 3,
+        }}>
+          <img
+            src="/PRAMOD sign jpg.jpg.jpeg"
+            alt="Signature"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          />
+        </div>
+
+        {/* 11. AUTHORIZED SIGNATORY */}
+        <div style={{
+          position: 'absolute',
+          left: '95px',
+          top: '478px',
+          width: '210px',
+          borderTop: '2px solid #000000',
+          zIndex: 3,
+        }} />
+
+        <div style={{
+          position: 'absolute',
+          left: '95px',
+          top: '484px',
+          width: '210px',
+          textAlign: 'center',
+          fontSize: '21px',
+          fontWeight: 700,
+          color: '#000000',
+          whiteSpace: 'nowrap',
+          zIndex: 3,
+        }}>
+          Authorized Signatory
+        </div>
+
+        {/* 12 & 13. BOTTOM PALE YELLOW-GREEN BANNER & TEXT */}
+        <AlumniBanner
+          width={685}
+          height={92}
+          style={{ left: '335px', top: '475px' }}
+        />
+
+      </div>
+  );
+}
+
+function BackCard({ data }: { data: ICardData }) {
+  const enr = data.enrollmentNumber || (data.membershipNo || '').replace('ALUM/IITRAM/', '');
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const updateScale = () => {
+      if (containerRef.current) {
+        const w = containerRef.current.clientWidth;
+        setScale(w >= 1000 ? 1 : w / 1050);
+      }
+    };
+    updateScale();
+    const obs = new ResizeObserver(updateScale);
+    obs.observe(containerRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div ref={containerRef} style={{
+      width: '100%',
+      aspectRatio: '1050 / 600',
+      position: 'relative',
+      overflow: 'hidden',
+      borderRadius: '0px',
+      boxShadow: 'none',
+      background: '#ffffff',
+    }}>
+      <div style={{
+        width: '1050px',
+        height: '600px',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        transform: 'none',
+        transformOrigin: 'top left',
+        background: '#FFFFFF',
+        fontFamily: "'Arial', 'Helvetica', sans-serif",
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+        border: '1px solid #CBD5E1',
+      }}>
+
+        {/* 1. TOP-LEFT ALUMNI RELATIONS BANNER */}
+        <AlumniBanner
+          width={540}
+          height={90}
+          style={{ left: '0px', top: '0px' }}
+        />
+
+        {/* 2. LEFT VERTICAL LIGHT-BLUE PILL (2-LINE TEXT) */}
+        <div style={{
+          position: 'absolute',
+          left: '0px',
+          top: '90px',
+          width: '65px',
+          height: '510px',
+          borderRadius: '0 30px 0 0',
+          background: '#E0F2F5',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '4px',
+          padding: '4px 0',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
+          zIndex: 2,
+        }}>
+          <span style={{
+            writingMode: 'vertical-rl',
+            transform: 'rotate(180deg)',
+            fontSize: '13.5px',
+            fontWeight: 800,
+            color: '#073F7C',
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
+            userSelect: 'none',
+          }}>
+            INSTITUTE OF INFRASTRUCTURE, TECHNOLOGY,
+          </span>
+          <span style={{
+            writingMode: 'vertical-rl',
+            transform: 'rotate(180deg)',
+            fontSize: '13.5px',
+            fontWeight: 800,
+            color: '#073F7C',
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
+            userSelect: 'none',
+          }}>
+            RESEARCH AND MANAGEMENT
+          </span>
+        </div>
+
+        {/* 3. FADED IITRAM WATERMARK LOGO */}
+        <div style={{
+          position: 'absolute',
+          left: '105px',
+          top: '130px',
+          width: '390px',
+          height: '390px',
+          opacity: 0.16,
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}>
+          <img
+            src="/new/iitram cdr logo.png"
+            alt="IITRAM Watermark"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          />
+        </div>
+
+        {/* 4. STUDENT INFORMATION FIELDS */}
+        <div style={{
+          position: 'absolute',
+          left: '105px',
+          top: '135px',
+          fontSize: '24px',
+          color: '#000000',
+          lineHeight: '1.2',
+          zIndex: 3,
+        }}>
+          <span style={{ fontWeight: 800 }}>Enrollment Number :</span>{' '}
+          <span style={{ fontWeight: 500 }}>{enr}</span>
+        </div>
+
+        <div style={{
+          position: 'absolute',
+          left: '105px',
+          top: '220px',
+          width: '420px',
+          maxWidth: '420px',
+          fontSize: (data.email || '').length > 32 ? '18px' : (data.email || '').length > 25 ? '20px' : '24px',
+          color: '#000000',
+          lineHeight: '1.25',
+          wordBreak: 'break-word',
+          zIndex: 3,
+        }}>
+          <span style={{ fontWeight: 800 }}>Email Id :</span>{' '}
+          <span style={{ fontWeight: 500 }}>{data.email || `${enr}@iitram.ac.in`}</span>
+        </div>
+
+        <div style={{
+          position: 'absolute',
+          left: '105px',
+          top: '305px',
+          fontSize: '24px',
+          color: '#000000',
+          lineHeight: '1.2',
+          zIndex: 3,
+        }}>
+          <span style={{ fontWeight: 800 }}>Contact No :</span>{' '}
+          <span style={{ fontWeight: 500 }}>{data.phone || '+91 98765 43210'}</span>
+        </div>
+
+        <div style={{
+          position: 'absolute',
+          left: '105px',
+          top: '382px',
+          width: '410px',
+          fontSize: '21px',
+          color: '#000000',
+          lineHeight: '1.2',
+          zIndex: 3,
+        }}>
+          <span style={{ fontWeight: 800 }}>Permanent Address:</span>{' '}
+          <span style={{ fontWeight: 500, whiteSpace: 'pre-line' }}>
+            {data.address ? data.address : <>Ahmedabad,<br />Gujarat - 380026</>}
+          </span>
+        </div>
+
+        {/* 5. DISCLAIMER TEXT */}
+        <div style={{
+          position: 'absolute',
+          left: '105px',
+          bottom: '12px',
+          width: '420px',
+          fontSize: '13px',
+          color: '#333333',
+          fontStyle: 'italic',
+          lineHeight: '1.4',
+          fontWeight: 600,
+          zIndex: 3,
+        }}>
+          *Report the loss of this card to Security Office, IITRAM<br />
+          *This Card is not transferable
+        </div>
+
+        {/* 6. RIGHT BUILDING IMAGE WITH EXACT SVG CLIP-PATH BOUNDARY */}
+        <div style={{
+          position: 'absolute',
+          left: '542px',
+          top: '23px',
+          width: '472px',
+          height: '537px',
+          overflow: 'hidden',
+          zIndex: 1,
+        }}>
+          <svg width="0" height="0" style={{ position: 'absolute' }}>
+            <defs>
+              <clipPath id="buildingClip" clipPathUnits="userSpaceOnUse">
+                <path d="M 35 0 C 15 45, 5 100, 12 155 C 20 215, 45 270, 75 325 C 98 375, 138 420, 148 470 C 155 495, 155 520, 154 537 L 472 537 L 472 0 Z" />
+              </clipPath>
+            </defs>
+          </svg>
+          <img
+            src="/iitram-bg.jpg"
+            alt="IITRAM Campus Building"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center top',
+              clipPath: 'url(#buildingClip)',
+              WebkitClipPath: 'url(#buildingClip)',
+              display: 'block',
+            }}
+            onError={e => { (e.target as HTMLImageElement).style.background = '#b0c8d8'; }}
+          />
+        </div>
+
+      </div>
+    </div>
+  );
+}
 
 export default function AlumniICard({
   data: propsData,
@@ -130,589 +590,121 @@ export default function AlumniICard({
   const [backCanvasUrl, setBackCanvasUrl] = useState<string | null>(null);
   const data = Object.freeze(propsData || OFFICIAL_CARD_DATA);
 
-  // Generate high-resolution 3x flattened Canvas PNG snapshots for anti-inspect protection
   useEffect(() => {
-    let isMounted = true;
-    const generateCanvasSnapshots = async () => {
+    let alive = true;
+    const run = async () => {
+      const opts = {
+        quality: 1, pixelRatio: 3,
+        filter: (n: HTMLElement) => {
+          if (!n.tagName) return true;
+          return !['IFRAME', 'EMBED', 'SCRIPT'].includes(n.tagName.toUpperCase());
+        },
+      };
       try {
         if (offscreenFrontRef.current) {
-          const frontUrl = await toPng(offscreenFrontRef.current, {
-            quality: 1,
-            pixelRatio: 3,
-            filter: (node) => {
-              if (!node.tagName) return true;
-              const tag = node.tagName.toUpperCase();
-              return tag !== 'IFRAME' && tag !== 'EMBED' && tag !== 'SCRIPT';
-            },
-          });
-          if (isMounted) setFrontCanvasUrl(frontUrl);
+          const url = await toPng(offscreenFrontRef.current, opts);
+          if (alive) setFrontCanvasUrl(url);
         }
-
         if (offscreenBackRef.current) {
-          const backUrl = await toPng(offscreenBackRef.current, {
-            quality: 1,
-            pixelRatio: 3,
-            filter: (node) => {
-              if (!node.tagName) return true;
-              const tag = node.tagName.toUpperCase();
-              return tag !== 'IFRAME' && tag !== 'EMBED' && tag !== 'SCRIPT';
-            },
-          });
-          if (isMounted) setBackCanvasUrl(backUrl);
+          const url = await toPng(offscreenBackRef.current, opts);
+          if (alive) setBackCanvasUrl(url);
         }
-      } catch (err) {
-        console.error('Canvas snapshot generation error:', err);
-      }
+      } catch (e) { console.error(e); }
     };
-
-    const timer = setTimeout(generateCanvasSnapshots, 100);
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-    };
+    const t = setTimeout(run, 150);
+    return () => { alive = false; clearTimeout(t); };
   }, [data, tamperKey]);
 
-  // Active MutationObserver & Event protection against DevTools DOM inspection / editing
   useEffect(() => {
     if (!securityProtected || !cardRef.current) return;
-    const targetNode = cardRef.current;
-
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.key === 'F12' ||
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
-        (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
-      ) {
+    const node = cardRef.current;
+    const onCtx = (e: MouseEvent) => e.preventDefault();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && 'IJCijc'.includes(e.key)) || (e.ctrlKey && 'Uu'.includes(e.key)))
         e.preventDefault();
-      }
     };
-
-    const observer = new MutationObserver((mutations) => {
-      let isTampered = false;
-      for (const mutation of mutations) {
-        if (mutation.type === 'childList' || mutation.type === 'characterData' || mutation.type === 'attributes') {
-          isTampered = true;
-          break;
-        }
-      }
-      if (isTampered) {
-        // Silently reset and re-render card state without annoying toast alerts
-        setTamperKey((prev) => prev + 1);
-      }
-    });
-
-    observer.observe(targetNode, {
-      attributes: true,
-      childList: true,
-      characterData: true,
-      subtree: true,
-    });
-
-    targetNode.addEventListener('contextmenu', handleContextMenu);
-    window.addEventListener('keydown', handleKeyDown);
-
+    const obs = new MutationObserver(() => setTamperKey(p => p + 1));
+    obs.observe(node, { attributes: true, childList: true, characterData: true, subtree: true });
+    node.addEventListener('contextmenu', onCtx);
+    window.addEventListener('keydown', onKey);
     return () => {
-      observer.disconnect();
-      targetNode.removeEventListener('contextmenu', handleContextMenu);
-      window.removeEventListener('keydown', handleKeyDown);
+      obs.disconnect();
+      node.removeEventListener('contextmenu', onCtx);
+      window.removeEventListener('keydown', onKey);
     };
   }, [securityProtected, tamperKey]);
 
-  const handleCopyId = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigator.clipboard.writeText(data.membershipNo || 'ALUM/IITRAM/2310400011011');
-    toast.success('Membership No. copied!');
-  };
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // 1. FRONT SIDE MARKUP (EXACT 1:1 REPLICA MATCH WITH ZERO CUTOFFS)
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderFrontCard = () => {
-    if (securityProtected && frontCanvasUrl) {
+  const renderFront = () => {
+    if (securityProtected && frontCanvasUrl)
       return (
-        <div className="front-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden select-none">
-          <img
-            src={frontCanvasUrl}
-            alt="Official IITRAM Alumni Identity Card - Front View"
-            className="w-full h-full object-cover pointer-events-none select-none"
-            onContextMenu={(e) => e.preventDefault()}
-            onDragStart={(e) => e.preventDefault()}
-          />
+        <div style={{ width: '100%', height: '100%', overflow: 'hidden', userSelect: 'none' }}>
+          <img src={frontCanvasUrl} alt="IITRAM Alumni Card Front"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none', userSelect: 'none' }}
+            onContextMenu={e => e.preventDefault()}
+            onDragStart={e => e.preventDefault()} />
         </div>
       );
-    }
-    return (
-      <div
-        className="front-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none"
-        style={{
-          boxShadow: '0 20px 40px -15px rgba(122, 21, 43, 0.18), 0 0 1px 1px rgba(0,0,0,0.05)',
-        }}
-      >
-      {/* Invisible Security Protection Layer (Catches Inspect Element Picker) */}
-      <div className="absolute inset-0 z-30 bg-transparent pointer-events-auto select-none" />
-
-      {/* Top Gold Accent Border */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
-
-      {/* Card Outer Layout Container with Right Vertical Bars */}
-      <div className="relative flex-1 flex flex-col justify-between pl-3 sm:pl-4 pr-11 sm:pr-14 pt-2.5 sm:pt-3 pb-0">
-        
-        {/* ── HEADER SECTION ────────────────────────────────────────────── */}
-        <div>
-          <div className="flex items-center gap-2 sm:gap-3 pb-2">
-            {/* IITRAM Official Circular Header Logo (Left) */}
-            <div className="w-10 h-10 sm:w-14 sm:h-14 shrink-0 rounded-full p-0.5 bg-white shadow-2xs border border-slate-100 flex items-center justify-center">
-              <img
-                src="/images/iitram-logo.png"
-                alt="IITRAM Logo"
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/en/2/25/Institute_of_Infrastructure_Technology_Research_and_Management_logo.png';
-                }}
-              />
-            </div>
-
-            {/* Header Titles (Center) */}
-            <div className="flex-1 min-w-0">
-              <h2 className="text-[10px] sm:text-base font-black tracking-tight text-[#7A152B] font-serif leading-tight uppercase">
-                IITRAM ALUMNI RELATIONS
-              </h2>
-              <p className="text-[5.5px] sm:text-[7.5px] font-semibold text-slate-800 leading-tight mt-0.5 whitespace-nowrap">
-                Institute of Infrastructure, Technology, Research and Management
-              </p>
-              <p className="text-[5.5px] sm:text-[7.5px] font-medium text-slate-500 leading-tight mt-0.5 tracking-tight truncate">
-                Ahmedabad, Gujarat &nbsp;|&nbsp; www.iitram.ac.in &nbsp;|&nbsp; alumni@iitram.ac.in
-              </p>
-            </div>
-
-            {/* IITRAM Alumni Relations Logo (Top Right) */}
-            <div className="w-11 h-11 sm:w-15 sm:h-15 shrink-0 bg-white p-0.5 flex items-center justify-center">
-              <img
-                src={alumniLogo}
-                alt="IITRAM Alumni Relations Logo"
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/images/alumni-logo.jpg';
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Horizontal Golden Separator Bar */}
-          <div className="h-[3px] w-full bg-[#C59B27] rounded-full shadow-2xs" />
-        </div>
-
-        {/* ── MAIN BODY SECTION ─────────────────────────────────────────── */}
-        <div className="flex items-stretch gap-3 sm:gap-4 py-1 sm:py-1.5 my-auto">
-          
-          {/* Photo Frame (Left Box - Showing Convocation Student Photo / Logo) */}
-          <div className="relative w-18 sm:w-26 h-22 sm:h-30 rounded-xs border-2 border-[#7A152B] bg-slate-50 shrink-0 overflow-hidden shadow-2xs flex flex-col items-center justify-center text-center p-0.5 group">
-            <img
-              src={data.photoUrl || '/images/iitram-logo.png'}
-              alt={data.fullName || 'Alumni Photo'}
-              className="w-full h-full object-cover rounded-xs"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/images/iitram-logo.png';
-              }}
-            />
-          </div>
-
-          {/* Alumni Details Column (Right Side) */}
-          <div className="flex-1 flex flex-col justify-center min-w-0 pr-1">
-            {/* Member Category Badge */}
-            <span className="text-[8px] sm:text-[10px] font-bold text-[#C59B27] uppercase tracking-widest block mb-0.5">
-              ALUMNI MEMBER
-            </span>
-
-            {/* Full Name: HEMANSHU TALA */}
-            <h1 className="text-xs sm:text-lg font-black text-[#7A152B] uppercase tracking-tight leading-tight truncate mb-1 sm:mb-1.5 font-serif">
-              {data.fullName || 'HEMANSHU TALA'}
-            </h1>
-
-            {/* Information Grid */}
-            <div className="space-y-0.5 sm:space-y-1 text-[8px] sm:text-[10.5px] font-semibold text-slate-700">
-              <div className="flex items-baseline">
-                <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Degree</span>
-                <span className="mr-1.5 text-slate-400 font-normal">:</span>
-                <span className="font-bold text-slate-900 truncate">{data.degree || 'B.Tech'}</span>
-              </div>
-
-              <div className="flex items-baseline">
-                <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Department</span>
-                <span className="mr-1.5 text-slate-400 font-normal">:</span>
-                <span className="font-bold text-slate-900 truncate">
-                  {data.department || 'Computer Engineering'}
-                </span>
-              </div>
-
-              <div className="flex items-baseline">
-                <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Batch</span>
-                <span className="mr-1.5 text-slate-400 font-normal">:</span>
-                <span className="font-bold text-slate-900 truncate">
-                  {data.batch || '2023 - 2027'}
-                </span>
-              </div>
-
-              <div className="flex items-center cursor-pointer" onClick={handleCopyId}>
-                <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Membership No.</span>
-                <span className="mr-1.5 text-slate-400 font-normal">:</span>
-                <span className="font-extrabold text-[#7A152B] tracking-tight hover:underline flex items-center gap-1 truncate font-mono text-[8px] sm:text-[10px]">
-                  {data.membershipNo || 'ALUM/IITRAM/2310400011011'}
-                </span>
-              </div>
-
-              <div className="flex items-baseline">
-                <span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Date of Birth</span>
-                <span className="mr-1.5 text-slate-400 font-normal">:</span>
-                <span className="font-semibold text-slate-800">{data.dateOfIssue || '07/09/2026'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── FOOTER BANNER (Reference style: 2 signatures) ─────────────── */}
-        <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-4 sm:pl-6 pr-14 sm:pr-18 pt-1 pb-1.5 sm:pb-2 flex items-center justify-between shadow-inner">
-
-          {/* Left: Issuing Authority / Hon. Dean */}
-          <div className="flex flex-col items-start shrink-0">
-            <svg viewBox="0 0 60 14" className="w-11 sm:w-15 h-3 sm:h-3.5" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3,11 C6,4 10,3 13,7 C15,10 17,8 19,5 C21,3 23,6 25,9 C27,13 29,7 32,5 C34,3 36,5 38,9" />
-              <path d="M3,13 Q20,12 38,13" strokeWidth="0.5" opacity="0.4" />
-            </svg>
-            <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-            <span className="text-[6px] sm:text-[8px] font-bold text-white leading-none">Issuing Authority</span>
-            <span className="text-[5px] sm:text-[6.5px] font-medium text-amber-200 leading-none mt-0.5">Hon. Dean</span>
-          </div>
-
-          {/* Right: Signature of Card Holder */}
-          <div className="flex flex-col items-end shrink-0">
-            <svg viewBox="0 0 60 14" className="w-11 sm:w-15 h-3 sm:h-3.5" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3,11 C5,4 8,3 11,6 C13,9 15,11 17,8 C19,5 21,3 24,7 C26,11 28,6 31,4 C34,3 37,5 39,8 C41,12 43,8 46,6 C48,4 51,7 54,10" />
-              <path d="M3,13 Q28,12 54,13" strokeWidth="0.5" opacity="0.4" />
-            </svg>
-            <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-            <span className="text-[6px] sm:text-[8px] font-bold text-white leading-none">Signature of</span>
-            <span className="text-[5px] sm:text-[6.5px] font-medium text-amber-200 leading-none mt-0.5">Card Holder</span>
-          </div>
-
-        </div>
-
-        {/* ── RIGHT VERTICAL STRIPES ACCENT ────────────────────────────── */}
-        <div className="absolute top-0 bottom-0 right-0 flex h-full pointer-events-none">
-          {/* Inner Gold Stripe */}
-          <div className="w-2 sm:w-2.5 h-full bg-[#C59B27]" />
-          {/* Outer Burgundy Column */}
-          <div className="w-7 sm:w-9 h-full bg-[#7A152B]" />
-        </div>
-      </div>
-    </div>
-    );
+    return <FrontCard data={data} />;
   };
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // 2. BACK SIDE MARKUP (EXACT 1:1 REPLICA MATCH WITH REAL QR CODE)
-  // ══════════════════════════════════════════════════════════════════════════
-  const renderBackCard = () => {
-    if (securityProtected && backCanvasUrl) {
+  const renderBack = () => {
+    if (securityProtected && backCanvasUrl)
       return (
-        <div className="back-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden select-none">
-          <img
-            src={backCanvasUrl}
-            alt="Official IITRAM Alumni Identity Card - Back View"
-            className="w-full h-full object-cover pointer-events-none select-none"
-            onContextMenu={(e) => e.preventDefault()}
-            onDragStart={(e) => e.preventDefault()}
-          />
+        <div style={{ width: '100%', height: '100%', overflow: 'hidden', userSelect: 'none' }}>
+          <img src={backCanvasUrl} alt="IITRAM Alumni Card Back"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none', userSelect: 'none' }}
+            onContextMenu={e => e.preventDefault()}
+            onDragStart={e => e.preventDefault()} />
         </div>
       );
-    }
+    return <BackCard data={data} />;
+  };
+
+  if (side === 'front')
     return (
-      <div
-        className="back-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none"
-        style={{
-          boxShadow: '0 20px 40px -15px rgba(122, 21, 43, 0.18), 0 0 1px 1px rgba(0,0,0,0.05)',
-        }}
-      >
-      {/* Invisible Security Protection Layer (Catches Inspect Element Picker) */}
-      <div className="absolute inset-0 z-30 bg-transparent pointer-events-auto select-none" />
-      {/* Top Gold Accent Border */}
-      <div className="h-1.5 sm:h-2 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
-
-      {/* Main Burgundy Header Bar */}
-      <div className="bg-[#7A152B] text-white py-2.5 sm:py-3.5 px-4 text-center shadow-2xs">
-        <h2 className="text-sm sm:text-xl font-black tracking-wider uppercase font-serif">
-          IITRAM ALUMNI RELATIONS
-        </h2>
-      </div>
-
-      {/* Body Section: Membership Privileges */}
-      <div className="px-4 sm:px-7 py-2 sm:py-3 flex-1 flex flex-col justify-between">
-        <div>
-          <h3 className="text-xs sm:text-sm font-black text-[#7A152B] uppercase tracking-wide mb-1.5 sm:mb-2 font-serif">
-            MEMBERSHIP PRIVILEGES
-          </h3>
-
-          <ul className="space-y-1 sm:space-y-2 text-[9px] sm:text-[11.5px] font-semibold text-slate-800">
-            <li className="flex items-start gap-1.5">
-              <span className="text-[#7A152B] font-bold text-xs leading-none">•</span>
-              <span>Access to alumni networking and events</span>
-            </li>
-            <li className="flex items-start gap-1.5">
-              <span className="text-[#7A152B] font-bold text-xs leading-none">•</span>
-              <span>Participation in institute/alumni activities</span>
-            </li>
-            <li className="flex items-start gap-1.5">
-              <span className="text-[#7A152B] font-bold text-xs leading-none">•</span>
-              <span>Access to alumni communications and updates</span>
-            </li>
-            <li className="flex items-start gap-1.5">
-              <span className="text-[#7A152B] font-bold text-xs leading-none">•</span>
-              <span>Opportunities for professional and academic networking</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* Certification Statement */}
-        <div className="my-1 sm:my-1.5">
-          <div className="h-[2.5px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1" />
-          <p className="text-[8px] sm:text-[10px] font-medium text-slate-700 text-center">
-            This card certifies that the holder is a registered member of IITRAM Alumni Relations.
-          </p>
-        </div>
-
-        {/* Footer Row: email (left) | QR (absolute dead center) | phone (right) */}
-        <div className="relative flex items-center justify-between py-1 px-3 sm:px-5">
-
-          {/* Left: Email */}
-          <div className="flex flex-col items-start min-w-0 max-w-[38%]">
-            <span className="text-[6px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-wider">Email</span>
-            <span className="text-[6.5px] sm:text-[9px] font-bold text-[#7A152B] truncate leading-tight w-full">
-              {data.email || 'alumni@iitram.ac.in'}
-            </span>
-          </div>
-
-          {/* Center: QR Code (100% Dead Center Box) */}
-          <div
-            onClick={(e) => { e.stopPropagation(); onOpenVerify?.(); }}
-            className="absolute left-1/2 -translate-x-1/2 w-10 sm:w-13 h-9 sm:h-11 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-2xs cursor-pointer hover:bg-amber-50/50 transition-colors"
-            title="Click to verify QR code"
-          >
-            <QRCodeSVG
-              value={data.membershipNo || 'ALUM/IITRAM/231040011011'}
-              size={44}
-              bgColor="#FDFBF7"
-              fgColor="#7A152B"
-              level="M"
-              style={{ width: '100%', height: '100%' }}
-            />
-          </div>
-
-          {/* Right: Mobile */}
-          <div className="flex flex-col items-end min-w-0 max-w-[38%] shrink-0">
-            <span className="text-[6px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-wider">Mobile</span>
-            <span className="text-[6.5px] sm:text-[9px] font-bold text-[#7A152B] leading-tight">
-              {data.phone || '+91 98765 43210'}
-            </span>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
-};
-
-  // If explicit side is requested (e.g. side-by-side mode)
-  if (side === 'front') {
-    return (
-      <div ref={cardRef} className="w-full max-w-[560px] mx-auto aspect-[1.58/1] select-none">
-        {renderFrontCard()}
+      <div ref={cardRef} style={{ width: '100%', maxWidth: '700px', margin: '0 auto', aspectRatio: '1050 / 600', userSelect: 'none' }}>
+        {renderFront()}
       </div>
     );
-  }
-
-  if (side === 'back') {
+  if (side === 'back')
     return (
-      <div ref={cardRef} className="w-full max-w-[560px] mx-auto aspect-[1.58/1] select-none">
-        {renderBackCard()}
+      <div ref={cardRef} style={{ width: '100%', maxWidth: '700px', margin: '0 auto', aspectRatio: '1050 / 600', userSelect: 'none' }}>
+        {renderBack()}
       </div>
     );
-  }
 
-  // Auto 3D flip card view
   return (
-    <div ref={cardRef} className="w-full max-w-[580px] mx-auto select-none" style={{ perspective: '1200px' }}>
+    <div ref={cardRef} style={{ width: '100%', maxWidth: '700px', margin: '0 auto', perspective: '1200px', userSelect: 'none' }}>
       <motion.div
-        className="relative w-full aspect-[1.58/1] rounded-none shadow-xl cursor-pointer select-none"
+        style={{ position: 'relative', width: '100%', aspectRatio: '1050 / 600', transformStyle: 'preserve-3d', cursor: 'pointer' }}
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.6, ease: 'easeInOut' }}
         onClick={onFlip}
-        style={{ transformStyle: 'preserve-3d', WebkitTransformStyle: 'preserve-3d' }}
       >
-        {/* Front Container */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            zIndex: isFlipped ? 0 : 2,
-          }}
-        >
-          {renderFrontCard()}
+        <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', zIndex: isFlipped ? 0 : 2 }}>
+          {renderFront()}
         </div>
-
-        {/* Back Container */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            WebkitTransform: 'rotateY(180deg)',
-            zIndex: isFlipped ? 2 : 0,
-          }}
-        >
-          {renderBackCard()}
+        <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', zIndex: isFlipped ? 2 : 0 }}>
+          {renderBack()}
         </div>
       </motion.div>
 
-      {/* Helper text below card */}
-      <div className="mt-3 flex items-center justify-between text-xs text-slate-500 px-1">
-        <span className="flex items-center gap-1.5 text-slate-600 font-medium">
-          <RotateCw size={13} className="text-[#7A152B]" />
-          Click card to flip
+      <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', color: '#666', padding: '0 4px' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: '#444' }}>
+          <RotateCw size={13} color="#0b9baa" /> Click card to flip
         </span>
-        <button
-          type="button"
-          onClick={onFlip}
-          className="text-[#7A152B] hover:text-[#5a0f1f] font-bold hover:underline cursor-pointer"
-        >
+        <button type="button" onClick={onFlip}
+          style={{ color: '#0b4c6e', fontWeight: '700', cursor: 'pointer', background: 'none', border: 'none', fontSize: '12px', textDecoration: 'underline' }}>
           {isFlipped ? 'View Front Side' : 'View Back Side'}
         </button>
       </div>
 
-      {/* Offscreen Raw Templates for High-Res 3x Canvas Snapshotting */}
-      <div
-        className="pointer-events-none opacity-0 fixed top-0 left-0 -z-50 overflow-hidden"
-        style={{ width: '580px', height: '367px', pointerEvents: 'none' }}
-      >
-        <div ref={offscreenFrontRef} style={{ width: '580px', height: '367px', backgroundColor: '#ffffff' }}>
-          {/* Raw Front Layout */}
-          <div className="front-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none">
-            <div className="h-1.5 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
-            <div className="relative flex-1 flex flex-col justify-between pl-3 sm:pl-4 pr-11 sm:pr-14 pt-2.5 sm:pt-3 pb-0">
-              <div>
-                <div className="flex items-center gap-2 sm:gap-3 pb-2">
-                  <div className="w-10 h-10 sm:w-14 sm:h-14 shrink-0 rounded-full p-0.5 bg-white shadow-2xs border border-slate-100 flex items-center justify-center">
-                    <img src="/images/iitram-logo.png" alt="IITRAM Logo" className="w-full h-full object-contain" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h2 className="text-[10px] sm:text-base font-black tracking-tight text-[#7A152B] font-serif leading-tight uppercase">IITRAM ALUMNI RELATIONS</h2>
-                    <p className="text-[5.5px] sm:text-[7.5px] font-semibold text-slate-800 leading-tight mt-0.5 whitespace-nowrap">Institute of Infrastructure, Technology, Research and Management</p>
-                    <p className="text-[5.5px] sm:text-[7.5px] font-medium text-slate-500 leading-tight mt-0.5 tracking-tight truncate">Ahmedabad, Gujarat &nbsp;|&nbsp; www.iitram.ac.in &nbsp;|&nbsp; alumni@iitram.ac.in</p>
-                  </div>
-                  <div className="w-11 h-11 sm:w-15 sm:h-15 shrink-0 bg-white p-0.5 flex items-center justify-center">
-                    <img src={alumniLogo} alt="IITRAM Alumni Relations Logo" className="w-full h-full object-contain" />
-                  </div>
-                </div>
-                <div className="h-[3px] w-full bg-[#C59B27] rounded-full shadow-2xs" />
-              </div>
-              <div className="flex items-stretch gap-3 sm:gap-4 py-1 sm:py-1.5 my-auto">
-                <div className="relative w-18 sm:w-26 h-22 sm:h-30 rounded-xs border-2 border-[#7A152B] bg-slate-50 shrink-0 overflow-hidden shadow-2xs flex flex-col items-center justify-center text-center p-0.5 group">
-                  <img src={data.photoUrl || '/images/iitram-logo.png'} alt={data.fullName} className="w-full h-full object-cover rounded-xs" />
-                </div>
-                <div className="flex-1 flex flex-col justify-center min-w-0 pr-1">
-                  <span className="text-[8px] sm:text-[10px] font-bold text-[#C59B27] uppercase tracking-widest block mb-0.5">ALUMNI MEMBER</span>
-                  <h1 className="text-xs sm:text-lg font-black text-[#7A152B] uppercase tracking-tight leading-tight truncate mb-1 sm:mb-1.5 font-serif">{data.fullName}</h1>
-                  <div className="space-y-0.5 sm:space-y-1 text-[8px] sm:text-[10.5px] font-semibold text-slate-700">
-                    <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Degree</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-bold text-slate-900 truncate">{data.degree}</span></div>
-                    <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Department</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-bold text-slate-900 truncate">{data.department}</span></div>
-                    <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Batch</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-bold text-slate-900 truncate">{data.batch}</span></div>
-                    <div className="flex items-center"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Membership No.</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-extrabold text-[#7A152B] tracking-tight font-mono text-[8px] sm:text-[10px]">{data.membershipNo}</span></div>
-                    <div className="flex items-baseline"><span className="w-18 sm:w-26 text-slate-500 font-medium shrink-0">Date of Birth</span><span className="mr-1.5 text-slate-400 font-normal">:</span><span className="font-semibold text-slate-800">{data.dateOfIssue}</span></div>
-                  </div>
-                </div>
-              </div>
-              <div className="-mx-3 sm:-mx-4 -mr-11 sm:-mr-14 bg-[#7A152B] text-white pl-4 sm:pl-6 pr-14 sm:pr-18 pt-1 pb-1.5 sm:pb-2 flex items-center justify-between shadow-inner">
-                <div className="flex flex-col items-start shrink-0">
-                  <svg viewBox="0 0 60 14" className="w-11 sm:w-15 h-3 sm:h-3.5" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3,11 C6,4 10,3 13,7 C15,10 17,8 19,5 C21,3 23,6 25,9 C27,13 29,7 32,5 C34,3 36,5 38,9" />
-                    <path d="M3,13 Q20,12 38,13" strokeWidth="0.5" opacity="0.4" />
-                  </svg>
-                  <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-                  <span className="text-[6px] sm:text-[8px] font-bold text-white leading-none">Issuing Authority</span>
-                  <span className="text-[5px] sm:text-[6.5px] font-medium text-amber-200 leading-none mt-0.5">Hon. Dean</span>
-                </div>
-                <div className="flex flex-col items-end shrink-0">
-                  <svg viewBox="0 0 60 14" className="w-11 sm:w-15 h-3 sm:h-3.5" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3,11 C5,4 8,3 11,6 C13,9 15,11 17,8 C19,5 21,3 24,7 C26,11 28,6 31,4 C34,3 37,5 39,8 C41,12 43,8 46,6 C48,4 51,8 54,10" />
-                    <path d="M3,13 Q28,12 54,13" strokeWidth="0.5" opacity="0.4" />
-                  </svg>
-                  <div className="h-[0.5px] w-full bg-white/30 my-0.5" />
-                  <span className="text-[6px] sm:text-[8px] font-bold text-white leading-none">Signature of</span>
-                  <span className="text-[5px] sm:text-[6.5px] font-medium text-amber-200 leading-none mt-0.5">Card Holder</span>
-                </div>
-              </div>
-              <div className="absolute top-0 bottom-0 right-0 flex h-full pointer-events-none">
-                <div className="w-2 sm:w-2.5 h-full bg-[#C59B27]" />
-                <div className="w-7 sm:w-9 h-full bg-[#7A152B]" />
-              </div>
-            </div>
-          </div>
+      <div style={{ position: 'fixed', top: 0, left: 0, zIndex: -9999, opacity: 0, pointerEvents: 'none', overflow: 'hidden', width: '1050px', height: '600px' }}>
+        <div ref={offscreenFrontRef} style={{ width: '1050px', height: '600px' }}>
+          <FrontCard data={data} />
         </div>
-
-        <div ref={offscreenBackRef} style={{ width: '580px', height: '367px', backgroundColor: '#ffffff', marginTop: '20px' }}>
-          {/* Raw Back Layout */}
-          <div className="back-card-node relative w-full h-full bg-white rounded-none border border-slate-200 shadow-xl overflow-hidden flex flex-col justify-between select-none">
-            <div className="h-1.5 sm:h-2 w-full bg-gradient-to-r from-[#C59B27] via-[#D4AF37] to-[#C59B27]" />
-            <div className="bg-[#7A152B] text-white py-2.5 sm:py-3.5 px-4 text-center shadow-2xs">
-              <h2 className="text-sm sm:text-xl font-black tracking-wider uppercase font-serif">IITRAM ALUMNI RELATIONS</h2>
-            </div>
-            <div className="px-4 sm:px-7 py-2 sm:py-3 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 className="text-xs sm:text-sm font-black text-[#7A152B] uppercase tracking-wide mb-1.5 sm:mb-2 font-serif">MEMBERSHIP PRIVILEGES</h3>
-                <ul className="space-y-1 sm:space-y-2 text-[9px] sm:text-[11.5px] font-semibold text-slate-800">
-                  <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Access to alumni networking and events</span></li>
-                  <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Participation in institute/alumni activities</span></li>
-                  <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Access to alumni communications and updates</span></li>
-                  <li className="flex items-start gap-1.5"><span className="text-[#7A152B] font-bold text-xs leading-none">•</span><span>Opportunities for professional and academic networking</span></li>
-                </ul>
-              </div>
-              <div className="my-1 sm:my-1.5">
-                <div className="h-[2.5px] w-full bg-[#C59B27] rounded-full shadow-2xs mb-1" />
-                <p className="text-[8px] sm:text-[10px] font-medium text-slate-700 text-center">This card certifies that the holder is a registered member of IITRAM Alumni Relations.</p>
-              </div>
-              <div className="relative flex items-center justify-between py-1 px-3 sm:px-5">
-                <div className="flex flex-col items-start min-w-0 max-w-[38%]">
-                  <span className="text-[6px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-wider">Email</span>
-                  <span className="text-[6.5px] sm:text-[9px] font-bold text-[#7A152B] truncate leading-tight w-full">{data.email || 'alumni@iitram.ac.in'}</span>
-                </div>
-                <div className="absolute left-1/2 -translate-x-1/2 w-10 sm:w-13 h-9 sm:h-11 border border-[#7A152B] bg-[#FDFBF7] flex items-center justify-center p-0.5 rounded-xs shadow-2xs">
-                  <QRCodeSVG
-                    value={data.membershipNo || 'ALUM/IITRAM/231040011011'}
-                    size={44}
-                    bgColor="#FDFBF7"
-                    fgColor="#7A152B"
-                    level="M"
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                </div>
-                <div className="flex flex-col items-end min-w-0 max-w-[38%] shrink-0">
-                  <span className="text-[6px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-wider">Mobile</span>
-                  <span className="text-[6.5px] sm:text-[9px] font-bold text-[#7A152B] leading-tight">{data.phone || '+91 98765 43210'}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div ref={offscreenBackRef} style={{ width: '1050px', height: '600px', marginTop: '20px' }}>
+          <BackCard data={data} />
         </div>
       </div>
     </div>

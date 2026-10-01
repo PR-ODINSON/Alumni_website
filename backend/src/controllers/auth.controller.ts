@@ -19,6 +19,8 @@ const sendTokenResponse = async (user: any, statusCode: number, res: Response): 
   });
 
   const alumniProfile = await Alumni.findOne({ user: user._id }).lean();
+  const studentProfile = await Student.findOne({ user: user._id }).lean();
+  const roleProfile: any = alumniProfile || studentProfile;
 
   const userData = {
     _id: user._id,
@@ -29,6 +31,7 @@ const sendTokenResponse = async (user: any, statusCode: number, res: Response): 
     role: user.role,
     avatar: user.avatar,
     coverImage: user.coverImage,
+    signatureUrl: user.signatureUrl,
     bio: user.bio,
     phone: user.phone,
     location: user.location,
@@ -39,14 +42,19 @@ const sendTokenResponse = async (user: any, statusCode: number, res: Response): 
     verificationStatus: user.verificationStatus,
     mentorStatus: user.mentorStatus,
     notificationPreferences: user.notificationPreferences,
-    enrollmentNumber: user.enrollmentNumber || alumniProfile?.enrollmentNumber,
+    enrollmentNumber: user.enrollmentNumber || roleProfile?.enrollmentNumber,
+    mustChangePassword: !!user.mustChangePassword,
+    permanentAddress: user.permanentAddress || '',
     hasDonated: !!(user.hasDonated || alumniProfile?.hasDonated),
     donationAmount: user.donationAmount || alumniProfile?.donationAmount || 0,
     donationDate: user.donationDate,
     donationPurpose: user.donationPurpose,
-    degreeType: alumniProfile?.degreeType || 'B.Tech',
-    department: alumniProfile?.department || 'Mechanical Engineering',
-    graduationYear: alumniProfile?.graduationYear || 2023,
+    degreeType: roleProfile?.degreeType || 'B.Tech',
+    department: roleProfile?.department || 'Mechanical Engineering',
+    batch: roleProfile?.batch,
+    currentYear: studentProfile?.currentYear,
+    currentSemester: studentProfile?.currentSemester,
+    graduationYear: alumniProfile?.graduationYear ?? studentProfile?.graduationYear,
   };
 
   res.status(statusCode).json({
@@ -58,7 +66,7 @@ const sendTokenResponse = async (user: any, statusCode: number, res: Response): 
 };
 
 export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const { firstName, lastName, email, password, role, batch, department, program, degreeType } = req.body;
+  const { firstName, lastName, email, password, role, batch, graduationYear, department, program, degreeType } = req.body;
 
   const existing = await User.findOne({ email });
   if (existing) return next(new AppError('An account with this email already exists.', 409));
@@ -77,11 +85,11 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
   });
 
   // Create role-specific profile
-  if (user.role === 'alumni' && batch && department) {
+  if (user.role === 'alumni' && batch && graduationYear && department) {
     await Alumni.create({
       user: user._id,
       batch: parseInt(batch),
-      graduationYear: parseInt(batch) + (degreeType === 'B.Tech' ? 4 : degreeType === 'M.Tech' ? 2 : 5),
+      graduationYear: parseInt(graduationYear),
       department,
       program: program || department,
       degreeType: degreeType || 'B.Tech',
@@ -270,7 +278,10 @@ export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
 
 export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
   const user = await User.findById(req.user._id);
-  
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'User not found.' });
+  }
+
   let profile = null;
   if (req.user.role === 'alumni') {
     profile = await Alumni.findOne({ user: req.user._id });
@@ -278,14 +289,28 @@ export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
     profile = await Student.findOne({ user: req.user._id });
   }
 
-  res.json({ success: true, user, profile });
+  const userObj: any = user.toObject();
+  userObj.enrollmentNumber = user.enrollmentNumber || (profile as any)?.enrollmentNumber;
+  userObj.mustChangePassword = !!user.mustChangePassword;
+  userObj.degreeType = (profile as any)?.degreeType || userObj.degreeType;
+  userObj.department = (profile as any)?.department || userObj.department;
+  userObj.batch = (profile as any)?.batch;
+  userObj.currentYear = (profile as any)?.currentYear;
+  userObj.currentSemester = (profile as any)?.currentSemester;
+  userObj.graduationYear = (profile as any)?.graduationYear;
+  userObj.permanentAddress = user.permanentAddress || '';
+
+  res.json({ success: true, user: userObj, profile });
 });
 
 export const completeOnboarding = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const { role, department, batch, degreeType, currentYear, currentSemester, linkedin, github, bio, avatar } = req.body;
+  const { role, department, batch, graduationYear, degreeType, currentYear, currentSemester, linkedin, github, bio, avatar } = req.body;
 
   if (!['student', 'alumni', 'faculty'].includes(role)) {
     return next(new AppError('Invalid role. Must be student, alumni, or faculty.', 400));
+  }
+  if (role === 'alumni' && (!department || !Number.isInteger(Number(batch)) || !Number.isInteger(Number(graduationYear)))) {
+    return next(new AppError('Alumni onboarding requires department, start year, and passing year.', 400));
   }
 
   const user = await User.findById(req.user._id);
@@ -304,15 +329,13 @@ export const completeOnboarding = asyncHandler(async (req: AuthRequest, res: Res
   await user.save({ validateBeforeSave: false });
 
   // Create role-specific profile
-  if (role === 'alumni' && department && batch) {
+  if (role === 'alumni' && department && batch && graduationYear) {
     const existing = await Alumni.findOne({ user: user._id });
     if (!existing) {
-      const batchNum = parseInt(batch);
-      const yearsForDegree = degreeType === 'M.Tech' || degreeType === 'MBA' ? 2 : degreeType === 'PhD' ? 5 : 4;
       await Alumni.create({
         user: user._id,
-        batch: batchNum,
-        graduationYear: batchNum + yearsForDegree,
+        batch: Number(batch),
+        graduationYear: Number(graduationYear),
         department,
         program: department,
         degreeType: degreeType || 'B.Tech',
@@ -327,6 +350,7 @@ export const completeOnboarding = asyncHandler(async (req: AuthRequest, res: Res
         department,
         program: department,
         degreeType: degreeType || 'B.Tech',
+        graduationYear: graduationYear ? Number(graduationYear) : undefined,
         currentYear: currentYear || 1,
         currentSemester: currentSemester || 1,
       });
@@ -354,6 +378,33 @@ export const updatePassword = asyncHandler(async (req: AuthRequest, res: Respons
   }
 
   user.password = newPassword;
+  user.mustChangePassword = false;
   await user.save();
   sendTokenResponse(user, 200, res);
+});
+
+/** After bulk-created login: verify enrollment number, then set a new password. */
+export const setPasswordWithEnrollment = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+  const { enrollmentNumber, newPassword } = req.body as { enrollmentNumber?: string; newPassword?: string };
+  const enr = (enrollmentNumber || '').trim();
+  const nextPassword = (newPassword || '').trim();
+
+  if (!enr) return next(new AppError('Enrollment number is required.', 400));
+  if (nextPassword.length < 8) return next(new AppError('New password must be at least 8 characters.', 400));
+
+  const user = await User.findById(req.user._id).select('+password');
+  if (!user) return next(new AppError('User not found.', 404));
+
+  const storedEnr = (user.enrollmentNumber || '').trim();
+  if (!storedEnr) return next(new AppError('No enrollment number is linked to this account. Contact the alumni office.', 400));
+  if (storedEnr.toLowerCase() !== enr.toLowerCase()) {
+    return next(new AppError('Enrollment number does not match this account.', 400));
+  }
+
+  user.password = nextPassword;
+  user.mustChangePassword = false;
+  user.refreshToken = undefined;
+  await user.save();
+
+  await sendTokenResponse(user, 200, res);
 });

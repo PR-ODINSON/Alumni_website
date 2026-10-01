@@ -197,3 +197,22 @@ export const uploadApi = {
     return api.post('/upload/document', form, { headers: { 'Content-Type': 'multipart/form-data' } });
   },
 };
+
+export const adminApi = {
+  getDashboard: () => api.get('/admin/dashboard'),
+  getAcademicStats: (params?: any) => api.get('/admin/academic-stats', { params }),
+  getAcademicRecords: (params?: any) => api.get('/admin/academic-records', { params }),
+  exportAcademicRecordsCsv: (params?: any) =>
+    api.get('/admin/academic-records', {
+      params: { ...params, exportCsv: 'true' },
+      responseType: 'blob',
+    }),
+  getUsers: (params?: any) => api.get('/admin/users', { params }),
+  banUser: (userId: string, reason?: string) => api.patch(`/admin/users/${userId}/ban`, { reason }),
+  unbanUser: (userId: string) => api.patch(`/admin/users/${userId}/unban`),
+  verifyUser: (userId: string) => api.patch(`/admin/users/${userId}/verify`),
+  bulkCreateUsers: (data: { users: any[]; defaultPassword?: string }) =>
+    api.post('/admin/bulk-create-users', data),
+  downloadSampleStudentCsv: () =>
+    api.get('/admin/sample-student-csv', { responseType: 'blob' }),
+};

@@ -17,6 +17,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
   const userId = propUserId || routeUserId;
   const { user: currentUser, isAuthenticated } = useAuthStore();
   const isOwn = currentUser?._id === userId;
+  const canViewPrivate = isOwn || currentUser?.role === 'admin';
 
   const { data, isLoading } = useQuery({
     queryKey: ['profile', userId],
@@ -74,11 +75,11 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
   // Synthesize or fallback profile if not created yet (e.g. pending onboarding)
   const profile = data.profile || {
     user,
-    batch: 2026,
-    graduationYear: 2026,
-    department: 'Engineering',
-    program: 'B.Tech',
-    degreeType: 'B.Tech',
+    batch: undefined,
+    graduationYear: undefined,
+    department: user.department || '',
+    program: '',
+    degreeType: user.degreeType || '',
     currentCompany: '',
     currentDesignation: '',
     currentIndustry: '',
@@ -104,36 +105,45 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
 
   const connStatus = connData?.data?.data?.status;
 
+  // Career data — prefer User-level career fields (new), fall back to Alumni profile model
+  const userCareer = canViewPrivate ? (user as any).career || [] : [];
+  const userEducation = canViewPrivate ? (user as any).education || [] : [];
+  const userSkills: string[] = canViewPrivate ? (user as any).skills || [] : [];
+  const userHeadline: string = canViewPrivate ? (user as any).headline || '' : '';
+
   // Map student internships and academic information to match alumni properties
-  const careerTimeline = isAlumni
-    ? (profile.careerTimeline || [])
+  const careerTimeline = !canViewPrivate ? [] : isAlumni
+    ? (userCareer.length > 0 ? userCareer : (profile.careerTimeline || []))
     : (profile.internships || []).map((entry: any) => ({
         ...entry,
         title: entry.role,
         employmentType: 'internship',
       }));
 
-  const educationHistory = isAlumni
-    ? (profile.educationHistory || [])
+  const educationHistory = !canViewPrivate ? [] : isAlumni
+    ? (userEducation.length > 0 ? userEducation : (profile.educationHistory || []))
     : [
         {
           degree: profile.degreeType || 'Student',
           field: profile.program || profile.department || '',
           institution: 'Indian Institute of Technology RAM (IITRAM)',
-          startYear: profile.batch ? profile.batch - 4 : new Date().getFullYear() - 4,
-          endYear: profile.batch || new Date().getFullYear(),
-          isCurrent: true,
+          startYear: profile.batch,
+          endYear: profile.graduationYear,
+          isCurrent: !profile.graduationYear,
           grade: profile.cgpa ? `CGPA: ${profile.cgpa}` : undefined,
         },
       ];
 
-  const achievements = profile.achievements || [];
-  const publications = profile.publications || [];
+  // Skills — use user.skills first, then profile.skills
+  const allSkills: string[] = canViewPrivate ? (userSkills.length > 0 ? userSkills : (profile.skills || [])) : [];
+
+  const achievements = canViewPrivate ? profile.achievements || [] : [];
+  const publications = canViewPrivate ? profile.publications || [] : [];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50/80">
       {/* Cover */}
-      <div className="relative h-64 bg-gradient-to-br from-iitram-800 to-iitram-600 overflow-hidden">
+      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-iitram-900 via-iitram-700 to-slate-700 sm:h-60">
         {user.coverImage && (
           <img src={user.coverImage} className="w-full h-full object-cover" alt="Cover" />
         )}
@@ -147,19 +157,19 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Profile Header */}
-        <div className="card -mt-20 p-6 sm:p-8 mb-6 relative border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.06)] hover:-translate-y-1 transition-all duration-300">
-          <div className="flex flex-col sm:flex-row gap-6">
+        <div className="relative z-10 -mt-12 mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-lg sm:-mt-16 sm:p-7">
+          <div className="flex flex-col gap-5 sm:flex-row sm:gap-6">
             <div className="relative flex-shrink-0">
               {user.avatar ? (
                 <img
                   src={user.avatar}
-                  className="w-28 h-28 rounded-2xl object-cover ring-4 ring-white shadow-soft"
+                  className="h-24 w-24 rounded-full border-4 border-white object-cover shadow-md sm:h-28 sm:w-28"
                   alt={user.firstName}
                 />
               ) : (
-                <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-iitram-700 to-iitram-500 ring-4 ring-white shadow-soft flex items-center justify-center">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-iitram-800 text-white shadow-md ring-4 ring-white sm:h-28 sm:w-28">
                   <span className="text-3xl font-bold text-white">{user.firstName?.[0] || ''}{user.lastName?.[0] || ''}</span>
                 </div>
               )}
@@ -174,7 +184,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-3 flex-wrap">
-                    <h1 className="text-2xl font-bold text-slate-900">{user.firstName} {user.lastName}</h1>
+                    <h1 className="text-2xl font-bold text-slate-950 sm:text-3xl">{user.firstName} {user.lastName}</h1>
                     {user.role === 'alumni' && profile.isDistinguished && (
                       <span className="badge badge-gold">
                         <Award size={11} /> Distinguished Alumni
@@ -197,27 +207,38 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
                     )}
                   </div>
                   <p className="text-slate-600 mt-1">
-                    {user.role === 'alumni' 
-                      ? (profile.currentDesignation || 'IITRAM Alumni') + (profile.currentCompany ? ` at ${profile.currentCompany}` : '')
-                      : user.role === 'student'
-                      ? `Student · ${profile.degreeType || 'B.Tech'} in ${profile.department || 'Engineering'}`
-                      : user.role === 'faculty'
-                      ? `Faculty · ${profile.currentDesignation || 'Professor'} in ${profile.department || 'Engineering'}`
-                      : `Administrator`}
+                    {canViewPrivate
+                      ? user.role === 'alumni'
+                        ? (profile.currentDesignation || 'IITRAM Alumni') + (profile.currentCompany ? ` at ${profile.currentCompany}` : '')
+                        : user.role === 'student'
+                          ? `Student · ${profile.degreeType || 'B.Tech'} in ${profile.department || 'Engineering'}`
+                          : user.role === 'faculty'
+                            ? `Faculty · ${profile.currentDesignation || 'Professor'} in ${profile.department || 'Engineering'}`
+                            : 'Administrator'
+                      : user.role === 'alumni' ? 'IITRAM Alumni' : user.role === 'student' ? 'IITRAM Student' : user.role}
                   </p>
+                  {userHeadline && (
+                    <p className="text-sm text-slate-500 mt-0.5 italic">{userHeadline}</p>
+                  )}
                   <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-slate-500">
-                    {user.location?.city && (
+                    {canViewPrivate && user.location?.city && (
                       <span className="flex items-center gap-1"><MapPin size={13} /> {user.location.city}, {user.location.country}</span>
                     )}
-                    {user.role === 'alumni' && profile.currentIndustry && (
+                    {canViewPrivate && user.role === 'alumni' && profile.currentIndustry && (
                       <span className="flex items-center gap-1"><Briefcase size={13} /> {profile.currentIndustry}</span>
                     )}
-                    {(profile.degreeType || profile.department) && (
+                    {!canViewPrivate && data.profile?.department && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700"><GraduationCap size={13} className="text-iitram-700" /> Branch: {data.profile.department}</span>
+                    )}
+                    {!canViewPrivate && data.profile?.graduationYear && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-900"><GraduationCap size={13} /> Passing Year: {data.profile.graduationYear}</span>
+                    )}
+                    {canViewPrivate && (profile.degreeType || profile.department) && (
                       <span className="flex items-center gap-1">
-                        <GraduationCap size={13} /> {profile.degreeType || ''} {profile.department ? `· ${profile.department}` : ''} {profile.batch ? `· Batch ${profile.batch}` : ''}
+                        <GraduationCap size={13} /> Branch: {profile.department || ''} {profile.graduationYear ? `· Passing Year: ${profile.graduationYear}` : profile.batch ? `· Batch ${profile.batch}` : ''}
                       </span>
                     )}
-                    <span className="flex items-center gap-1"><Eye size={13} /> {profile.profileViews || 0} views</span>
+                    {canViewPrivate && <span className="flex items-center gap-1"><Eye size={13} /> {profile.profileViews || 0} views</span>}
                   </div>
                 </div>
 
@@ -252,12 +273,12 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
               </div>
 
               {/* Bio */}
-              {user.bio && (
+              {canViewPrivate && user.bio && (
                 <p className="text-slate-600 text-sm mt-4 leading-relaxed max-w-2xl">{user.bio}</p>
               )}
 
               {/* Social Links */}
-              <div className="flex items-center gap-3 mt-4">
+              {canViewPrivate && <div className="flex items-center gap-3 mt-4">
                 {user.socialLinks?.linkedin && (
                   <a href={user.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-brand-500 transition-colors" title="LinkedIn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
@@ -278,12 +299,12 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
                     <Globe size={18} />
                   </a>
                 )}
-              </div>
+              </div>}
             </div>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 pb-12">
+        {canViewPrivate && <div className="grid lg:grid-cols-3 gap-6 pb-12">
           {/* Left column */}
           <div className="lg:col-span-2 space-y-6">
              {/* Career Timeline */}
@@ -489,11 +510,11 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
           {/* Right sidebar */}
           <div className="space-y-5">
             {/* Skills */}
-            {profile.skills?.length > 0 && (
+            {allSkills.length > 0 && (
               <div className="card p-5 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h3 className="font-bold text-slate-900 text-sm mb-3">Skills & Expertise</h3>
                 <div className="flex flex-wrap gap-1.5">
-                  {profile.skills.map((skill: string) => (
+                  {allSkills.map((skill: string) => (
                     <span key={skill} className="text-xs px-2.5 py-1 bg-slate-50 border border-slate-200/60 text-slate-600 hover:text-[#0169FC] hover:border-[#0169FC]/30 hover:bg-blue-50/50 rounded-full transition-all duration-200 font-medium">{skill}</span>
                   ))}
                 </div>
@@ -579,7 +600,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
               </div>
             )}
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );
