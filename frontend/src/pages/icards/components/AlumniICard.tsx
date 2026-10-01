@@ -18,6 +18,59 @@ export interface ICardData {
   bloodGroup?: string;
   enrollmentNumber?: string;
   address?: string;
+  completionYear?: string;
+}
+
+const CARD_WIDTH = 1050;
+const CARD_HEIGHT = 600;
+
+/** Fits a fixed 1050×600 card design into any responsive container without overflow. */
+function CardScaleViewport({ children }: { children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+    const update = () => {
+      const w = node.clientWidth;
+      setScale(w > 0 ? w / CARD_WIDTH : 1);
+    };
+    update();
+    const obs = new ResizeObserver(update);
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      style={{
+        width: '100%',
+        aspectRatio: `${CARD_WIDTH} / ${CARD_HEIGHT}`,
+        position: 'relative',
+        overflow: 'hidden',
+        background: '#FFFFFF',
+        isolation: 'isolate',
+      }}
+    >
+      <div
+        style={{
+          width: `${CARD_WIDTH}px`,
+          height: `${CARD_HEIGHT}px`,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          overflow: 'hidden',
+          boxSizing: 'border-box',
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
 }
 
 interface AlumniICardProps {
@@ -88,38 +141,22 @@ function AlumniBanner({
 
 function FrontCard({ data }: { data: ICardData }) {
   const enr = data.enrollmentNumber || (data.membershipNo || '').replace('ALUM/IITRAM/', '');
-  const yearOfCompletion = 2026;
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const updateScale = () => {
-      if (containerRef.current) {
-        const w = containerRef.current.clientWidth;
-        setScale(w >= 1000 ? 1 : w / 1050);
-      }
-    };
-    updateScale();
-    const obs = new ResizeObserver(updateScale);
-    obs.observe(containerRef.current);
-    return () => obs.disconnect();
-  }, []);
+  const yearOfCompletion = data.completionYear || data.batch?.split('-').pop()?.trim() || '2026';
 
   return (
-    <div style={{
-      width: '1050px',
-      height: '600px',
-      position: 'relative',
-      overflow: 'hidden',
-      margin: 0,
-      padding: 0,
-      background: '#FFFFFF',
-      fontFamily: "'Arial', 'Helvetica', sans-serif",
-      boxSizing: 'border-box',
-    }}>
-
+    <CardScaleViewport>
+      <div
+        style={{
+          position: 'relative',
+          width: `${CARD_WIDTH}px`,
+          height: `${CARD_HEIGHT}px`,
+          margin: 0,
+          padding: 0,
+          background: '#FFFFFF',
+          fontFamily: "'Arial', 'Helvetica', sans-serif",
+          boxSizing: 'border-box',
+        }}
+      >
         {/* 1. TOP HEADER CONTAINER - WITH 25PX TOP MARGIN */}
         <div style={{
           position: 'absolute',
@@ -340,54 +377,28 @@ function FrontCard({ data }: { data: ICardData }) {
         />
 
       </div>
+    </CardScaleViewport>
   );
 }
 
 function BackCard({ data }: { data: ICardData }) {
   const enr = data.enrollmentNumber || (data.membershipNo || '').replace('ALUM/IITRAM/', '');
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const updateScale = () => {
-      if (containerRef.current) {
-        const w = containerRef.current.clientWidth;
-        setScale(w >= 1000 ? 1 : w / 1050);
-      }
-    };
-    updateScale();
-    const obs = new ResizeObserver(updateScale);
-    obs.observe(containerRef.current);
-    return () => obs.disconnect();
-  }, []);
+  const buildingClipId = `buildingClip-${React.useId().replace(/:/g, '')}`;
 
   return (
-    <div ref={containerRef} style={{
-      width: '100%',
-      aspectRatio: '1050 / 600',
-      position: 'relative',
-      overflow: 'hidden',
-      borderRadius: '0px',
-      boxShadow: 'none',
-      background: '#ffffff',
-    }}>
-      <div style={{
-        width: '1050px',
-        height: '600px',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        transform: 'none',
-        transformOrigin: 'top left',
-        background: '#FFFFFF',
-        fontFamily: "'Arial', 'Helvetica', sans-serif",
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-        border: '1px solid #CBD5E1',
-      }}>
-
+    <CardScaleViewport>
+      <div
+        style={{
+          position: 'relative',
+          width: `${CARD_WIDTH}px`,
+          height: `${CARD_HEIGHT}px`,
+          background: '#FFFFFF',
+          fontFamily: "'Arial', 'Helvetica', sans-serif",
+          overflow: 'hidden',
+          boxSizing: 'border-box',
+          border: '1px solid #CBD5E1',
+        }}
+      >
         {/* 1. TOP-LEFT ALUMNI RELATIONS BANNER */}
         <AlumniBanner
           width={540}
@@ -548,7 +559,7 @@ function BackCard({ data }: { data: ICardData }) {
         }}>
           <svg width="0" height="0" style={{ position: 'absolute' }}>
             <defs>
-              <clipPath id="buildingClip" clipPathUnits="userSpaceOnUse">
+              <clipPath id={buildingClipId} clipPathUnits="userSpaceOnUse">
                 <path d="M 35 0 C 15 45, 5 100, 12 155 C 20 215, 45 270, 75 325 C 98 375, 138 420, 148 470 C 155 495, 155 520, 154 537 L 472 537 L 472 0 Z" />
               </clipPath>
             </defs>
@@ -561,8 +572,8 @@ function BackCard({ data }: { data: ICardData }) {
               height: '100%',
               objectFit: 'cover',
               objectPosition: 'center top',
-              clipPath: 'url(#buildingClip)',
-              WebkitClipPath: 'url(#buildingClip)',
+              clipPath: `url(#${buildingClipId})`,
+              WebkitClipPath: `url(#${buildingClipId})`,
               display: 'block',
             }}
             onError={e => { (e.target as HTMLImageElement).style.background = '#b0c8d8'; }}
@@ -570,7 +581,7 @@ function BackCard({ data }: { data: ICardData }) {
         </div>
 
       </div>
-    </div>
+    </CardScaleViewport>
   );
 }
 
@@ -639,7 +650,7 @@ export default function AlumniICard({
       return (
         <div style={{ width: '100%', height: '100%', overflow: 'hidden', userSelect: 'none' }}>
           <img src={frontCanvasUrl} alt="IITRAM Alumni Card Front"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none', userSelect: 'none' }}
+            style={{ width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none', userSelect: 'none' }}
             onContextMenu={e => e.preventDefault()}
             onDragStart={e => e.preventDefault()} />
         </div>
@@ -652,7 +663,7 @@ export default function AlumniICard({
       return (
         <div style={{ width: '100%', height: '100%', overflow: 'hidden', userSelect: 'none' }}>
           <img src={backCanvasUrl} alt="IITRAM Alumni Card Back"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none', userSelect: 'none' }}
+            style={{ width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none', userSelect: 'none' }}
             onContextMenu={e => e.preventDefault()}
             onDragStart={e => e.preventDefault()} />
         </div>
@@ -662,13 +673,13 @@ export default function AlumniICard({
 
   if (side === 'front')
     return (
-      <div ref={cardRef} style={{ width: '100%', maxWidth: '700px', margin: '0 auto', aspectRatio: '1050 / 600', userSelect: 'none' }}>
+      <div ref={cardRef} style={{ width: '100%', maxWidth: '700px', margin: '0 auto', userSelect: 'none', overflow: 'hidden' }}>
         {renderFront()}
       </div>
     );
   if (side === 'back')
     return (
-      <div ref={cardRef} style={{ width: '100%', maxWidth: '700px', margin: '0 auto', aspectRatio: '1050 / 600', userSelect: 'none' }}>
+      <div ref={cardRef} style={{ width: '100%', maxWidth: '700px', margin: '0 auto', userSelect: 'none', overflow: 'hidden' }}>
         {renderBack()}
       </div>
     );

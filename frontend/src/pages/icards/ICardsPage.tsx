@@ -329,9 +329,7 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
                 </span>
                 <span className="text-[11px] font-bold text-slate-400">Contact &amp; Details</span>
               </div>
-              <div className="py-3">
-                <AlumniICard data={effectiveCardData} side="back" onOpenVerify={() => setShowVerifyModal(true)} securityProtected={false} />
-              </div>
+              <AlumniICard data={effectiveCardData} side="back" onOpenVerify={() => setShowVerifyModal(true)} securityProtected={false} />
             </div>
           </div>
         ) : (
