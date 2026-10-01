@@ -27,13 +27,7 @@ const CARD_HEIGHT = 600;
 const VIEWPORT_INSET_X = 3;
 
 /** Fits a fixed 1050×600 card design into any responsive container without overflow. */
-function CardScaleViewport({
-  children,
-  frameBorder = false,
-}: {
-  children: React.ReactNode;
-  frameBorder?: boolean;
-}) {
+function CardScaleViewport({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
@@ -63,9 +57,6 @@ function CardScaleViewport({
         isolation: 'isolate',
         boxSizing: 'border-box',
         padding: `0 ${VIEWPORT_INSET_X}px`,
-        ...(frameBorder
-          ? { boxShadow: 'inset 0 0 0 1px rgba(15, 23, 42, 0.9)' }
-          : {}),
       }}
     >
       <div
@@ -399,7 +390,7 @@ function BackCard({ data }: { data: ICardData }) {
   const buildingClipId = `buildingClip-${React.useId().replace(/:/g, '')}`;
 
   return (
-    <CardScaleViewport frameBorder>
+    <CardScaleViewport>
       <div
         style={{
           position: 'relative',
