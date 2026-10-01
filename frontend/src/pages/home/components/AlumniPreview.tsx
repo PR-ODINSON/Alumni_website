@@ -54,11 +54,17 @@ export default function AlumniPreview({ featured }: AlumniPreviewProps) {
             >
               <Link to={`/alumni/${alumnus.user?._id}`} className="flex flex-col h-full justify-between gap-4">
                 <div className="flex items-start gap-3.5">
-                  <img
-                    src={alumnus.user?.avatar || `https://ui-avatars.com/api/?name=${alumnus.user?.firstName}&background=001f54&color=fff`}
-                    className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-100 border border-slate-200 shrink-0"
-                    alt=""
-                  />
+                  {alumnus.user?.avatar ? (
+                    <img
+                      src={alumnus.user.avatar}
+                      className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-100 border border-slate-200 shrink-0"
+                      alt=""
+                    />
+                  ) : (
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-600">
+                      {`${alumnus.user?.firstName?.[0] || ''}${alumnus.user?.lastName?.[0] || ''}` || '—'}
+                    </div>
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="font-bold font-display text-slate-900 text-sm truncate">{alumnus.user?.firstName} {alumnus.user?.lastName}</p>
                     <p className="text-xs font-semibold text-brand-600 mt-0.5 truncate">{alumnus.currentDesignation || 'Alumnus'}</p>

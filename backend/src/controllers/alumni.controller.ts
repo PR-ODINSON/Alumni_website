@@ -1,6 +1,7 @@
 import { Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import Alumni from '../models/Alumni';
+import Student from '../models/Student';
 import User from '../models/User';
 import { asyncHandler, AppError } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
@@ -62,9 +63,23 @@ export const getAlumniDirectory = asyncHandler(async (req: AuthRequest, res: Res
     .limit(Number(limit))
     .lean();
 
+  const publicRows = req.user?.role === 'admin' ? alumni : alumni.map((entry: any) => ({
+    _id: entry._id,
+    user: entry.user ? {
+      _id: entry.user._id,
+      firstName: entry.user.firstName,
+      lastName: entry.user.lastName,
+      role: entry.user.role,
+      avatar: entry.user.avatar,
+      coverImage: entry.user.coverImage,
+    } : null,
+    department: entry.department,
+    graduationYear: entry.graduationYear,
+  }));
+
   res.json({
     success: true,
-    data: alumni,
+    data: publicRows,
     pagination: {
       total,
       page: Number(page),
@@ -85,6 +100,27 @@ export const getAlumniProfile = asyncHandler(async (req: AuthRequest, res: Respo
   // Increment profile views (avoid self-views)
   if (req.user && req.user._id.toString() !== userId) {
     await Alumni.findByIdAndUpdate(alumni._id, { $inc: { profileViews: 1 } });
+  }
+
+  const isOwner = req.user?._id.toString() === userId;
+  const isAdmin = req.user?.role === 'admin';
+  if (!isOwner && !isAdmin) {
+    const user = alumni.user as any;
+    return res.json({
+      success: true,
+      data: {
+        user: {
+          _id: user?._id,
+          firstName: user?.firstName,
+          lastName: user?.lastName,
+          role: user?.role,
+          avatar: user?.avatar,
+          coverImage: user?.coverImage,
+        },
+        department: alumni.department,
+        graduationYear: alumni.graduationYear,
+      },
+    });
   }
 
   res.json({ success: true, data: alumni });
@@ -191,7 +227,7 @@ export const getMentors = asyncHandler(async (req: AuthRequest, res: Response) =
 });
 
 export const getAlumniStats = asyncHandler(async (_req: AuthRequest, res: Response) => {
-  const [total, byDepartment, byBatch, byIndustry, byCountry, mentors, entrepreneurs] = await Promise.all([
+  const [total, byDepartment, byBatch, byIndustry, byCountry, mentors, entrepreneurs, totalStudents, studentsByDepartment] = await Promise.all([
     Alumni.countDocuments({ verificationStatus: 'verified' }),
     Alumni.aggregate([
       { $match: { verificationStatus: 'verified' } },
@@ -225,11 +261,17 @@ export const getAlumniStats = asyncHandler(async (_req: AuthRequest, res: Respon
     ]),
     Alumni.countDocuments({ isMentor: true }),
     Alumni.countDocuments({ employmentStatus: 'entrepreneur' }),
+    Student.countDocuments({ isActive: true }),
+    Student.aggregate([
+      { $match: { isActive: true } },
+      { $group: { _id: '$department', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ]),
   ]);
 
   res.json({
     success: true,
-    data: { total, byDepartment, byBatch, byIndustry, byCountry, mentors, entrepreneurs },
+    data: { total, byDepartment, byBatch, byIndustry, byCountry, mentors, entrepreneurs, totalStudents, studentsByDepartment },
   });
 });
 

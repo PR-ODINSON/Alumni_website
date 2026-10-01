@@ -27,7 +27,7 @@ export default function Cta() {
               Be Part of the IITRAM Legacy
             </h2>
             <p className="text-slate-300 text-xs sm:text-sm mb-6 sm:mb-8 max-w-lg mx-auto leading-relaxed font-medium">
-              Join thousands of IITRAM alumni who are shaping industries, building companies, and making an impact across the world.
+              Create your profile to connect with IITRAM alumni and students, explore opportunities, and stay close to the institute.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-md mx-auto">
