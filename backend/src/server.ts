@@ -112,7 +112,7 @@ app.get('/health', (_req, res) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     service: 'IITRAM Alumni Platform API',
-    version: '1.0.0',
+    version: '2.0.0',
   });
 });
 
