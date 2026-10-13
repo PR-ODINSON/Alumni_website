@@ -7,7 +7,7 @@ import {
 import toast from "react-hot-toast";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
-import AlumniICard, { type ICardData } from "./components/AlumniICard";
+import AlumniICard, { type ICardData, renderCardToPngDataUrl } from "./components/AlumniICard";
 import ICardVerifierModal from "./components/ICardVerifierModal";
 import { convocationPhotoCandidates } from '../../lib/convocationPhoto';
 import { useAuthStore } from "../../stores/authStore";
@@ -28,7 +28,7 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
     if (user) {
       const uAny = user as any;
       const fullName = (user.fullName || `${user.firstName} ${user.lastName}`).toUpperCase();
-      const enr = user.enrollmentNumber || "";
+      const enr = user.enrollmentNumber || uAny.rollNumber || "20160101";
       const convPhotos = convocationPhotoCandidates(enr, user.avatar);
       const photoUrl = localPhoto || convPhotos[0];
 
@@ -85,25 +85,12 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
   const frontPdfRef = useRef<HTMLDivElement>(null);
   const backPdfRef = useRef<HTMLDivElement>(null);
 
-  const captureFilter = (node: HTMLElement) => {
-    if (!node.tagName) return true;
-    const tag = node.tagName.toUpperCase();
-    if (["IFRAME", "EMBED", "OBJECT", "SCRIPT", "NOSCRIPT"].includes(tag)) return false;
-    const src = node.getAttribute?.("src") || "";
-    if (src.includes("chrome-extension:") || src.includes("moz-extension:")) return false;
-    return true;
-  };
-
   const handleDownloadPDF = async () => {
-    if (!frontPdfRef.current || !backPdfRef.current) {
-      toast.error("PDF generation elements not ready.");
-      return;
-    }
     toast.loading("Generating high-resolution PDF...", { id: "pdf-gen" });
     try {
       const [frontImg, backImg] = await Promise.all([
-        toPng(frontPdfRef.current, { quality: 1, pixelRatio: 3, filter: captureFilter, cacheBust: true }),
-        toPng(backPdfRef.current, { quality: 1, pixelRatio: 3, filter: captureFilter, cacheBust: true }),
+        renderCardToPngDataUrl(effectiveCardData, "front", 3),
+        renderCardToPngDataUrl(effectiveCardData, "back", 3),
       ]);
       const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
       const pageW = pdf.internal.pageSize.getWidth(); // 297 mm
@@ -115,7 +102,7 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
       pdf.addImage(frontImg, "PNG", margin, topY, cardW, cardH);
       pdf.addPage();
       pdf.addImage(backImg, "PNG", margin, topY, cardW, cardH);
-      const name = (cardData.fullName || "ALUMNI").replace(/\s+/g, "_");
+      const name = (effectiveCardData.fullName || "ALUMNI").replace(/\s+/g, "_");
       pdf.save(`IITRAM_Alumni_ICard_${name}.pdf`);
       toast.success("PDF downloaded!", { id: "pdf-gen" });
     } catch (err) {
@@ -124,17 +111,13 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
   };
 
   const handleDownloadPNG = async () => {
-    if (!frontPdfRef.current || !backPdfRef.current) {
-      toast.error("PNG generation elements not ready.");
-      return;
-    }
     toast.loading("Generating PNG images...", { id: "png-gen" });
     try {
       const [frontImg, backImg] = await Promise.all([
-        toPng(frontPdfRef.current, { quality: 1, pixelRatio: 3, filter: captureFilter, cacheBust: true }),
-        toPng(backPdfRef.current, { quality: 1, pixelRatio: 3, filter: captureFilter, cacheBust: true }),
+        renderCardToPngDataUrl(effectiveCardData, "front", 3),
+        renderCardToPngDataUrl(effectiveCardData, "back", 3),
       ]);
-      const name = (cardData.fullName || "ALUMNI").replace(/\s+/g, "_");
+      const name = (effectiveCardData.fullName || "ALUMNI").replace(/\s+/g, "_");
       const triggerDownload = (dataUrl: string, filename: string) => {
         const a = document.createElement("a");
         a.href = dataUrl;

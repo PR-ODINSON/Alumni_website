@@ -23,8 +23,6 @@ export interface ICardData {
 
 const CARD_WIDTH = 1050;
 const CARD_HEIGHT = 600;
-/** Inset so scaled cards are not clipped on the left/right by subpixel overflow. */
-const VIEWPORT_INSET_X = 3;
 
 /** Fits a fixed 1050×600 card design into any responsive container without overflow. */
 function CardScaleViewport({ children }: { children: React.ReactNode }) {
@@ -35,9 +33,8 @@ function CardScaleViewport({ children }: { children: React.ReactNode }) {
     const node = containerRef.current;
     if (!node) return;
     const update = () => {
-      const w = node.getBoundingClientRect().width;
-      const innerW = Math.max(0, w - VIEWPORT_INSET_X * 2);
-      setScale(innerW > 0 ? innerW / CARD_WIDTH : 1);
+      const w = node.clientWidth;
+      setScale(w > 0 ? w / CARD_WIDTH : 1);
     };
     update();
     const obs = new ResizeObserver(update);
@@ -55,8 +52,6 @@ function CardScaleViewport({ children }: { children: React.ReactNode }) {
         overflow: 'hidden',
         background: '#FFFFFF',
         isolation: 'isolate',
-        boxSizing: 'border-box',
-        padding: `0 ${VIEWPORT_INSET_X}px`,
       }}
     >
       <div
@@ -65,9 +60,10 @@ function CardScaleViewport({ children }: { children: React.ReactNode }) {
           height: `${CARD_HEIGHT}px`,
           position: 'absolute',
           top: 0,
-          left: VIEWPORT_INSET_X,
+          left: 0,
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
+          overflow: 'hidden',
           boxSizing: 'border-box',
         }}
       >
@@ -387,7 +383,7 @@ function FrontCard({ data }: { data: ICardData }) {
 
 function BackCard({ data }: { data: ICardData }) {
   const enr = data.enrollmentNumber || (data.membershipNo || '').replace('ALUM/IITRAM/', '');
-  const buildingClipId = `buildingClip-${React.useId().replace(/:/g, '')}`;
+  const buildingClipId = `buildingClip-${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
   return (
     <CardScaleViewport>
@@ -398,8 +394,9 @@ function BackCard({ data }: { data: ICardData }) {
           height: `${CARD_HEIGHT}px`,
           background: '#FFFFFF',
           fontFamily: "'Arial', 'Helvetica', sans-serif",
+          overflow: 'hidden',
           boxSizing: 'border-box',
-          overflow: 'visible',
+          border: '1px solid #CBD5E1',
         }}
       >
         {/* 1. TOP-LEFT ALUMNI RELATIONS BANNER */}
@@ -414,44 +411,43 @@ function BackCard({ data }: { data: ICardData }) {
           position: 'absolute',
           left: '0px',
           top: '90px',
-          width: '72px',
+          width: '65px',
           height: '510px',
-          borderRadius: '0 32px 0 0',
+          borderRadius: '0 30px 0 0',
           background: '#E0F2F5',
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '2px',
-          padding: '8px 6px',
+          gap: '4px',
+          padding: '4px 0',
           boxSizing: 'border-box',
+          overflow: 'hidden',
           zIndex: 2,
         }}>
           <span style={{
             writingMode: 'vertical-rl',
-            textOrientation: 'mixed',
-            fontSize: '12px',
+            transform: 'rotate(180deg)',
+            fontSize: '13.5px',
             fontWeight: 800,
             color: '#073F7C',
-            letterSpacing: '0.5px',
+            letterSpacing: '1px',
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
             userSelect: 'none',
-            lineHeight: 1.1,
           }}>
             INSTITUTE OF INFRASTRUCTURE, TECHNOLOGY,
           </span>
           <span style={{
             writingMode: 'vertical-rl',
-            textOrientation: 'mixed',
-            fontSize: '12px',
+            transform: 'rotate(180deg)',
+            fontSize: '13.5px',
             fontWeight: 800,
             color: '#073F7C',
-            letterSpacing: '0.5px',
+            letterSpacing: '1px',
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
             userSelect: 'none',
-            lineHeight: 1.1,
           }}>
             RESEARCH AND MANAGEMENT
           </span>
@@ -460,7 +456,7 @@ function BackCard({ data }: { data: ICardData }) {
         {/* 3. FADED IITRAM WATERMARK LOGO */}
         <div style={{
           position: 'absolute',
-          left: '88px',
+          left: '105px',
           top: '130px',
           width: '390px',
           height: '390px',
@@ -478,7 +474,7 @@ function BackCard({ data }: { data: ICardData }) {
         {/* 4. STUDENT INFORMATION FIELDS */}
         <div style={{
           position: 'absolute',
-          left: '88px',
+          left: '105px',
           top: '135px',
           fontSize: '24px',
           color: '#000000',
@@ -491,10 +487,10 @@ function BackCard({ data }: { data: ICardData }) {
 
         <div style={{
           position: 'absolute',
-          left: '88px',
+          left: '105px',
           top: '220px',
-          width: '430px',
-          maxWidth: '430px',
+          width: '420px',
+          maxWidth: '420px',
           fontSize: (data.email || '').length > 32 ? '18px' : (data.email || '').length > 25 ? '20px' : '24px',
           color: '#000000',
           lineHeight: '1.25',
@@ -507,7 +503,7 @@ function BackCard({ data }: { data: ICardData }) {
 
         <div style={{
           position: 'absolute',
-          left: '88px',
+          left: '105px',
           top: '305px',
           fontSize: '24px',
           color: '#000000',
@@ -520,9 +516,9 @@ function BackCard({ data }: { data: ICardData }) {
 
         <div style={{
           position: 'absolute',
-          left: '88px',
+          left: '105px',
           top: '382px',
-          width: '420px',
+          width: '410px',
           fontSize: '21px',
           color: '#000000',
           lineHeight: '1.2',
@@ -537,9 +533,9 @@ function BackCard({ data }: { data: ICardData }) {
         {/* 5. DISCLAIMER TEXT */}
         <div style={{
           position: 'absolute',
-          left: '88px',
+          left: '105px',
           bottom: '12px',
-          width: '430px',
+          width: '420px',
           fontSize: '13px',
           color: '#333333',
           fontStyle: 'italic',
@@ -589,6 +585,338 @@ function BackCard({ data }: { data: ICardData }) {
   );
 }
 
+function loadImg(src: string, fallbackSrc = '/new/iitram cdr logo.png'): Promise<HTMLImageElement | null> {
+  return new Promise((resolve) => {
+    if (!src) {
+      if (fallbackSrc) return loadImg(fallbackSrc, '').then(resolve);
+      return resolve(null);
+    }
+    const img = new window.Image();
+    if (!src.startsWith('data:') && !src.startsWith('blob:')) {
+      img.crossOrigin = 'anonymous';
+    }
+    img.onload = () => resolve(img);
+    img.onerror = () => {
+      if (fallbackSrc && src !== fallbackSrc) {
+        loadImg(fallbackSrc, '').then(resolve);
+      } else {
+        resolve(null);
+      }
+    };
+    img.src = src;
+  });
+}
+
+function drawContain(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number) {
+  const iw = img.naturalWidth || img.width || 1;
+  const ih = img.naturalHeight || img.height || 1;
+  const scale = Math.min(w / iw, h / ih);
+  const dw = iw * scale;
+  const dh = ih * scale;
+  ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+}
+
+function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number, alignTop = false) {
+  const iw = img.naturalWidth || img.width || 1;
+  const ih = img.naturalHeight || img.height || 1;
+  const scale = Math.max(w / iw, h / ih);
+  const dw = iw * scale;
+  const dh = ih * scale;
+  const dx = x + (w - dw) / 2;
+  const dy = alignTop ? y : y + (h - dh) / 2;
+  ctx.drawImage(img, dx, dy, dw, dh);
+}
+
+function drawBanner(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, text = 'ALUMNI RELATIONS, IITRAM') {
+  ctx.save();
+  ctx.translate(x, y);
+  const sx = w / 685;
+  const sy = h / 79;
+  ctx.beginPath();
+  ctx.moveTo(0 * sx, 14 * sy);
+  ctx.quadraticCurveTo(171.25 * sx, 7 * sy, 342.5 * sx, 0 * sy);
+  ctx.quadraticCurveTo(513.75 * sx, 7 * sy, 685 * sx, 14 * sy);
+  ctx.lineTo(685 * sx, 65 * sy);
+  ctx.quadraticCurveTo(513.75 * sx, 72 * sy, 342.5 * sx, 79 * sy);
+  ctx.quadraticCurveTo(171.25 * sx, 72 * sy, 0 * sx, 65 * sy);
+  ctx.closePath();
+  ctx.fillStyle = '#D6DF8E';
+  ctx.fill();
+
+  ctx.fillStyle = '#000000';
+  const fontSize = Math.round(26 * Math.min(sx, sy));
+  ctx.font = `bold ${fontSize}px Arial, Helvetica, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, w / 2, h / 2 + 1);
+  ctx.restore();
+}
+
+function drawBoldLabelValue(
+  ctx: CanvasRenderingContext2D,
+  label: string,
+  value: string,
+  x: number,
+  y: number,
+  fontSize: number,
+  labelWeight = '700',
+) {
+  ctx.font = `${labelWeight} ${fontSize}px Arial, Helvetica, sans-serif`;
+  ctx.fillStyle = '#000000';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText(label, x, y);
+  const lw = ctx.measureText(label + ' ').width;
+  ctx.font = `500 ${fontSize}px Arial, Helvetica, sans-serif`;
+  ctx.fillText(value, x + lw, y);
+}
+
+export async function renderCardToPngDataUrl(
+  rawData: ICardData,
+  side: 'front' | 'back',
+  pixelRatio = 3,
+): Promise<string> {
+  const data = rawData || OFFICIAL_CARD_DATA;
+  const enr = data.enrollmentNumber || (data.membershipNo || '').replace('ALUM/IITRAM/', '') || '2310400011011';
+  const yearOfCompletion = data.completionYear || data.batch?.split('-').pop()?.trim() || '2026';
+
+  const canvas = document.createElement('canvas');
+  canvas.width = CARD_WIDTH * pixelRatio;
+  canvas.height = CARD_HEIGHT * pixelRatio;
+  const ctx = canvas.getContext('2d')!;
+  ctx.scale(pixelRatio, pixelRatio);
+
+  // White card background
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
+
+  if (side === 'front') {
+    const [iitramLogo, studentPhoto, alumniWatermark, signImg] = await Promise.all([
+      loadImg('/new/iitram cdr logo.png', '/images/iitram-logo.png'),
+      loadImg(data.photoUrl || '/new/alumani.jpeg', '/new/alumani.jpeg'),
+      loadImg('/new/alumani.jpeg', '/images/alumni-logo.jpg'),
+      loadImg('/PRAMOD sign jpg.jpg.jpeg', ''),
+    ]);
+
+    // 1. Top Header Container
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(30, 25, 990, 138, 24);
+    ctx.fillStyle = '#DFF3F5';
+    ctx.fill();
+    ctx.restore();
+
+    // 2. IITRAM Logo in Header
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(35 + 62, 32 + 62, 62, 0, Math.PI * 2);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fill();
+    ctx.clip();
+    if (iitramLogo) {
+      drawContain(ctx, iitramLogo, 35, 32, 124, 124);
+    }
+    ctx.restore();
+
+    // 3 & 4. Header Title & Subtitle
+    ctx.save();
+    ctx.fillStyle = '#073F7C';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    const centerX = 170 + 830 / 2;
+    ctx.font = '700 34px Arial, Helvetica, sans-serif';
+    ctx.fillText('INSTITUTE OF INFRASTRUCTURE, TECHNOLOGY,', centerX, 34);
+    ctx.fillText('RESEARCH AND MANAGEMENT', centerX, 73);
+    ctx.font = 'italic 600 20px Arial, Helvetica, sans-serif';
+    ctx.fillText('(An Autonomous University Established by Government of Gujarat)', centerX, 116);
+    ctx.restore();
+
+    // 5. ALUMNUS Vertical Text
+    ctx.save();
+    ctx.translate(48 + 25, 205 + 215 / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.font = '700 36px Arial, Helvetica, sans-serif';
+    ctx.fillStyle = '#1597A2';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('ALUMNUS', 0, 0);
+    ctx.restore();
+
+    // 6. Student Photo
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(116, 199, 176, 210);
+    ctx.fillStyle = '#EEF5F8';
+    ctx.fill();
+    ctx.clip();
+    if (studentPhoto) {
+      drawCover(ctx, studentPhoto, 116, 199, 176, 210);
+    }
+    ctx.restore();
+
+    // 8. Right Watermark Logo (drawn behind text)
+    if (alumniWatermark) {
+      ctx.save();
+      ctx.globalAlpha = 0.22;
+      drawContain(ctx, alumniWatermark, 715, 155, 295, 330);
+      ctx.restore();
+    }
+
+    // 7. Main Information Area
+    drawBoldLabelValue(ctx, 'ID Number:', enr, 307, 212, 26, '700');
+    drawBoldLabelValue(ctx, 'Name :', data.fullName || '', 307, 263, 26, '700');
+    drawBoldLabelValue(ctx, 'Academic Program:', `${data.degree || 'B.Tech'} –`, 307, 314, 26, '700');
+    ctx.font = '500 26px Arial, Helvetica, sans-serif';
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(data.department || '', 307, 347);
+    drawBoldLabelValue(ctx, 'Year of Completion:', String(yearOfCompletion), 307, 398, 26, '700');
+
+    // 10. Signature
+    if (signImg) {
+      drawContain(ctx, signImg, 143, 430, 120, 45);
+    }
+
+    // 11. Authorized Signatory
+    ctx.save();
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(95, 478);
+    ctx.lineTo(305, 478);
+    ctx.stroke();
+    ctx.font = '700 21px Arial, Helvetica, sans-serif';
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('Authorized Signatory', 95 + 105, 484);
+    ctx.restore();
+
+    // 12. Bottom Banner
+    drawBanner(ctx, 335, 475, 685, 92, 'ALUMNI RELATIONS, IITRAM');
+  } else {
+    const [watermarkLogo, buildingImg] = await Promise.all([
+      loadImg('/new/iitram cdr logo.png', '/images/iitram-logo.png'),
+      loadImg('/iitram-bg.jpg', '/images/iitram-building.jpg'),
+    ]);
+
+    // 1. Top-Left Alumni Relations Banner
+    drawBanner(ctx, 0, 0, 540, 90, 'ALUMNI RELATIONS, IITRAM');
+
+    // 2. Left Vertical Light-Blue Pill
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(0, 90, 65, 510, [0, 30, 0, 0]);
+    ctx.fillStyle = '#E0F2F5';
+    ctx.fill();
+    ctx.clip();
+
+    ctx.fillStyle = '#073F7C';
+    ctx.font = '800 13.5px Arial, Helvetica, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.save();
+    ctx.translate(23, 90 + 255);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('INSTITUTE OF INFRASTRUCTURE, TECHNOLOGY,', 0, 0);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(43, 90 + 255);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('RESEARCH AND MANAGEMENT', 0, 0);
+    ctx.restore();
+    ctx.restore();
+
+    // 3. Faded IITRAM Watermark Logo
+    if (watermarkLogo) {
+      ctx.save();
+      ctx.globalAlpha = 0.16;
+      drawContain(ctx, watermarkLogo, 105, 130, 390, 390);
+      ctx.restore();
+    }
+
+    // 4. Student Information Fields
+    drawBoldLabelValue(ctx, 'Enrollment Number :', enr, 105, 135, 24, '800');
+
+    const emailStr = data.email || `${enr}@iitram.ac.in`;
+    const emailFontSize = emailStr.length > 32 ? 18 : emailStr.length > 25 ? 20 : 24;
+    drawBoldLabelValue(ctx, 'Email Id :', emailStr, 105, 220, emailFontSize, '800');
+
+    drawBoldLabelValue(ctx, 'Contact No :', data.phone || '+91 98765 43210', 105, 305, 24, '800');
+
+    // Permanent Address (supports multi-line)
+    ctx.save();
+    ctx.font = '800 21px Arial, Helvetica, sans-serif';
+    ctx.fillStyle = '#000000';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    const addrLabel = 'Permanent Address: ';
+    ctx.fillText(addrLabel, 105, 382);
+    const addrLabelW = ctx.measureText(addrLabel).width;
+    ctx.font = '500 21px Arial, Helvetica, sans-serif';
+    const rawAddr = data.address ? data.address : 'Ahmedabad,\nGujarat - 380026';
+    const addrLines = rawAddr.split(/\r?\n/);
+    if (addrLines.length === 1 && ctx.measureText(addrLines[0]).width + addrLabelW > 410) {
+      const words = addrLines[0].split(' ');
+      let line1 = '';
+      let line2 = '';
+      for (const w of words) {
+        if (!line2 && ctx.measureText((line1 ? line1 + ' ' : '') + w).width + addrLabelW <= 410) {
+          line1 = (line1 ? line1 + ' ' : '') + w;
+        } else {
+          line2 = (line2 ? line2 + ' ' : '') + w;
+        }
+      }
+      ctx.fillText(line1, 105 + addrLabelW, 382);
+      if (line2) ctx.fillText(line2, 105, 408);
+    } else {
+      ctx.fillText(addrLines[0] || '', 105 + addrLabelW, 382);
+      for (let i = 1; i < addrLines.length; i++) {
+        ctx.fillText(addrLines[i], 105, 382 + i * 26);
+      }
+    }
+    ctx.restore();
+
+    // 5. Disclaimer Text
+    ctx.save();
+    ctx.font = 'italic 600 13px Arial, Helvetica, sans-serif';
+    ctx.fillStyle = '#333333';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('*Report the loss of this card to Security Office, IITRAM', 105, 552);
+    ctx.fillText('*This Card is not transferable', 105, 570);
+    ctx.restore();
+
+    // 6. Right Building Image with Exact SVG Clip-Path Boundary
+    if (buildingImg) {
+      ctx.save();
+      ctx.translate(542, 23);
+      ctx.beginPath();
+      ctx.moveTo(35, 0);
+      ctx.bezierCurveTo(15, 45, 5, 100, 12, 155);
+      ctx.bezierCurveTo(20, 215, 45, 270, 75, 325);
+      ctx.bezierCurveTo(98, 375, 138, 420, 148, 470);
+      ctx.bezierCurveTo(155, 495, 155, 520, 154, 537);
+      ctx.lineTo(472, 537);
+      ctx.lineTo(472, 0);
+      ctx.closePath();
+      ctx.clip();
+      drawCover(ctx, buildingImg, 0, 0, 472, 537, true);
+      ctx.restore();
+    }
+
+    // Card border
+    ctx.strokeStyle = '#CBD5E1';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, 0.5, CARD_WIDTH - 1, CARD_HEIGHT - 1);
+  }
+
+  return canvas.toDataURL('image/png', 1.0);
+}
+
 export default function AlumniICard({
   data: propsData,
   onOpenVerify,
@@ -608,25 +936,18 @@ export default function AlumniICard({
   useEffect(() => {
     let alive = true;
     const run = async () => {
-      const opts = {
-        quality: 1, pixelRatio: 3,
-        filter: (n: HTMLElement) => {
-          if (!n.tagName) return true;
-          return !['IFRAME', 'EMBED', 'SCRIPT'].includes(n.tagName.toUpperCase());
-        },
-      };
       try {
-        if (offscreenFrontRef.current) {
-          const url = await toPng(offscreenFrontRef.current, opts);
-          if (alive) setFrontCanvasUrl(url);
-        }
-        if (offscreenBackRef.current) {
-          const url = await toPng(offscreenBackRef.current, opts);
-          if (alive) setBackCanvasUrl(url);
+        const [fUrl, bUrl] = await Promise.all([
+          renderCardToPngDataUrl(data, 'front', 3),
+          renderCardToPngDataUrl(data, 'back', 3),
+        ]);
+        if (alive) {
+          setFrontCanvasUrl(fUrl);
+          setBackCanvasUrl(bUrl);
         }
       } catch (e) { console.error(e); }
     };
-    const t = setTimeout(run, 150);
+    const t = setTimeout(run, 50);
     return () => { alive = false; clearTimeout(t); };
   }, [data, tamperKey]);
 

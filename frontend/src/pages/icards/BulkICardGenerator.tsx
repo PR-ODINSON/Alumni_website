@@ -7,7 +7,7 @@ import {
 import toast from 'react-hot-toast';
 import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
-import AlumniICard, { type ICardData } from './components/AlumniICard';
+import AlumniICard, { type ICardData, renderCardToPngDataUrl } from './components/AlumniICard';
 
 if (typeof window !== 'undefined') {
   (window as any).htmlToImage = { toPng };
@@ -345,10 +345,25 @@ export default function BulkICardGenerator() {
     return true;
   };
 
-  const generateSinglePdf = async (row: AlumniRow, frontEl: HTMLDivElement, backEl: HTMLDivElement): Promise<Blob> => {
+  const generateSinglePdf = async (row: AlumniRow, _frontEl?: HTMLDivElement | null, _backEl?: HTMLDivElement | null): Promise<Blob> => {
+    const icardData: ICardData = {
+      fullName: row.fullName,
+      degree: row.degree,
+      department: row.department,
+      batch: row.batch,
+      membershipNo: `ALUM/IITRAM/${row.enrollmentNo}`,
+      dateOfIssue: row.dateOfIssue,
+      membershipType: row.membershipType,
+      photoUrl: row.photoUrl,
+      email: row.email,
+      phone: row.phone,
+      bloodGroup: row.bloodGroup,
+      enrollmentNumber: row.enrollmentNo,
+      address: row.address,
+    };
     const [frontImg, backImg] = await Promise.all([
-      toPng(frontEl, { quality: 1, pixelRatio: 3, filter: captureFilter, cacheBust: true }),
-      toPng(backEl,  { quality: 1, pixelRatio: 3, filter: captureFilter, cacheBust: true }),
+      renderCardToPngDataUrl(icardData, 'front', 3),
+      renderCardToPngDataUrl(icardData, 'back', 3),
     ]);
     const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
     const pageW = pdf.internal.pageSize.getWidth(); // 297 mm
