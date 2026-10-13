@@ -120,7 +120,7 @@ export default function Sidebar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 top-14 bg-slate-900/25 z-20 lg:hidden"
+            className="fixed inset-0 top-16 bg-slate-900/25 z-20 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
@@ -134,7 +134,7 @@ export default function Sidebar() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -270, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 420, damping: 40 }}
-            className="fixed left-0 bottom-0 z-30 bg-white overflow-hidden flex flex-col top-0 lg:top-14"
+            className="fixed left-0 bottom-0 z-30 bg-white overflow-hidden flex flex-col top-0 lg:top-16"
             style={{
               width: 'var(--sidebar-width)',
               borderRight: '1px solid #f1f5f9',

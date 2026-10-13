@@ -146,19 +146,12 @@ function DashboardHome() {
     <div className="max-w-7xl mx-auto space-y-7 pb-12">
 
       {/* ── Greeting header ─────────────────────────────────────────── */}
-      <motion.div variants={fadeUp} initial="hidden" animate="show" className="pt-2 flex items-center justify-between gap-4">
-        <div>
-          <p className="text-sm text-slate-400 font-medium">{greeting} 👋</p>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-0.5 font-display">
-            {user?.firstName} {user?.lastName}
-          </h1>
-          <p className="text-slate-400 text-sm mt-1">Stay connected with the IITRAM community.</p>
-        </div>
-        <div className="hidden sm:flex items-center gap-2 p-2 rounded-2xl bg-white border border-slate-100 shadow-xs">
-          <img src="/new/iitram cdr logo.png" alt="IITRAM Logo" className="w-9 h-9 object-contain" />
-          <div className="w-[1px] h-6 bg-slate-200" />
-          <img src="/new/alumani.jpeg" alt="IITRAM Alumni Logo" className="w-9 h-9 object-contain rounded-full" />
-        </div>
+      <motion.div variants={fadeUp} initial="hidden" animate="show" className="pt-2">
+        <p className="text-sm text-slate-400 font-medium">{greeting} 👋</p>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-0.5 font-display">
+          {user?.firstName} {user?.lastName}
+        </h1>
+        <p className="text-slate-400 text-sm mt-1">Stay connected with the IITRAM community.</p>
       </motion.div>
 
       {/* ── Metrics ─────────────────────────────────────────────────── */}

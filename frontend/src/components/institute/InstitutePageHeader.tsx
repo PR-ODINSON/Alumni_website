@@ -11,9 +11,8 @@ interface InstitutePageHeaderProps {
 export function InstitutePageHeader({ title, subtitle, badge = 'IITRAM Institutional Information' }: InstitutePageHeaderProps) {
   return (
     <header className="bg-white border border-slate-200 shadow-xs rounded-xl p-5 md:p-6 mb-4">
-      <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold mb-2">
-        <img src="/new/iitram cdr logo.png" alt="IITRAM" className="w-5 h-5 object-contain" />
-        <img src="/new/alumani.jpeg" alt="Alumni Relations" className="w-5 h-5 object-contain rounded-full" />
+      <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold mb-2">
+        <Building2 size={14} className="text-brand-500" aria-hidden="true" />
         <span>{badge}</span>
       </div>
       <h1 className="text-2xl md:text-3xl font-bold font-display text-slate-900 tracking-tight leading-tight">

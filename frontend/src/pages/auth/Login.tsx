@@ -171,11 +171,8 @@ export default function LoginPage() {
       </form>
 
       {/* Quick Demo Credentials */}
-      <div
-        className="mt-5 p-3.5 rounded-xl border"
-        style={{ background: '#DFF3F5', borderColor: '#bce7ec' }}
-      >
-        <p className="text-[11px] font-extrabold uppercase tracking-wider mb-2" style={{ color: '#073F7C' }}>
+      <div className="mt-5 p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+        <p className="text-[10px] font-bold uppercase tracking-wider mb-2 text-slate-500">
           Quick Login Credentials (Click to Fill)
         </p>
         <div className="grid grid-cols-3 gap-2">
@@ -191,16 +188,12 @@ export default function LoginPage() {
                 setValue('email', cred.email, { shouldValidate: true });
                 setValue('password', cred.pass, { shouldValidate: true });
               }}
-              className="p-2 rounded-lg text-left transition-all hover:shadow-xs cursor-pointer"
-              style={{ background: '#FFFFFF', border: '1px solid #1597A2' }}
+              className="p-2 rounded-lg text-left bg-white border border-slate-200 hover:border-[#1597A2] transition-all hover:shadow-xs cursor-pointer"
             >
-              <span
-                className="inline-block px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase mb-1"
-                style={{ background: '#D6DF8E', color: '#000000' }}
-              >
+              <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase mb-1 bg-[#DFF3F5] text-[#073F7C]">
                 {cred.role}
               </span>
-              <p className="text-[10px] font-bold text-[#073F7C] truncate">{cred.email}</p>
+              <p className="text-[10px] font-bold text-slate-800 truncate">{cred.email}</p>
               <p className="text-[9px] text-slate-500 font-mono">Pass: {cred.pass}</p>
             </button>
           ))}

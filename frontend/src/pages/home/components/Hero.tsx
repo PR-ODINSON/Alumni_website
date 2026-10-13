@@ -79,30 +79,11 @@ export default function Hero({ stats, isAuthenticated }: HeroProps) {
             initial="hidden"
             animate="show"
             transition={{ delay: 0.05 }}
-            className="mb-6 inline-flex flex-wrap items-center gap-2.5 p-1.5 pr-4 rounded-full shadow-lg"
-            style={{ background: '#DFF3F5', border: '2px solid #D6DF8E' }}
+            className="mb-6 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25"
           >
-            <div className="flex items-center gap-2 bg-white px-2.5 py-1 rounded-full shadow-2xs">
-              <img
-                src="/new/iitram cdr logo.png"
-                alt="IITRAM Institute Logo"
-                className="w-8 h-8 object-contain"
-              />
-              <div className="w-[1px] h-5 bg-[#1597A2]/30" />
-              <img
-                src="/new/alumani.jpeg"
-                alt="IITRAM Alumni Relations Logo"
-                className="w-8 h-8 object-contain rounded-full"
-              />
-            </div>
-            <span
-              className="text-[11px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full"
-              style={{ background: '#D6DF8E', color: '#000000' }}
-            >
-              ALUMNI RELATIONS, IITRAM
-            </span>
-            <span className="text-xs font-extrabold uppercase tracking-wider" style={{ color: '#073F7C' }}>
-              Ahmedabad
+            <span className="w-2 h-2 rounded-full bg-[#D6DF8E] animate-pulse" />
+            <span className="text-xs font-bold uppercase tracking-wider text-white">
+              IITRAM · Ahmedabad
             </span>
           </motion.div>
 
@@ -116,7 +97,7 @@ export default function Hero({ stats, isAuthenticated }: HeroProps) {
           >
             IITRAM Alumni
             <br />
-            <span style={{ color: '#D6DF8E' }}>Network</span>
+            <span style={{ color: '#7dd3dc' }}>Network</span>
           </motion.h1>
 
           <motion.p
@@ -124,8 +105,7 @@ export default function Hero({ stats, isAuthenticated }: HeroProps) {
             initial="hidden"
             animate="show"
             transition={{ delay: 0.18 }}
-            className="mb-8 max-w-xl text-base leading-relaxed sm:text-lg font-medium"
-            style={{ color: '#DFF3F5' }}
+            className="mb-8 max-w-xl text-base leading-relaxed sm:text-lg font-medium text-white/90"
           >
             Find graduates and students by engineering branch, explore exclusive opportunities, and stay connected to the institute.
           </motion.p>
@@ -139,16 +119,15 @@ export default function Hero({ stats, isAuthenticated }: HeroProps) {
           >
             <Link
               to="/directory"
-              className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-extrabold transition-all hover:shadow-lg hover:-translate-y-0.5 shadow-md"
-              style={{ background: '#D6DF8E', color: '#000000', border: '1px solid #c3cf6d' }}
+              className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold text-white transition-all hover:shadow-lg hover:-translate-y-0.5 shadow-md"
+              style={{ background: 'linear-gradient(135deg, #1597A2 0%, #0B6169 100%)' }}
             >
               Explore the directory <ArrowRight size={15} />
             </Link>
             {!isAuthenticated && (
               <Link
                 to="/register"
-                className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-extrabold text-white transition-all hover:shadow-lg hover:-translate-y-0.5"
-                style={{ background: 'linear-gradient(135deg, #1597A2 0%, #0B6169 100%)', border: '1px solid #DFF3F5' }}
+                className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold text-white bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/30 transition-all"
               >
                 Join the network
               </Link>

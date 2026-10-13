@@ -2,7 +2,6 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import Footer from '../../pages/home/components/Footer';
 import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
 
@@ -14,9 +13,6 @@ export default function Layout() {
   const { isAuthenticated } = useAuthStore();
 
   const showSidebar = isAuthenticated && !NO_SIDEBAR_ROUTES.includes(location.pathname);
-  const showLayoutFooter =
-    !location.pathname.startsWith('/messages') &&
-    !(location.pathname === '/' && !isAuthenticated);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -26,9 +22,9 @@ export default function Layout() {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-x-hidden font-sans flex flex-col">
+    <div className="min-h-screen bg-slate-50 relative overflow-x-hidden font-sans">
       <Navbar />
-      <div className="flex pt-16 relative z-10 flex-1">
+      <div className="flex pt-16 relative z-10">
         {showSidebar && (
           <>
             {/* Mobile overlay */}
@@ -41,11 +37,10 @@ export default function Layout() {
             <Sidebar />
           </>
         )}
-        <main className={`flex-1 flex flex-col min-h-[calc(100vh-4rem)] transition-all duration-300 ${showSidebar ? 'lg:ml-72' : ''}`}>
-          <div className={`w-full flex-1 max-w-full ${showSidebar ? 'p-3 sm:p-4 lg:p-6 lg:pl-0' : 'p-0'}`}>
+        <main className={`flex-1 min-h-[calc(100vh-4rem)] transition-all duration-300 ${showSidebar ? 'lg:ml-72 p-3 sm:p-4 lg:p-6 lg:pl-0' : 'p-0'}`}>
+          <div className="w-full h-full max-w-full">
             <Outlet />
           </div>
-          {showLayoutFooter && <Footer />}
         </main>
       </div>
     </div>

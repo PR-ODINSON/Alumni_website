@@ -166,24 +166,21 @@ export default function BranchShowcase({ stats }: { stats?: LandingStats }) {
   const otherFields = otherAcademicFields(stats);
 
   return (
-    <section className="border-b border-[#bce7ec] py-14 sm:py-18" style={{ background: '#DFF3F5' }}>
+    <section className="border-b border-slate-200 bg-slate-50 py-14 sm:py-18">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <span
-              className="mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide"
-              style={{ background: '#D6DF8E', color: '#000000' }}
-            >
+            <span className="mb-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-[#1597A2]">
               <GraduationCap size={14} /> IITRAM academic network
             </span>
-            <h2 className="text-2xl font-bold sm:text-3xl" style={{ color: '#073F7C' }}>Engineering branches</h2>
-            <p className="mt-2 max-w-xl text-sm text-slate-700 font-medium">
+            <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">Engineering branches</h2>
+            <p className="mt-2 max-w-xl text-sm text-slate-600">
               Alumni and active student totals are drawn from current institute records.
             </p>
           </div>
           <Link
             to="/directory"
-            className="inline-flex items-center gap-2 self-start rounded-xl px-4 py-2.5 text-xs font-extrabold text-white transition-all hover:shadow-md sm:self-auto"
+            className="inline-flex items-center gap-2 self-start rounded-xl px-4 py-2.5 text-xs font-bold text-white transition-all hover:shadow-md sm:self-auto"
             style={{ background: 'linear-gradient(135deg, #1597A2 0%, #0B6169 100%)' }}
           >
             Browse directory <ArrowRight size={14} />

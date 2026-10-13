@@ -62,15 +62,14 @@ export default function Features() {
           className="text-center mb-12 sm:mb-16"
         >
           <span
-            className="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-3"
-            style={{ background: '#D6DF8E', color: '#000000' }}
+            className="inline-block px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3 bg-[#DFF3F5] text-[#1597A2] border border-[#bce7ec]"
           >
             Institutional Pillars
           </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-display mb-3 tracking-tight" style={{ color: '#073F7C' }}>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-display mb-3 tracking-tight text-slate-900">
             Connecting Academia, Industry<br />and Alumni Success
           </h2>
-          <p className="text-slate-600 text-xs sm:text-sm max-w-xl mx-auto font-medium">
+          <p className="text-slate-500 text-xs sm:text-sm max-w-xl mx-auto font-medium">
             Fostering lifelong professional connections, infrastructure research collaborations, student career mentorship, and technical innovation.
           </p>
         </motion.div>
@@ -84,17 +83,15 @@ export default function Features() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="group p-6 sm:p-7 bg-white border border-[#bce7ec] shadow-xs hover:border-[#1597A2] hover:shadow-md rounded-2xl transition-all duration-200"
+              className="group p-6 sm:p-7 bg-white border border-slate-200/80 shadow-xs hover:border-[#1597A2] hover:shadow-md rounded-2xl transition-all duration-200"
             >
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center mb-5 group-hover:scale-105 transition-all duration-200"
-                style={{ background: '#DFF3F5', border: '1px solid #bce7ec' }}
+                className="w-10 h-10 rounded-xl flex items-center justify-center mb-5 group-hover:scale-105 transition-all duration-200 bg-[#DFF3F5] border border-[#bce7ec]"
               >
-                <Icon size={18} style={{ color: '#1597A2' }} />
+                <Icon size={18} className="text-[#1597A2]" />
               </div>
               <div
-                className="inline-block px-2.5 py-0.5 rounded-full mb-2.5 text-[10px] font-extrabold uppercase tracking-wider"
-                style={{ background: '#D6DF8E', color: '#000000' }}
+                className="inline-block px-2.5 py-0.5 rounded-full mb-2.5 text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600"
               >
                 {tag}
               </div>

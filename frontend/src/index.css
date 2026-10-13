@@ -154,7 +154,7 @@
 
 /* ─── CSS Variables ─────────────────────────────────────────────────────── */
 :root {
-  --header-height: 3.5rem;
+  --header-height: 4rem;
   --sidebar-width: 15.5rem;
 
   /* Official IITRAM I-Card Color Palette */
@@ -180,7 +180,7 @@
     text-rendering: optimizeLegibility;
   }
   body {
-    background-color: #f6fbfc;
+    background-color: #f8fafc;
     @apply text-slate-900 font-sans min-h-screen selection:bg-brand-100 selection:text-brand-900;
     font-feature-settings: "cv11", "ss01";
   }
