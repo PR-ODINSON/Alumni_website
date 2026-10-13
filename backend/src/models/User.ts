@@ -26,6 +26,9 @@ export interface IUser extends Document {
   authProvider: AuthProvider;
   isEmailVerified: boolean;
   isProfileComplete: boolean;
+  mustChangePassword?: boolean;
+  permanentAddress?: string;
+  signatureUrl?: string;
   
   // Verification
   verificationStatus: VerificationStatus;

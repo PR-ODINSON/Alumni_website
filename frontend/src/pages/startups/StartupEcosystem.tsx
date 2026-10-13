@@ -74,7 +74,7 @@ export default function StartupEcosystem() {
   return (
     <div className="pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Hero Banner with Modern Gradient */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#001f54] via-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-8 md:p-10 mt-4 mb-8 shadow-xl border border-slate-800">
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#073F7C] via-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-8 md:p-10 mt-4 mb-8 shadow-xl border border-slate-800">
         {/* Subtle glowing ambient orbs */}
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-80 h-80 bg-brand-500/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-1/3 -mb-20 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -319,7 +319,7 @@ export default function StartupEcosystem() {
       />
 
       {/* Call to Action Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-slate-900 to-[#001f54] text-white rounded-3xl p-6 sm:p-8 md:p-10 mt-12 shadow-md border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="relative overflow-hidden bg-gradient-to-r from-slate-900 to-[#073F7C] text-white rounded-3xl p-6 sm:p-8 md:p-10 mt-12 shadow-md border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="max-w-xl text-center md:text-left">
           <div className="flex items-center justify-center md:justify-start gap-2 text-amber-400 text-xs font-bold mb-2">
             <Sparkles size={15} />

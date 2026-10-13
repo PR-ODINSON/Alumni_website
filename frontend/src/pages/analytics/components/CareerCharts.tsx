@@ -7,7 +7,7 @@ interface CareerChartsProps {
   distribution: any;
 }
 
-const COLORS = ['#0169FC', '#14b8a6', '#5d40f8', '#2dd4bf', '#2d10cf', '#0d9488'];
+const COLORS = ['#1597A2', '#14b8a6', '#5d40f8', '#2dd4bf', '#2d10cf', '#0d9488'];
 
 export default function CareerCharts({ placement, distribution }: CareerChartsProps) {
   return (
@@ -20,7 +20,7 @@ export default function CareerCharts({ placement, distribution }: CareerChartsPr
         className="bg-white border border-slate-200 shadow-sm rounded-2xl p-5"
       >
         <h3 className="font-bold font-display text-slate-900 text-sm mb-5 flex items-center gap-2">
-          <Briefcase size={16} className="text-[#001f54]" /> Placement Statistics
+          <Briefcase size={16} className="text-[#073F7C]" /> Placement Statistics
         </h3>
         {placement?.length > 0 ? (
           <ResponsiveContainer width="100%" height={240}>
@@ -32,7 +32,7 @@ export default function CareerCharts({ placement, distribution }: CareerChartsPr
               <Legend formatter={(v) => <span className="text-[10px] text-slate-500 font-bold">{v}</span>} />
               <Bar dataKey="employed" name="Employed" fill="#14b8a6" radius={[3, 3, 0, 0]} />
               <Bar dataKey="entrepreneurs" name="Entrepreneurs" fill="#eab308" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="higherStudies" name="Higher Studies" fill="#0169FC" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="higherStudies" name="Higher Studies" fill="#1597A2" radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         ) : (
@@ -48,7 +48,7 @@ export default function CareerCharts({ placement, distribution }: CareerChartsPr
         className="bg-white border border-slate-200 shadow-sm rounded-2xl p-5"
       >
         <h3 className="font-bold font-display text-slate-900 text-sm mb-5 flex items-center gap-2">
-          <Users size={16} className="text-[#001f54]" /> Employment Status
+          <Users size={16} className="text-[#073F7C]" /> Employment Status
         </h3>
         {distribution?.byEmploymentStatus?.length > 0 ? (
           <div className="space-y-4 py-2">

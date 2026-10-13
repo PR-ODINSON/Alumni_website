@@ -100,7 +100,7 @@ export default function MentorshipDetailPage() {
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-12 flex justify-center items-center">
-        <Loader2 className="animate-spin text-[#0169FC]" size={36} />
+        <Loader2 className="animate-spin text-[#1597A2]" size={36} />
       </div>
     );
   }
@@ -161,7 +161,7 @@ export default function MentorshipDetailPage() {
         {/* Top Header Card */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-50/70 border border-blue-100 flex items-center justify-center flex-shrink-0 text-[#0169FC]">
+            <div className="w-12 h-12 rounded-xl bg-blue-50/70 border border-blue-100 flex items-center justify-center flex-shrink-0 text-[#1597A2]">
               <User size={24} />
             </div>
             <div>
@@ -194,7 +194,7 @@ export default function MentorshipDetailPage() {
             
             {/* Overview / Goals */}
             <div className="card p-6 bg-white border border-slate-200 rounded-2xl shadow-xs">
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">Program Goals</h3>
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">Program Goals</h3>
               <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl mb-4">
                 <p className="text-sm text-slate-705 leading-relaxed font-semibold italic">
                   "{mentorship.goals}"
@@ -211,7 +211,7 @@ export default function MentorshipDetailPage() {
                   <p className="text-xs text-slate-400 font-bold mb-1.5 font-sans">Focus Areas</p>
                   <div className="flex flex-wrap gap-1.5">
                     {mentorship.areas.map((area: string) => (
-                      <span key={area} className="text-xs font-bold px-2.5 py-0.5 bg-blue-50/70 border border-blue-100 text-[#0169FC] rounded-md">
+                      <span key={area} className="text-xs font-bold px-2.5 py-0.5 bg-blue-50/70 border border-blue-100 text-[#1597A2] rounded-md">
                         {area}
                       </span>
                     ))}
@@ -222,7 +222,7 @@ export default function MentorshipDetailPage() {
 
             {/* Pending actions for Mentor */}
             {mentorship.status === 'pending' && isMentor && (
-              <div className="card p-6 border-2 border-[#0169FC]/20 bg-blue-50/20 rounded-2xl">
+              <div className="card p-6 border-2 border-[#1597A2]/20 bg-blue-50/20 rounded-2xl">
                 <h4 className="font-bold text-slate-900 mb-2">Pending Request Response</h4>
                 <p className="text-xs text-slate-500 font-semibold mb-4 leading-relaxed">
                   Review the student's details, focus areas, and goals before responding.
@@ -250,7 +250,7 @@ export default function MentorshipDetailPage() {
             {mentorship.status !== 'pending' && (
               <div className="card p-6 bg-white border border-slate-200 rounded-2xl shadow-xs">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider">Scheduled Sessions</h3>
+                  <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider">Scheduled Sessions</h3>
                   {mentorship.status === 'active' && isMentor && !showScheduleForm && (
                     <button
                       onClick={() => setShowScheduleForm(true)}
@@ -354,7 +354,7 @@ export default function MentorshipDetailPage() {
                                 ? 'bg-emerald-50 border border-emerald-100 text-emerald-600'
                                 : session.status === 'cancelled'
                                 ? 'bg-red-50 border border-red-100 text-red-500'
-                                : 'bg-blue-50 border border-blue-100 text-[#0169FC]'
+                                : 'bg-blue-50 border border-blue-100 text-[#1597A2]'
                             }`}>
                               {idx + 1}
                             </div>
@@ -368,7 +368,7 @@ export default function MentorshipDetailPage() {
                                 {session.status && (
                                   <span className={`capitalize text-[10px] font-bold ${
                                     session.status === 'completed' ? 'text-emerald-600' :
-                                    session.status === 'cancelled' ? 'text-red-500' : 'text-[#0169FC]'
+                                    session.status === 'cancelled' ? 'text-red-500' : 'text-[#1597A2]'
                                   }`}>{session.status}</span>
                                 )}
                               </div>
@@ -383,7 +383,7 @@ export default function MentorshipDetailPage() {
                                 rel="noopener noreferrer"
                                 className="btn btn-secondary btn-sm inline-flex items-center gap-1 py-1 px-3 text-xs"
                               >
-                                <Video size={13} className="text-[#0169FC]" /> Join Meeting
+                                <Video size={13} className="text-[#1597A2]" /> Join Meeting
                               </a>
                             )}
                             {session.status === 'scheduled' && isMentor && (
@@ -418,7 +418,7 @@ export default function MentorshipDetailPage() {
             {/* Feedback & Review Form (Mentees/Students) */}
             {mentorship.status === 'completed' && !isMentor && (
               <div className="card p-6 bg-white border border-slate-200 rounded-2xl shadow-xs">
-                <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">Program Review & Feedback</h3>
+                <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">Program Review & Feedback</h3>
                 
                 {hasSubmittedFeedback ? (
                   <div className="p-4 bg-emerald-50/50 border border-emerald-100 rounded-xl font-sans">
@@ -504,7 +504,7 @@ export default function MentorshipDetailPage() {
             {/* Program Completion/Feedback notes (Mentor viewpoint) */}
             {mentorship.status === 'completed' && isMentor && (
               <div className="card p-6 bg-white border border-slate-200 rounded-2xl shadow-xs">
-                <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">Program Wrap Up</h3>
+                <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">Program Wrap Up</h3>
                 {mentorship.finalFeedback?.fromMentee?.submittedAt ? (
                   <div>
                     <p className="text-xs text-slate-400 font-bold mb-2">Mentee's Feedback & Rating</p>
@@ -536,7 +536,7 @@ export default function MentorshipDetailPage() {
           {/* Right Column: Other User Profile Card */}
           <div className="md:col-span-1">
             <div className="card p-5 bg-white border border-slate-200 rounded-2xl shadow-xs text-center font-sans sticky top-24">
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4 text-left">
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4 text-left">
                 {isMentor ? 'Mentee Info' : 'Mentor Info'}
               </h3>
               
@@ -551,7 +551,7 @@ export default function MentorshipDetailPage() {
                 <h4 className="font-bold text-slate-900 mt-3 text-sm">
                   {otherUser?.firstName} {otherUser?.lastName}
                 </h4>
-                <p className="text-xs text-[#0169FC] font-bold capitalize mt-0.5">
+                <p className="text-xs text-[#1597A2] font-bold capitalize mt-0.5">
                   {otherUser?.role}
                 </p>
 

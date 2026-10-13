@@ -77,7 +77,7 @@ export default function CreateStoryPage() {
       title: form.title,
       subtitle: form.subtitle || undefined,
       category: form.category,
-      coverImage: form.coverImage || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop&q=60',
+      coverImage: form.coverImage || '/iitram-bg.jpg',
       quote: form.quote || undefined,
       content: form.content,
       tags: form.tagsInput

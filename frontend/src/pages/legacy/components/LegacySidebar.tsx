@@ -28,7 +28,7 @@ export default function LegacySidebar({ distinguished }: LegacySidebarProps) {
       <div className="bg-white border border-slate-200 shadow-xs rounded-xl p-4">
         <div className="flex items-center justify-between mb-3 px-0.5">
           <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">Distinguished Highlights</h2>
-          <Link to="/alumni" className="text-[10px] font-bold text-[#0169FC] hover:underline">View all</Link>
+          <Link to="/alumni" className="text-[10px] font-bold text-[#1597A2] hover:underline">View all</Link>
         </div>
         <div className="space-y-2.5">
           {distinguished.map((alumni) => (
@@ -36,20 +36,20 @@ export default function LegacySidebar({ distinguished }: LegacySidebarProps) {
               key={alumni.name}
               className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100"
             >
-              <div className="w-8 h-8 bg-[#0169FC]/10 text-[#0169FC] rounded-full flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs">
+              <div className="w-8 h-8 bg-[#1597A2]/10 text-[#1597A2] rounded-full flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs">
                 {alumni.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="font-bold text-slate-900 text-xs truncate leading-tight">{alumni.name}</p>
                 <p className="text-[10px] text-slate-500 truncate mt-0.5 font-medium">{alumni.dept}, Batch {alumni.batch}</p>
-                <p className="text-[10px] font-bold text-[#0169FC] mt-0.5 truncate">{alumni.achievement}</p>
+                <p className="text-[10px] font-bold text-[#1597A2] mt-0.5 truncate">{alumni.achievement}</p>
               </div>
             </div>
           ))}
         </div>
         <Link
           to="/stories"
-          className="mt-3.5 inline-flex items-center gap-1 text-[11px] text-[#0169FC] hover:underline font-bold px-0.5"
+          className="mt-3.5 inline-flex items-center gap-1 text-[11px] text-[#1597A2] hover:underline font-bold px-0.5"
         >
           Read Success Stories <ChevronRight size={11} />
         </Link>
@@ -63,7 +63,7 @@ export default function LegacySidebar({ distinguished }: LegacySidebarProps) {
             <Link
               key={link.label}
               to={link.to}
-              className="flex items-center gap-2.5 text-xs text-slate-650 hover:text-[#0169FC] py-2 px-2 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all font-semibold cursor-pointer"
+              className="flex items-center gap-2.5 text-xs text-slate-650 hover:text-[#1597A2] py-2 px-2 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all font-semibold cursor-pointer"
             >
               <link.icon size={14} className="text-slate-400 shrink-0" />
               <span>{link.label}</span>

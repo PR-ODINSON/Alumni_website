@@ -18,7 +18,7 @@ export default function StudentCard({ student }: { student: any }) {
       transition={{ type: 'spring', stiffness: 350, damping: 25 }}
       className="h-full"
     >
-      <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-4 flex flex-col justify-between hover:border-[#0169FC]/40 transition-all duration-200 group relative h-full">
+      <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-4 flex flex-col justify-between hover:border-[#1597A2]/40 transition-all duration-200 group relative h-full">
         <div>
           {/* Header */}
           <div className="flex items-start justify-between mb-3">
@@ -29,7 +29,7 @@ export default function StudentCard({ student }: { student: any }) {
                 size="md"
               />
               <div className="min-w-0 flex-1">
-                <p className="font-semibold text-slate-900 text-xs leading-snug group-hover:text-[#0169FC] transition-colors truncate">
+                <p className="font-semibold text-slate-900 text-xs leading-snug group-hover:text-[#1597A2] transition-colors truncate">
                   {fullName || 'IITRAM Student'}
                 </p>
                 <p className="text-[10px] text-slate-500 font-semibold mt-0.5 truncate">
@@ -55,7 +55,7 @@ export default function StudentCard({ student }: { student: any }) {
 
           {/* Badges */}
           <div className="flex flex-wrap gap-1.5 mb-2.5">
-            <span className="bg-blue-50/70 text-[#0169FC] border border-blue-100 text-[10px] px-2 py-0.5 rounded-full font-bold">
+            <span className="bg-blue-50/70 text-[#1597A2] border border-blue-100 text-[10px] px-2 py-0.5 rounded-full font-bold">
               Batch {student.batch}
             </span>
             {student.openToWork && (

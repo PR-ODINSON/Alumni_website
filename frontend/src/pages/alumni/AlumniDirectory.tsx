@@ -55,9 +55,9 @@ export default function AlumniDirectoryPage() {
               </p>
             </div>
             <div className="flex items-center gap-3 text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 font-semibold">
-              <span className="flex items-center gap-1.5"><Users size={14} className="text-[#0169FC]" /> Alumni Network</span>
+              <span className="flex items-center gap-1.5"><Users size={14} className="text-[#1597A2]" /> Alumni Network</span>
               <span className="w-1 h-1 rounded-full bg-slate-300" />
-              <span className="flex items-center gap-1.5"><Globe size={14} className="text-[#0169FC]" /> Global Presence</span>
+              <span className="flex items-center gap-1.5"><Globe size={14} className="text-[#1597A2]" /> Global Presence</span>
             </div>
           </div>
  
@@ -69,17 +69,17 @@ export default function AlumniDirectoryPage() {
                 type="text"
                 onChange={(e) => { debouncedSearch(e.target.value); setPage(1); }}
                 placeholder="Search by name, company, skills..."
-                className="w-full pl-10 pr-4 h-10 bg-slate-50/50 border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-[#0169FC]/25 focus:border-[#0169FC]/40"
+                className="w-full pl-10 pr-4 h-10 bg-slate-50/50 border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-[#1597A2]/25 focus:border-[#1597A2]/40"
               />
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-1.5 px-4 h-10 rounded-lg border text-xs font-bold transition-all cursor-pointer ${showFilters || activeFilterCount > 0 ? 'bg-[#0169FC] border-[#0169FC] text-white shadow-xs' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+              className={`flex items-center gap-1.5 px-4 h-10 rounded-lg border text-xs font-bold transition-all cursor-pointer ${showFilters || activeFilterCount > 0 ? 'bg-[#1597A2] border-[#1597A2] text-white shadow-xs' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
             >
               <SlidersHorizontal size={14} />
               Filters
               {activeFilterCount > 0 && (
-                <span className="w-4 h-4 rounded-full bg-white text-[#0169FC] text-[10px] flex items-center justify-center font-extrabold ml-1 border border-[#0169FC]/20">
+                <span className="w-4 h-4 rounded-full bg-white text-[#1597A2] text-[10px] flex items-center justify-center font-extrabold ml-1 border border-[#1597A2]/20">
                   {activeFilterCount}
                 </span>
               )}

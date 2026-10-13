@@ -3,7 +3,8 @@ import { ResearchPermission } from '../../config/permissions/research';
 
 export class ResearchPolicy extends BasePolicy {
   static create(user: any): boolean {
-    return this.hasPermission(user, ResearchPermission.RESEARCH_CREATE) && user.verificationStatus === 'verified';
+    const isUserVerified = user.verificationStatus === 'verified' || user.isVerified || user.role === 'admin' || user.role === 'alumni' || user.role === 'faculty';
+    return this.hasPermission(user, ResearchPermission.RESEARCH_CREATE) && isUserVerified;
   }
 
   static update(user: any, project: any): boolean {
@@ -17,7 +18,7 @@ export class ResearchPolicy extends BasePolicy {
   }
 
   static apply(user: any, project: any): boolean {
-    if (user.verificationStatus !== 'verified') return false;
+    if (user.isBanned || !user.isActive) return false;
     if (!this.hasPermission(user, ResearchPermission.RESEARCH_APPLY)) return false;
     if (project.status !== 'open' || project.deletedAt) return false;
     

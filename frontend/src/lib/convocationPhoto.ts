@@ -1,6 +1,6 @@
 const PHOTO_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'] as const;
 
-const DEFAULT_PLACEHOLDER = '/images/alumni-logo.jpg';
+const DEFAULT_PLACEHOLDER = '/new/alumani.jpeg';
 
 /**
  * Ordered image URLs to try for a student's convocation / ID photo.

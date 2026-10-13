@@ -60,7 +60,7 @@ export default function StoriesPreview({ stories }: StoriesPreviewProps) {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-[#001f54] flex items-center justify-center">
+                    <div className="w-full h-full bg-[#073F7C] flex items-center justify-center">
                       <Star size={28} className="text-white/40" />
                     </div>
                   )}

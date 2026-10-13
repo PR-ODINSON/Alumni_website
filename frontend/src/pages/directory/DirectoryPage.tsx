@@ -221,7 +221,7 @@ export default function DirectoryPage() {
                       {Array.from({ length: Math.min(7, alumniPagination.pages) }, (_, i) => {
                         const p = i + 1;
                         return (
-                          <button key={p} onClick={() => setAlumniPage(p)} className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${alumniPage === p ? 'bg-[#0169FC] text-white' : 'text-slate-600 hover:bg-slate-100'}`}>{p}</button>
+                          <button key={p} onClick={() => setAlumniPage(p)} className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${alumniPage === p ? 'bg-[#1597A2] text-white' : 'text-slate-600 hover:bg-slate-100'}`}>{p}</button>
                         );
                       })}
                     </div>
@@ -258,7 +258,7 @@ export default function DirectoryPage() {
                       {Array.from({ length: Math.min(5, studentPagination.pages) }, (_, i) => {
                         const p = Math.max(1, Math.min(studentPagination.pages - 4, studentPage - 2)) + i;
                         return (
-                          <button key={p} onClick={() => setStudentPage(p)} className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${p === studentPage ? 'bg-[#0169FC] text-white' : 'text-slate-600 hover:bg-slate-100'}`}>{p}</button>
+                          <button key={p} onClick={() => setStudentPage(p)} className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${p === studentPage ? 'bg-[#1597A2] text-white' : 'text-slate-600 hover:bg-slate-100'}`}>{p}</button>
                         );
                       })}
                     </div>

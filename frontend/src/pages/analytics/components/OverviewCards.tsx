@@ -8,7 +8,7 @@ export default function OverviewCards({ overview }: OverviewCardsProps) {
   const cards = [
     { icon: Users, label: 'Total Alumni', value: overview?.totalAlumni, color: 'text-slate-700', bg: 'bg-slate-100' },
     { icon: GraduationCap, label: 'Students', value: overview?.totalStudents, color: 'text-emerald-700', bg: 'bg-emerald-50 border border-emerald-100' },
-    { icon: Briefcase, label: 'Active Jobs', value: overview?.totalJobs, color: 'text-[#0169FC]', bg: 'bg-blue-50 border border-blue-100' },
+    { icon: Briefcase, label: 'Active Jobs', value: overview?.totalJobs, color: 'text-[#1597A2]', bg: 'bg-blue-50 border border-blue-100' },
     { icon: Calendar, label: 'Upcoming Events', value: overview?.totalEvents, color: 'text-purple-700', bg: 'bg-purple-50 border border-purple-100' },
     { icon: Target, label: 'Mentorships', value: overview?.activeMentorships, color: 'text-amber-700', bg: 'bg-amber-50 border border-amber-100' },
     { icon: Award, label: 'Verified Alumni', value: overview?.verifiedAlumni, color: 'text-rose-700', bg: 'bg-rose-50 border border-rose-100' },
@@ -19,7 +19,7 @@ export default function OverviewCards({ overview }: OverviewCardsProps) {
       {cards.map(({ icon: Icon, label, value, color, bg }) => (
         <div
           key={label}
-          className="bg-white border border-slate-200 shadow-xs hover:border-[#0169FC]/30 transition-all duration-150 rounded-xl p-4 flex flex-col justify-between"
+          className="bg-white border border-slate-200 shadow-xs hover:border-[#1597A2]/30 transition-all duration-150 rounded-xl p-4 flex flex-col justify-between"
         >
           <div>
             <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center mb-3`}>

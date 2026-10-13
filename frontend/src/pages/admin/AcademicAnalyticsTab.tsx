@@ -153,8 +153,8 @@ export default function AcademicAnalyticsTab() {
       {/* ── Top Header & Context Card ────────────────────────────────────── */}
       <div className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#001f54] text-xs font-bold mb-2">
-            <Building2 size={13} className="text-[#0169FC]" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[#073F7C] text-xs font-bold mb-2">
+            <Building2 size={13} className="text-[#1597A2]" />
             IITRAM Academic Directorate Analytics
           </div>
           <h2 className="text-xl sm:text-2xl font-bold font-display text-slate-900 tracking-tight">
@@ -172,7 +172,7 @@ export default function AcademicAnalyticsTab() {
             className="btn btn-outline btn-sm text-xs font-bold gap-1.5"
             title="Refresh statistics"
           >
-            <RefreshCw size={13} className={statsRefetching ? 'animate-spin text-[#0169FC]' : ''} />
+            <RefreshCw size={13} className={statsRefetching ? 'animate-spin text-[#1597A2]' : ''} />
             <span>Refresh</span>
           </button>
 
@@ -190,7 +190,7 @@ export default function AcademicAnalyticsTab() {
       {/* ── Filter Bar ────────────────────────────────────────────────────── */}
       <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 shadow-xs">
         <div className="flex items-center gap-2 mb-3 text-xs font-bold text-slate-700 uppercase tracking-wider">
-          <Filter size={14} className="text-[#0169FC]" />
+          <Filter size={14} className="text-[#1597A2]" />
           Filter Analytics Dataset
         </div>
 
@@ -290,7 +290,7 @@ export default function AcademicAnalyticsTab() {
             <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">
               Enrolled Students
             </span>
-            <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#0169FC] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#1597A2] flex items-center justify-center">
               <Users size={15} />
             </div>
           </div>
@@ -400,7 +400,7 @@ export default function AcademicAnalyticsTab() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm sm:text-base font-bold font-display text-slate-900 flex items-center gap-2">
-                <Building2 size={16} className="text-[#0169FC]" />
+                <Building2 size={16} className="text-[#1597A2]" />
                 Field Breakdown (Students vs Passed Alumni)
               </h3>
               <p className="text-xs text-slate-400 font-medium mt-0.5">Top disciplines by demographic distribution</p>
@@ -426,7 +426,7 @@ export default function AcademicAnalyticsTab() {
                   />
                   <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
                   <Bar dataKey="PassedOut" name="Passed Alumni" fill="#10b981" radius={[0, 4, 4, 0]} barSize={10} />
-                  <Bar dataKey="Enrolled" name="Enrolled Students" fill="#0169FC" radius={[0, 4, 4, 0]} barSize={10} />
+                  <Bar dataKey="Enrolled" name="Enrolled Students" fill="#1597A2" radius={[0, 4, 4, 0]} barSize={10} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -455,8 +455,8 @@ export default function AcademicAnalyticsTab() {
                 <AreaChart data={yearTimelineData} margin={{ top: 10, right: 20, left: -10, bottom: 5 }}>
                   <defs>
                     <linearGradient id="yearGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0169FC" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#0169FC" stopOpacity={0.0} />
+                      <stop offset="5%" stopColor="#1597A2" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#1597A2" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -475,7 +475,7 @@ export default function AcademicAnalyticsTab() {
                   <Area
                     type="monotone"
                     dataKey="Passed Students"
-                    stroke="#0169FC"
+                    stroke="#1597A2"
                     strokeWidth={2.5}
                     fillOpacity={1}
                     fill="url(#yearGradient)"
@@ -496,7 +496,7 @@ export default function AcademicAnalyticsTab() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
             <h3 className="text-base font-bold font-display text-slate-900 flex items-center gap-2">
-              <FileSpreadsheet size={17} className="text-[#0169FC]" />
+              <FileSpreadsheet size={17} className="text-[#1597A2]" />
               Field × Passing Year Distribution Matrix
             </h3>
             <p className="text-xs text-slate-500 font-medium mt-0.5">
@@ -516,7 +516,7 @@ export default function AcademicAnalyticsTab() {
                 <th className="px-4 py-3 sticky left-0 z-10 bg-slate-100 min-w-[190px] shadow-[2px_0_4px_rgba(0,0,0,0.02)]">
                   Field / Department
                 </th>
-                <th className="px-3 py-3 text-center bg-blue-50/60 text-[#001f54] min-w-[100px]">
+                <th className="px-3 py-3 text-center bg-blue-50/60 text-[#073F7C] min-w-[100px]">
                   Enrolled Students
                 </th>
                 {distinctYears.map((yr) => (
@@ -537,7 +537,7 @@ export default function AcademicAnalyticsTab() {
                 <tr key={row.department} className="hover:bg-slate-50/70 transition-colors">
                   <td className="px-4 py-3 font-bold text-slate-900 sticky left-0 z-10 bg-white hover:bg-slate-50/70 shadow-[2px_0_4px_rgba(0,0,0,0.02)]">
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#0169FC]" />
+                      <span className="w-2 h-2 rounded-full bg-[#1597A2]" />
                       <span>{row.department}</span>
                     </div>
                   </td>
@@ -611,7 +611,7 @@ export default function AcademicAnalyticsTab() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           <div>
             <h3 className="text-base font-bold font-display text-slate-900 flex items-center gap-2">
-              <Users size={17} className="text-[#0169FC]" />
+              <Users size={17} className="text-[#1597A2]" />
               Cohort Member Records Directory
             </h3>
             <p className="text-xs text-slate-500 font-medium mt-0.5">

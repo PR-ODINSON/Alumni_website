@@ -37,7 +37,7 @@ export default function AnalyticsPage() {
           <p className="text-slate-500 text-sm mb-6 leading-relaxed">
             Network-wide analytics are available to administrators only.<br />
             Your personal profile stats are visible on your{' '}
-            <Link to="/profile" className="text-[#0169FC] font-semibold hover:underline">Profile page</Link>.
+            <Link to="/profile" className="text-[#1597A2] font-semibold hover:underline">Profile page</Link>.
           </p>
           {user?.role === 'alumni' || user?.role === 'student' ? (
             <Link to="/profile" className="btn btn-primary btn-sm">View My Profile</Link>
@@ -53,7 +53,7 @@ export default function AnalyticsPage() {
       {/* Header */}
       <div className="bg-white border border-slate-200 shadow-xs rounded-xl p-5 md:p-6 mb-4">
         <div>
-          <span className="bg-blue-50/70 border border-blue-100 text-[#0169FC] text-[10px] px-2 py-0.5 rounded-full font-bold inline-block mb-2">
+          <span className="bg-blue-50/70 border border-blue-100 text-[#1597A2] text-[10px] px-2 py-0.5 rounded-full font-bold inline-block mb-2">
             Platform Analytics
           </span>
           <h1 className="text-2xl font-bold tracking-tight mb-1 font-display">IITRAM Alumni Network</h1>
@@ -72,7 +72,7 @@ export default function AnalyticsPage() {
       <div className="relative mt-4 rounded-xl overflow-hidden text-slate-850 bg-white border border-slate-200 shadow-xs p-6 md:p-8">
         <div className="relative z-10 max-w-xl">
           <h3 className="text-base font-bold font-display text-slate-900 mb-2 flex items-center gap-2">
-            <Globe size={18} className="text-[#0169FC]" /> A Truly Global Network
+            <Globe size={18} className="text-[#1597A2]" /> A Truly Global Network
           </h3>
           <p className="text-slate-500 text-xs leading-relaxed font-semibold">
             IITRAM alumni are making their mark across 30+ countries worldwide, fostering international collaboration, advanced research, and global technological impact.

@@ -26,12 +26,19 @@ router.post('/image', upload.single('image'), asyncHandler(async (req: AuthReque
   const b64 = Buffer.from(req.file.buffer).toString('base64');
   const dataURI = `data:${req.file.mimetype};base64,${b64}`;
 
-  const result = await cloudinary.uploader.upload(dataURI, {
-    folder: `iitram-alumni/${folder}`,
-    transformation: folder === 'avatar' ? [{ width: 400, height: 400, crop: 'fill', gravity: 'face' }] : undefined,
-  });
+  try {
+    if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name') {
+      const result = await cloudinary.uploader.upload(dataURI, {
+        folder: `iitram-alumni/${folder}`,
+        transformation: folder === 'avatar' ? [{ width: 400, height: 400, crop: 'fill', gravity: 'face' }] : undefined,
+      });
+      return res.json({ success: true, url: result.secure_url, publicId: result.public_id });
+    }
+  } catch (err) {
+    console.warn('Cloudinary image upload failed, falling back to data URI:', err);
+  }
 
-  res.json({ success: true, url: result.secure_url, publicId: result.public_id });
+  res.json({ success: true, url: dataURI, publicId: `local_${Date.now()}` });
 }));
 
 router.post('/document', upload.single('document'), asyncHandler(async (req: AuthRequest, res) => {
@@ -40,12 +47,19 @@ router.post('/document', upload.single('document'), asyncHandler(async (req: Aut
   const b64 = Buffer.from(req.file.buffer).toString('base64');
   const dataURI = `data:${req.file.mimetype};base64,${b64}`;
 
-  const result = await cloudinary.uploader.upload(dataURI, {
-    folder: 'iitram-alumni/documents',
-    resource_type: 'raw',
-  });
+  try {
+    if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name') {
+      const result = await cloudinary.uploader.upload(dataURI, {
+        folder: 'iitram-alumni/documents',
+        resource_type: 'raw',
+      });
+      return res.json({ success: true, url: result.secure_url, publicId: result.public_id });
+    }
+  } catch (err) {
+    console.warn('Cloudinary document upload failed, falling back to data URI:', err);
+  }
 
-  res.json({ success: true, url: result.secure_url, publicId: result.public_id });
+  res.json({ success: true, url: dataURI, publicId: `local_${Date.now()}` });
 }));
 
 router.delete('/:publicId', asyncHandler(async (req: AuthRequest, res) => {

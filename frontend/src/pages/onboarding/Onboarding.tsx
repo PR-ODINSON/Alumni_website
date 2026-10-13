@@ -142,10 +142,20 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-iitram-50 flex flex-col items-center justify-center px-4 py-12">
       {/* Logo */}
       <div className="mb-8 flex flex-col items-center">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-iitram-600 to-iitram-800 flex items-center justify-center shadow-lg mb-3">
-          <GraduationCap size={24} className="text-white" />
+        <div className="flex items-center gap-2.5 p-2 rounded-2xl bg-white border border-slate-200 shadow-md mb-3">
+          <img
+            src="/new/iitram cdr logo.png"
+            alt="IITRAM Logo"
+            className="w-10 h-10 object-contain"
+          />
+          <div className="w-[1px] h-7 bg-slate-200" />
+          <img
+            src="/new/alumani.jpeg"
+            alt="IITRAM Alumni Relations Logo"
+            className="w-10 h-10 object-contain rounded-full"
+          />
         </div>
-        <span className="text-sm font-medium text-slate-500">IITRAM Alumni Platform</span>
+        <span className="text-sm font-semibold text-slate-700">IITRAM Alumni Platform</span>
       </div>
 
       {/* Progress */}

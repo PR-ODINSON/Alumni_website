@@ -34,7 +34,7 @@ export function PostCard({ post }: { post: any }) {
   });
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.04)] transition-all duration-300 overflow-hidden mb-4 font-sans text-slate-800">
+    <div className="bg-white border border-slate-200 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.04)] transition-all duration-300 overflow-hidden mb-4 font-sans text-slate-800">
       {/* Post Header */}
       <div className="p-4 pb-2.5">
         <div className="flex items-start justify-between gap-3 mb-2.5">
@@ -83,7 +83,7 @@ export function PostCard({ post }: { post: any }) {
         {post.tags?.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-2 px-0.5">
             {post.tags.map((tag: string) => (
-              <span key={tag} className="text-[11px] text-[#0169FC] hover:underline cursor-pointer font-bold">#{tag}</span>
+              <span key={tag} className="text-[11px] text-[#1597A2] hover:underline cursor-pointer font-bold">#{tag}</span>
             ))}
           </div>
         )}
@@ -101,9 +101,9 @@ export function PostCard({ post }: { post: any }) {
       <div className="px-2 py-1 flex items-center justify-between border-t border-slate-100 bg-white">
         <button
           onClick={() => likeMutation.mutate()}
-          className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex-1 hover:bg-slate-50 cursor-pointer ${liked ? 'text-[#0169FC]' : 'text-slate-500'}`}
+          className={`flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex-1 hover:bg-slate-50 cursor-pointer ${liked ? 'text-[#1597A2]' : 'text-slate-500'}`}
         >
-          <ThumbsUp size={14} className={liked ? 'fill-[#0169FC] stroke-[#0169FC]' : ''} />
+          <ThumbsUp size={14} className={liked ? 'fill-[#1597A2] stroke-[#1597A2]' : ''} />
           <span>Like</span>
         </button>
         <button

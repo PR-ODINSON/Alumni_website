@@ -149,7 +149,7 @@ export default function AdminPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start sm:items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-[#001f54] text-white flex items-center justify-center shrink-0 shadow-xs">
+            <div className="w-12 h-12 rounded-xl bg-[#073F7C] text-white flex items-center justify-center shrink-0 shadow-xs">
               <span className="font-extrabold text-sm tracking-wider">IITRAM</span>
             </div>
             <div>
@@ -157,7 +157,7 @@ export default function AdminPage() {
                 <h1 className="text-xl sm:text-2xl font-bold font-display text-slate-900 tracking-tight">
                   Institutional Administration Portal
                 </h1>
-                <span className="px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100 text-[#0169FC] text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100 text-[#1597A2] text-[10px] font-bold">
                   Admin Active
                 </span>
               </div>
@@ -184,7 +184,7 @@ export default function AdminPage() {
                 onClick={() => setActiveTab(id)}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === id
-                    ? 'bg-[#001f54] text-white shadow-xs'
+                    ? 'bg-[#073F7C] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                 }`}
               >
@@ -218,7 +218,7 @@ export default function AdminPage() {
             <div className="space-y-6">
               {dashLoading ? (
                 <div className="flex justify-center items-center py-16">
-                  <Loader2 className="animate-spin text-[#0169FC]" size={36} />
+                  <Loader2 className="animate-spin text-[#1597A2]" size={36} />
                 </div>
               ) : (
                 <>
@@ -271,7 +271,7 @@ export default function AdminPage() {
                     {/* Academic Quick Link */}
                     <div className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs">
                       <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
-                        <GraduationCap size={16} className="text-[#0169FC]" />
+                        <GraduationCap size={16} className="text-[#1597A2]" />
                         Academic Cohort Demographics
                       </h3>
                       <p className="text-slate-500 text-xs mb-5 font-medium leading-relaxed">
@@ -279,7 +279,7 @@ export default function AdminPage() {
                       </p>
                       <button
                         onClick={() => setActiveTab('academic')}
-                        className="btn btn-outline btn-sm w-full text-xs font-bold py-2.5 h-auto justify-center gap-2 text-[#001f54]"
+                        className="btn btn-outline btn-sm w-full text-xs font-bold py-2.5 h-auto justify-center gap-2 text-[#073F7C]"
                       >
                         <span>Open Field & Passing Year Analytics</span>
                         <ExternalLink size={13} />
@@ -321,7 +321,7 @@ export default function AdminPage() {
 
               {usersLoading ? (
                 <div className="flex justify-center py-16">
-                  <Loader2 className="animate-spin text-[#0169FC]" size={28} />
+                  <Loader2 className="animate-spin text-[#1597A2]" size={28} />
                 </div>
               ) : (
                 <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
@@ -414,7 +414,7 @@ export default function AdminPage() {
                     <div key={u._id} className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-xs">
                       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
                         <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-base font-extrabold text-[#0169FC] shrink-0">
+                          <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-base font-extrabold text-[#1597A2] shrink-0">
                             {u.firstName?.[0]}
                             {u.lastName?.[0]}
                           </div>
@@ -443,7 +443,7 @@ export default function AdminPage() {
                                       href={doc}
                                       target="_blank"
                                       rel="noreferrer"
-                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 hover:border-blue-400 rounded-lg text-xs text-[#0169FC] font-semibold transition-colors"
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 hover:border-blue-400 rounded-lg text-xs text-[#1597A2] font-semibold transition-colors"
                                     >
                                       <FileText size={12} />
                                       View Document {idx + 1}
@@ -526,7 +526,7 @@ export default function AdminPage() {
                             <span className="text-xs text-slate-400">Reported on {formatDate(r.createdAt)}</span>
                           </div>
                           <p className="text-sm font-semibold text-slate-800">
-                            Target Module: <span className="text-[#0169FC] font-bold">{r.targetType}</span> · ID:{' '}
+                            Target Module: <span className="text-[#1597A2] font-bold">{r.targetType}</span> · ID:{' '}
                             <span className="font-mono text-slate-500 text-xs">{r.targetId}</span>
                           </p>
                           <p className="text-xs text-slate-600 mt-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
@@ -608,7 +608,7 @@ export default function AdminPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                 <div>
                   <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <Activity size={17} className="text-[#0169FC]" />
+                    <Activity size={17} className="text-[#1597A2]" />
                     Administrative Security Audit Logs
                   </h3>
                   <p className="text-xs text-slate-500 font-medium">Record of administrative events and credential modifications.</p>
@@ -650,7 +650,7 @@ export default function AdminPage() {
                           <tr key={log._id} className="hover:bg-slate-50/70">
                             <td className="px-5 py-3.5 whitespace-nowrap text-slate-500">{formatDate(log.timestamp)}</td>
                             <td className="px-5 py-3.5 whitespace-nowrap">
-                              <span className="px-2 py-0.5 rounded bg-blue-50 text-[#0169FC] font-mono text-[10px] font-bold">
+                              <span className="px-2 py-0.5 rounded bg-blue-50 text-[#1597A2] font-mono text-[10px] font-bold">
                                 {log.action}
                               </span>
                             </td>
@@ -698,7 +698,7 @@ export default function AdminPage() {
                     >
                       <div>
                         <p className="font-bold text-slate-900 text-sm">{flag.name}</p>
-                        <p className="text-xs text-[#0169FC] font-mono mt-0.5">key: {flag.key}</p>
+                        <p className="text-xs text-[#1597A2] font-mono mt-0.5">key: {flag.key}</p>
                         <p className="text-xs text-slate-500 mt-1.5">{flag.description || 'No description provided.'}</p>
                       </div>
                       <button

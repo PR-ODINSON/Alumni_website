@@ -6,7 +6,7 @@ export default function MentorCard({ mentor, onRequest }: { mentor: any; index: 
   const user = mentor.user;
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-4 flex flex-col justify-between hover:border-[#0169FC]/40 transition-all duration-200 group relative font-sans text-slate-800">
+    <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-4 flex flex-col justify-between hover:border-[#1597A2]/40 transition-all duration-200 group relative font-sans text-slate-800">
       <div>
         {/* Header */}
         <div className="flex items-start gap-3 mb-3.5">
@@ -14,7 +14,7 @@ export default function MentorCard({ mentor, onRequest }: { mentor: any; index: 
             <Avatar src={user?.avatar} name={`${user?.firstName} ${user?.lastName}`} size="md" verified />
           </Link>
           <div className="flex-1 min-w-0">
-            <Link to={`/alumni/${user?._id}`} className="font-bold text-slate-900 group-hover:text-[#0169FC] transition-colors text-xs hover:underline block truncate">
+            <Link to={`/alumni/${user?._id}`} className="font-bold text-slate-900 group-hover:text-[#1597A2] transition-colors text-xs hover:underline block truncate">
               {user?.firstName} {user?.lastName}
             </Link>
             <p className="text-[10px] text-slate-500 font-semibold mt-0.5 truncate">{mentor.currentDesignation} at {mentor.currentCompany}</p>
@@ -29,7 +29,7 @@ export default function MentorCard({ mentor, onRequest }: { mentor: any; index: 
         {mentor.mentorAreas?.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-4">
             {mentor.mentorAreas.slice(0, 4).map((area: string) => (
-              <span key={area} className="text-[10px] px-2 py-0.5 bg-blue-50/70 text-[#0169FC] rounded-md border border-blue-100 font-bold">
+              <span key={area} className="text-[10px] px-2 py-0.5 bg-blue-50/70 text-[#1597A2] rounded-md border border-blue-100 font-bold">
                 {area}
               </span>
             ))}

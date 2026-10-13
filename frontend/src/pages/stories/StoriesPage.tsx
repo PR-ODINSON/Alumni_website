@@ -205,7 +205,7 @@ export default function StoriesPage() {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 {LEGACY_STATS.map((stat) => (
                   <div key={stat.label} className="text-center p-2 rounded-lg border border-transparent hover:bg-slate-50 transition-colors">
-                    <p className="text-xl font-bold font-display text-[#0169FC] leading-none">{stat.value}</p>
+                    <p className="text-xl font-bold font-display text-[#1597A2] leading-none">{stat.value}</p>
                     <p className="text-[10px] font-bold text-slate-900 mt-2 uppercase tracking-wide leading-none">{stat.label}</p>
                     <p className="text-[9px] text-slate-450 mt-1 font-semibold">{stat.desc}</p>
                   </div>
@@ -217,7 +217,7 @@ export default function StoriesPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
                 <div className="flex items-center gap-1.5 mb-4 px-1">
-                  <Milestone size={16} className="text-[#0169FC]" />
+                  <Milestone size={16} className="text-[#1597A2]" />
                   <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">Institutional Milestones</h2>
                 </div>
                 <div className="relative">

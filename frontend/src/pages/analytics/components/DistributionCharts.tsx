@@ -8,7 +8,7 @@ interface DistributionChartsProps {
   distribution: any;
 }
 
-const COLORS = ['#0169FC', '#10b981', '#6366f1', '#14b8a6', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899'];
+const COLORS = ['#1597A2', '#10b981', '#6366f1', '#14b8a6', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899'];
 
 export default function DistributionCharts({ distribution }: DistributionChartsProps) {
   return (
@@ -16,7 +16,7 @@ export default function DistributionCharts({ distribution }: DistributionChartsP
       {/* Department Distribution */}
       <div className="bg-white border border-slate-200 shadow-xs rounded-xl p-5">
         <h3 className="font-bold font-display text-slate-900 text-xs mb-4 flex items-center gap-1.5 uppercase tracking-wider text-slate-500">
-          <GraduationCap size={15} className="text-[#0169FC]" /> Alumni by Department
+          <GraduationCap size={15} className="text-[#1597A2]" /> Alumni by Department
         </h3>
         {distribution?.byDepartment?.length > 0 ? (
           <ResponsiveContainer width="100%" height={250}>
@@ -28,7 +28,7 @@ export default function DistributionCharts({ distribution }: DistributionChartsP
                 contentStyle={{ background: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)', fontSize: '11px', fontWeight: 600, color: '#0f172a' }}
                 formatter={(val: any) => [val, 'Alumni']}
               />
-              <Bar dataKey="count" fill="#0169FC" radius={[0, 4, 4, 0]} barSize={12} />
+              <Bar dataKey="count" fill="#1597A2" radius={[0, 4, 4, 0]} barSize={12} />
             </BarChart>
           </ResponsiveContainer>
         ) : (
@@ -39,7 +39,7 @@ export default function DistributionCharts({ distribution }: DistributionChartsP
       {/* Industry Distribution */}
       <div className="bg-white border border-slate-200 shadow-xs rounded-xl p-5">
         <h3 className="font-bold font-display text-slate-900 text-xs mb-4 flex items-center gap-1.5 uppercase tracking-wider text-slate-500">
-          <Building size={15} className="text-[#0169FC]" /> Industry Distribution
+          <Building size={15} className="text-[#1597A2]" /> Industry Distribution
         </h3>
         {distribution?.byIndustry?.length > 0 ? (
           <ResponsiveContainer width="100%" height={250}>

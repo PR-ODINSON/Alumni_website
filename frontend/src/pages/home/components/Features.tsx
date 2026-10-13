@@ -52,7 +52,7 @@ export default function Features() {
   ];
 
   return (
-    <section className="py-16 sm:py-20 bg-white border-b border-slate-200">
+    <section className="py-16 sm:py-20 bg-white border-b border-[#bce7ec]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={fadeUp}
@@ -61,11 +61,16 @@ export default function Features() {
           viewport={{ once: true }}
           className="text-center mb-12 sm:mb-16"
         >
-          <span className="badge badge-primary mb-3">Institutional Pillars</span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-display text-slate-900 mb-3 tracking-tight">
+          <span
+            className="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-3"
+            style={{ background: '#D6DF8E', color: '#000000' }}
+          >
+            Institutional Pillars
+          </span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-display mb-3 tracking-tight" style={{ color: '#073F7C' }}>
             Connecting Academia, Industry<br />and Alumni Success
           </h2>
-          <p className="text-slate-500 text-xs sm:text-sm max-w-xl mx-auto font-medium">
+          <p className="text-slate-600 text-xs sm:text-sm max-w-xl mx-auto font-medium">
             Fostering lifelong professional connections, infrastructure research collaborations, student career mentorship, and technical innovation.
           </p>
         </motion.div>
@@ -79,14 +84,22 @@ export default function Features() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="group p-6 sm:p-7 bg-white border border-slate-200 shadow-xs hover:border-brand-500/40 hover:shadow-md rounded-2xl transition-all duration-200"
+              className="group p-6 sm:p-7 bg-white border border-[#bce7ec] shadow-xs hover:border-[#1597A2] hover:shadow-md rounded-2xl transition-all duration-200"
             >
-              <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center mb-5 group-hover:bg-[#001f54] group-hover:text-white transition-colors duration-200">
-                <Icon size={18} className="text-[#001f54] group-hover:text-white transition-colors" />
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center mb-5 group-hover:scale-105 transition-all duration-200"
+                style={{ background: '#DFF3F5', border: '1px solid #bce7ec' }}
+              >
+                <Icon size={18} style={{ color: '#1597A2' }} />
               </div>
-              <div className="badge badge-primary mb-2.5 bg-slate-50 border-slate-200 text-slate-700 text-[10px] font-bold">{tag}</div>
-              <h3 className="text-sm sm:text-base font-bold font-display text-slate-900 mb-2">{title}</h3>
-              <p className="text-slate-500 text-xs leading-relaxed font-medium">{desc}</p>
+              <div
+                className="inline-block px-2.5 py-0.5 rounded-full mb-2.5 text-[10px] font-extrabold uppercase tracking-wider"
+                style={{ background: '#D6DF8E', color: '#000000' }}
+              >
+                {tag}
+              </div>
+              <h3 className="text-sm sm:text-base font-bold font-display mb-2" style={{ color: '#073F7C' }}>{title}</h3>
+              <p className="text-slate-600 text-xs leading-relaxed font-medium">{desc}</p>
             </motion.div>
           ))}
         </div>

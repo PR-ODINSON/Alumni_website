@@ -56,7 +56,7 @@ export default function EventsPreview({ events }: EventsPreviewProps) {
                   {event.coverImage ? (
                     <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-[#001f54] flex items-center justify-center">
+                    <div className="w-full h-full bg-[#073F7C] flex items-center justify-center">
                       <Calendar size={22} className="text-white/40" />
                     </div>
                   )}

@@ -3,7 +3,8 @@ import { JobPermission } from '../../config/permissions/jobs';
 
 export class JobPolicy extends BasePolicy {
   static create(user: any): boolean {
-    return this.hasPermission(user, JobPermission.JOB_CREATE) && user.verificationStatus === 'verified';
+    const isUserVerified = user.verificationStatus === 'verified' || user.isVerified || user.role === 'admin' || user.role === 'alumni';
+    return this.hasPermission(user, JobPermission.JOB_CREATE) && isUserVerified;
   }
 
   static update(user: any, job: any): boolean {
@@ -22,7 +23,7 @@ export class JobPolicy extends BasePolicy {
   }
 
   static apply(user: any, job: any): boolean {
-    if (user.verificationStatus !== 'verified') return false;
+    if (user.isBanned || !user.isActive) return false;
     if (!this.hasPermission(user, JobPermission.JOB_APPLY)) return false;
     // ABAC Checks
     if (job.status === 'closed' || job.status === 'archived' || job.deletedAt) return false;

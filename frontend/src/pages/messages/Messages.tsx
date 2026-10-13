@@ -68,7 +68,7 @@ export default function MessagesPage() {
                 <div
                   key={conv._id}
                   onClick={() => setActiveConv(conv)}
-                  className={`flex items-center gap-3 p-4 cursor-pointer border-b border-slate-100 hover:bg-slate-50 transition-colors ${isActive ? 'bg-[#001f54]/5 border-l-4 border-l-[#001f54]' : ''}`}
+                  className={`flex items-center gap-3 p-4 cursor-pointer border-b border-slate-100 hover:bg-slate-50 transition-colors ${isActive ? 'bg-[#073F7C]/5 border-l-4 border-l-[#073F7C]' : ''}`}
                 >
                   <Avatar src={other?.avatar} name={`${other?.firstName} ${other?.lastName}`} size="md" />
                   <div className="flex-1 min-w-0">
@@ -80,7 +80,7 @@ export default function MessagesPage() {
                     </div>
                     <p className="text-[11px] text-slate-500 truncate flex items-center mt-1.5 font-semibold">
                       {(conv.unreadCounts?.[user?._id as string] || 0) > 0 && (
-                        <span className="inline-block w-1.5 h-1.5 bg-[#001f54] rounded-full mr-1.5 shrink-0" />
+                        <span className="inline-block w-1.5 h-1.5 bg-[#073F7C] rounded-full mr-1.5 shrink-0" />
                       )}
                       Click to view messages
                     </p>
@@ -123,7 +123,7 @@ export default function MessagesPage() {
                   <div key={msg._id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-xl text-xs shadow-sm ${
                       isMine
-                        ? 'bg-[#001f54] text-white rounded-br-sm'
+                        ? 'bg-[#073F7C] text-white rounded-br-sm'
                         : 'bg-white text-slate-900 border border-slate-200 rounded-bl-sm'
                     }`}>
                       <p className="leading-relaxed font-semibold">{msg.content}</p>
@@ -149,7 +149,7 @@ export default function MessagesPage() {
                 <button
                   onClick={() => newMessage.trim() && sendMutation.mutate(newMessage)}
                   disabled={!newMessage.trim() || sendMutation.isPending}
-                  className="p-2.5 rounded-xl bg-[#001f54] text-white hover:bg-slate-900 transition-colors disabled:opacity-40"
+                  className="p-2.5 rounded-xl bg-[#073F7C] text-white hover:bg-slate-900 transition-colors disabled:opacity-40"
                 >
                   <Send size={13} />
                 </button>

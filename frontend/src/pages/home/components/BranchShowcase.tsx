@@ -10,7 +10,7 @@ const BRANCHES = [
     name: 'Computer Engineering',
     short: 'CE',
     icon: Cpu,
-    color: '#0169FC',
+    color: '#1597A2',
   },
   {
     key: 'mechanical',
@@ -166,19 +166,26 @@ export default function BranchShowcase({ stats }: { stats?: LandingStats }) {
   const otherFields = otherAcademicFields(stats);
 
   return (
-    <section className="border-b border-slate-200 bg-slate-50 py-14 sm:py-18">
+    <section className="border-b border-[#bce7ec] py-14 sm:py-18" style={{ background: '#DFF3F5' }}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <span className="mb-3 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-iitram-700">
+            <span
+              className="mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide"
+              style={{ background: '#D6DF8E', color: '#000000' }}
+            >
               <GraduationCap size={14} /> IITRAM academic network
             </span>
-            <h2 className="text-2xl font-bold text-slate-950 sm:text-3xl">Engineering branches</h2>
-            <p className="mt-2 max-w-xl text-sm text-slate-600">
+            <h2 className="text-2xl font-bold sm:text-3xl" style={{ color: '#073F7C' }}>Engineering branches</h2>
+            <p className="mt-2 max-w-xl text-sm text-slate-700 font-medium">
               Alumni and active student totals are drawn from current institute records.
             </p>
           </div>
-          <Link to="/directory" className="inline-flex items-center gap-2 self-start rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-xs font-bold text-slate-800 transition-colors hover:border-slate-500 sm:self-auto">
+          <Link
+            to="/directory"
+            className="inline-flex items-center gap-2 self-start rounded-xl px-4 py-2.5 text-xs font-extrabold text-white transition-all hover:shadow-md sm:self-auto"
+            style={{ background: 'linear-gradient(135deg, #1597A2 0%, #0B6169 100%)' }}
+          >
             Browse directory <ArrowRight size={14} />
           </Link>
         </div>
@@ -190,11 +197,11 @@ export default function BranchShowcase({ stats }: { stats?: LandingStats }) {
         </div>
 
         {otherFields.length > 0 && (
-          <div className="mt-8 border-t border-slate-200 pt-5">
-            <h3 className="text-sm font-bold text-slate-800">Other academic fields</h3>
+          <div className="mt-8 border-t border-[#1597A2]/20 pt-5">
+            <h3 className="text-sm font-bold" style={{ color: '#073F7C' }}>Other academic fields</h3>
             <div className="mt-3 flex flex-wrap gap-2">
               {otherFields.map(field => (
-                <span key={field.name} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700">
+                <span key={field.name} className="inline-flex items-center gap-2 rounded-lg border border-[#bce7ec] bg-white px-3 py-2 text-xs text-[#073F7C]">
                   <span className="font-semibold">{field.name}</span>
                   <span className="text-slate-500">{(field.alumni + field.students).toLocaleString()} records</span>
                 </span>

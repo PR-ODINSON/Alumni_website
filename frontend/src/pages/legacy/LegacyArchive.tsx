@@ -40,7 +40,7 @@ export default function LegacyArchive() {
             <span>IITRAM Legacy Archive</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-bold font-display text-slate-900 tracking-tight leading-tight">
-            A Legacy of <span className="text-[#0169FC]">Excellence & Innovation</span>
+            A Legacy of <span className="text-[#1597A2]">Excellence & Innovation</span>
           </h1>
           <p className="text-slate-500 text-xs leading-relaxed mt-2.5 font-semibold">
             From its founding in 2013, IITRAM has shaped thousands of engineers, researchers,
@@ -57,7 +57,7 @@ export default function LegacyArchive() {
               key={stat.label}
               className="text-center p-2 rounded-lg border border-transparent hover:bg-slate-50 transition-colors duration-150"
             >
-              <p className="text-xl font-bold font-display text-[#0169FC] leading-none">{stat.value}</p>
+              <p className="text-xl font-bold font-display text-[#1597A2] leading-none">{stat.value}</p>
               <p className="text-[10px] font-bold text-slate-900 mt-2 uppercase tracking-wide leading-none">{stat.label}</p>
               <p className="text-[9px] text-slate-450 mt-1 font-semibold">{stat.desc}</p>
             </div>
@@ -70,7 +70,7 @@ export default function LegacyArchive() {
         {/* Timeline */}
         <div className="lg:col-span-2">
           <div className="flex items-center gap-1.5 mb-4 px-1">
-            <Milestone size={16} className="text-[#0169FC]" />
+            <Milestone size={16} className="text-[#1597A2]" />
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">Institutional Milestones</h2>
           </div>
 

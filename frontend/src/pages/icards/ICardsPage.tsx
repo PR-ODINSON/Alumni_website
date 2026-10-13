@@ -161,10 +161,10 @@ export default function ICardsPage({ mode }: ICardsPageProps) {
     return (
       <div className="py-16 max-w-2xl mx-auto px-4 text-center font-sans">
         <div className="bg-white border border-slate-200/90 rounded-2xl p-8 sm:p-12 shadow-xs">
-          <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100 text-[#0169FC]">
+          <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100 text-[#1597A2]">
             <Lock size={28} />
           </div>
-          <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-[#001f54] text-xs font-bold mb-3 border border-blue-100">
+          <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-[#073F7C] text-xs font-bold mb-3 border border-blue-100">
             Alumni Exclusive Privilege
           </span>
           <h2 className="text-xl sm:text-2xl font-bold font-display text-slate-900 mb-2">

@@ -107,7 +107,7 @@ export default function PostJobPage() {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           {/* Header */}
           <div className="p-6 md:p-8 bg-slate-900 text-white relative">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#0169FC]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#1597A2]/15 rounded-full blur-3xl pointer-events-none" />
             <h1 className="text-2xl font-bold font-display">Post a New Job</h1>
             <p className="text-slate-400 text-xs mt-1 font-semibold">Share an opportunity with the IITRAM alumni and student network</p>
           </div>
@@ -117,7 +117,7 @@ export default function PostJobPage() {
             
             {/* Section: Basic details */}
             <div>
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">1. Basic Details</h3>
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">1. Basic Details</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Job Title <span className="text-red-500">*</span></label>
@@ -161,7 +161,7 @@ export default function PostJobPage() {
 
             {/* Section: Location & Type */}
             <div>
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">2. Location & Job Type</h3>
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">2. Location & Job Type</h3>
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Job Type</label>
@@ -234,7 +234,7 @@ export default function PostJobPage() {
 
             {/* Section: Job Description & Details */}
             <div>
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">3. Description & Requirements</h3>
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">3. Description & Requirements</h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Job Description <span className="text-red-500">*</span></label>
@@ -288,7 +288,7 @@ export default function PostJobPage() {
 
             {/* Section: Experience & Compensation */}
             <div>
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">4. Experience & Compensation</h3>
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">4. Experience & Compensation</h3>
               <div className="grid md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Min Experience (Yrs)</label>
@@ -379,7 +379,7 @@ export default function PostJobPage() {
 
             {/* Section: Deadlines & Referrals */}
             <div>
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">5. Referrals & Deadlines</h3>
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">5. Referrals & Deadlines</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Application Deadline (Optional)</label>

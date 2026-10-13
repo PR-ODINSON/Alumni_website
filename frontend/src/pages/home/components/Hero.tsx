@@ -5,7 +5,6 @@ import { ArrowRight, GraduationCap, Building2, Users, Lightbulb } from 'lucide-r
 
 interface HeroProps { stats: any; isAuthenticated: boolean; }
 
-// ── Animated counter ──────────────────────────────────────────────────────────
 function Counter({ to }: { to?: number | null }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
@@ -24,14 +23,15 @@ function Counter({ to }: { to?: number | null }) {
   return <span ref={ref}>{typeof to === 'number' ? val.toLocaleString() : '—'}</span>;
 }
 
-// ── Fade variants ─────────────────────────────────────────────────────────────
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 18 },
   show:   { opacity: 1, y: 0, transition: { duration: 0.55 } },
 };
 
-// ── Main ──────────────────────────────────────────────────────────────────────
 export default function Hero({ stats, isAuthenticated }: HeroProps) {
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
   const departmentNames = [
     ...(stats?.byDepartment || []),
     ...(stats?.studentsByDepartment || []),
@@ -39,63 +39,117 @@ export default function Hero({ stats, isAuthenticated }: HeroProps) {
   const academicFields = new Set(departmentNames).size;
 
   const metrics = [
-    { icon: GraduationCap, value: stats?.total, label: 'Verified Alumni' },
-    { icon: Users, value: stats?.totalStudents, label: 'Enrolled Students' },
-    { icon: Building2, value: stats ? academicFields : null, label: 'Academic Fields' },
-    { icon: Lightbulb, value: stats?.mentors, label: 'Mentors' },
+    { icon: GraduationCap, value: stats?.total,        label: 'Verified Alumni' },
+    { icon: Users,          value: stats?.totalStudents, label: 'Enrolled Students' },
+    { icon: Building2,      value: stats ? academicFields : null, label: 'Academic Fields' },
+    { icon: Lightbulb,      value: stats?.mentors,       label: 'Mentors' },
   ];
 
   return (
-    <section className="relative isolate flex min-h-[78vh] items-center overflow-hidden bg-slate-950">
+    <section className="relative isolate flex min-h-[82vh] items-center overflow-hidden" style={{ background: '#042226' }}>
+
+      {/* Official IITRAM campus background photo */}
       <img
-        src="/images/iitram-building.jpg"
-        alt="IITRAM campus building"
+        src="/iitram-bg.jpg"
+        alt="IITRAM campus"
+        onLoad={() => setImgLoaded(true)}
+        onError={() => setImgError(true)}
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/65 to-slate-950/15" />
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-slate-950/20" />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          className="max-w-3xl"
-        >
-          <span className="mb-6 inline-flex items-center gap-2 border-l-2 border-emerald-400 pl-3 text-xs font-semibold text-white/80">
-            IITRAM · Ahmedabad
-          </span>
-          <motion.h1
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            transition={{ delay: 0.08 }}
-            className="mb-5 text-4xl font-extrabold leading-[1.05] text-white sm:text-5xl lg:text-7xl"
-            style={{ fontFamily: 'Outfit, sans-serif' }}
-          >
-            IITRAM Alumni Network
-          </motion.h1>
-          <motion.p
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            transition={{ delay: 0.16 }}
-            className="mb-8 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg"
-          >
-            Find graduates and students by engineering branch, explore opportunities, and stay connected to the institute.
-          </motion.p>
+      {/* I-Card Teal & Deep Navy-Teal gradient overlays keeping the IITRAM campus photo clearly visible */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(95deg, rgba(4,34,38,0.88) 0%, rgba(7,63,124,0.62) 52%, rgba(21,151,162,0.18) 100%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(0deg, rgba(4,34,38,0.72) 0%, transparent 45%, rgba(4,34,38,0.25) 100%)',
+        }}
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+        <motion.div variants={fadeUp} initial="hidden" animate="show" className="max-w-3xl">
+
           <motion.div
             variants={fadeUp}
             initial="hidden"
             animate="show"
-            transition={{ delay: 0.22 }}
+            transition={{ delay: 0.05 }}
+            className="mb-6 inline-flex flex-wrap items-center gap-2.5 p-1.5 pr-4 rounded-full shadow-lg"
+            style={{ background: '#DFF3F5', border: '2px solid #D6DF8E' }}
+          >
+            <div className="flex items-center gap-2 bg-white px-2.5 py-1 rounded-full shadow-2xs">
+              <img
+                src="/new/iitram cdr logo.png"
+                alt="IITRAM Institute Logo"
+                className="w-8 h-8 object-contain"
+              />
+              <div className="w-[1px] h-5 bg-[#1597A2]/30" />
+              <img
+                src="/new/alumani.jpeg"
+                alt="IITRAM Alumni Relations Logo"
+                className="w-8 h-8 object-contain rounded-full"
+              />
+            </div>
+            <span
+              className="text-[11px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full"
+              style={{ background: '#D6DF8E', color: '#000000' }}
+            >
+              ALUMNI RELATIONS, IITRAM
+            </span>
+            <span className="text-xs font-extrabold uppercase tracking-wider" style={{ color: '#073F7C' }}>
+              Ahmedabad
+            </span>
+          </motion.div>
+
+          <motion.h1
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            transition={{ delay: 0.1 }}
+            className="mb-5 text-4xl font-extrabold leading-[1.05] text-white sm:text-5xl lg:text-7xl"
+            style={{ fontFamily: 'Outfit, sans-serif', textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
+          >
+            IITRAM Alumni
+            <br />
+            <span style={{ color: '#D6DF8E' }}>Network</span>
+          </motion.h1>
+
+          <motion.p
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            transition={{ delay: 0.18 }}
+            className="mb-8 max-w-xl text-base leading-relaxed sm:text-lg font-medium"
+            style={{ color: '#DFF3F5' }}
+          >
+            Find graduates and students by engineering branch, explore exclusive opportunities, and stay connected to the institute.
+          </motion.p>
+
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            transition={{ delay: 0.26 }}
             className="flex flex-col gap-3 sm:flex-row"
           >
-            <Link to="/directory" className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-slate-950 transition-colors hover:bg-slate-100">
+            <Link
+              to="/directory"
+              className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-extrabold transition-all hover:shadow-lg hover:-translate-y-0.5 shadow-md"
+              style={{ background: '#D6DF8E', color: '#000000', border: '1px solid #c3cf6d' }}
+            >
               Explore the directory <ArrowRight size={15} />
             </Link>
             {!isAuthenticated && (
-              <Link to="/register" className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/60 bg-black/15 px-5 py-3 text-sm font-bold text-white backdrop-blur-sm transition-colors hover:bg-white/10">
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-extrabold text-white transition-all hover:shadow-lg hover:-translate-y-0.5"
+                style={{ background: 'linear-gradient(135deg, #1597A2 0%, #0B6169 100%)', border: '1px solid #DFF3F5' }}
+              >
                 Join the network
               </Link>
             )}
@@ -105,17 +159,19 @@ export default function Hero({ stats, isAuthenticated }: HeroProps) {
             variants={fadeUp}
             initial="hidden"
             animate="show"
-            transition={{ delay: 0.3 }}
-            className="mt-10 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-white/30 pt-5 sm:max-w-2xl sm:grid-cols-4"
+            transition={{ delay: 0.34 }}
+            className="mt-12 grid grid-cols-2 gap-x-8 gap-y-5 border-t pt-6 sm:max-w-2xl sm:grid-cols-4"
+            style={{ borderColor: 'rgba(214, 223, 142, 0.35)' }}
           >
             {metrics.map(({ icon: Icon, value, label }) => (
-              <div key={label}>
-                <div className="mb-1 flex items-center gap-2 text-white/70">
-                  <Icon size={14} />
-                  <span className="text-[10px] font-semibold uppercase tracking-wide">{label}</span>
+              <div key={label} className="group">
+                <div className="mb-1.5 flex items-center gap-1.5" style={{ color: '#D6DF8E' }}>
+                  <Icon size={13} />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
                 </div>
-                <p className="text-2xl font-bold leading-none text-white">
+                <p className="text-2xl font-extrabold leading-none text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
                   <Counter to={value} />
+                  {value != null && '+'}
                 </p>
               </div>
             ))}

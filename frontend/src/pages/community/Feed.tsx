@@ -130,7 +130,7 @@ export default function FeedPage() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Upcoming Events</h3>
-                <Link to="/events" className="text-xs font-semibold text-[#0169FC] hover:underline">View all</Link>
+                <Link to="/events" className="text-xs font-semibold text-[#1597A2] hover:underline">View all</Link>
               </div>
               <div className="space-y-2">
                 {events.map((ev: any) => {

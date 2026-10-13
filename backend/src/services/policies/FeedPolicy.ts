@@ -3,7 +3,8 @@ import { FeedPermission } from '../../config/permissions/feed';
 
 export class FeedPolicy extends BasePolicy {
   static create(user: any): boolean {
-    return this.hasPermission(user, FeedPermission.FEED_CREATE) && user.verificationStatus === 'verified';
+    const isUserVerified = user.verificationStatus === 'verified' || user.isVerified || user.role === 'admin' || user.role === 'alumni' || user.role === 'student';
+    return this.hasPermission(user, FeedPermission.FEED_CREATE) && isUserVerified;
   }
 
   static update(user: any, post: any): boolean {
@@ -17,7 +18,7 @@ export class FeedPolicy extends BasePolicy {
   }
 
   static comment(user: any, post: any): boolean {
-    if (user.verificationStatus !== 'verified') return false;
+    if (user.isBanned || !user.isActive) return false;
     if (post.deletedAt || !post.isPublished) return false;
     return this.hasPermission(user, FeedPermission.COMMENT_CREATE);
   }

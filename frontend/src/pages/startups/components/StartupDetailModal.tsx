@@ -64,7 +64,7 @@ export default function StartupDetailModal({ alumni, onClose }: StartupDetailMod
           className="relative w-full max-w-2xl bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden z-10 my-auto"
         >
           {/* Header Banner */}
-          <div className="relative bg-gradient-to-br from-[#001f54] via-slate-900 to-brand-950 p-6 sm:p-8 text-white">
+          <div className="relative bg-gradient-to-br from-[#073F7C] via-slate-900 to-brand-950 p-6 sm:p-8 text-white">
             {/* Close Button */}
             <button
               type="button"

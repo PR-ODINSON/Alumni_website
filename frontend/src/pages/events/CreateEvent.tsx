@@ -77,7 +77,7 @@ export default function CreateEventPage() {
       isFree: form.isFree,
       fee: !form.isFree && form.fee ? Number(form.fee) : undefined,
       hasCertificate: form.hasCertificate,
-      coverImage: form.coverImage || 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop&q=60',
+      coverImage: form.coverImage || '/iitram-bg.jpg',
       tags: form.tagsInput
         .split(',')
         .map((t) => t.trim())
@@ -108,7 +108,7 @@ export default function CreateEventPage() {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           {/* Header */}
           <div className="p-6 md:p-8 bg-slate-900 text-white relative">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#0169FC]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#1597A2]/15 rounded-full blur-3xl pointer-events-none" />
             <h1 className="text-2xl font-bold font-display">Create a New Event</h1>
             <p className="text-slate-400 text-xs mt-1 font-semibold">Organize a meetup, webinar, workshop or session for the community</p>
           </div>
@@ -118,7 +118,7 @@ export default function CreateEventPage() {
             
             {/* Section: Basic info */}
             <div>
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">1. Event Info</h3>
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">1. Event Info</h3>
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Event Title <span className="text-red-500">*</span></label>
@@ -175,7 +175,7 @@ export default function CreateEventPage() {
 
             {/* Section: Date & Time */}
             <div>
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">2. Date & Time</h3>
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">2. Date & Time</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Start Date & Time <span className="text-red-500">*</span></label>
@@ -207,7 +207,7 @@ export default function CreateEventPage() {
             {/* Section: Location and Format */}
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider">3. Format & Venue</h3>
+                <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider">3. Format & Venue</h3>
                 <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-600">
                   <input
                     type="checkbox"
@@ -275,7 +275,7 @@ export default function CreateEventPage() {
 
             {/* Section: Capacity and Certificates */}
             <div>
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">4. Capacity & Registration Details</h3>
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">4. Capacity & Registration Details</h3>
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Max Attendees Limit</label>
@@ -335,7 +335,7 @@ export default function CreateEventPage() {
 
             {/* Section: Additional content */}
             <div>
-              <h3 className="text-xs font-bold text-[#0169FC] uppercase tracking-wider mb-4">5. Additional Info</h3>
+              <h3 className="text-xs font-bold text-[#1597A2] uppercase tracking-wider mb-4">5. Additional Info</h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-600 mb-1.5">Banner / Cover Image URL (Optional)</label>

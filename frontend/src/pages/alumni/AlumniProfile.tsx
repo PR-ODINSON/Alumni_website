@@ -309,12 +309,12 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
           <div className="lg:col-span-2 space-y-6">
              {/* Career Timeline */}
              {careerTimeline?.length > 0 && (
-               <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1 transition-all duration-300">
+               <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.05)] hover:-translate-y-1 transition-all duration-300">
                  <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
-                   <Briefcase size={18} className="text-[#0169FC]" /> {isAlumni ? 'Career Journey' : 'Internships & Experience'}
+                   <Briefcase size={18} className="text-[#1597A2]" /> {isAlumni ? 'Career Journey' : 'Internships & Experience'}
                  </h2>
                  <div className="relative">
-                   <div className="absolute left-4 top-2 bottom-2 w-[1.5px] bg-gradient-to-b from-[#0169FC]/25 via-slate-100 to-slate-100/50" />
+                   <div className="absolute left-4 top-2 bottom-2 w-[1.5px] bg-gradient-to-b from-[#1597A2]/25 via-slate-100 to-slate-100/50" />
                    <div className="space-y-6">
                      {careerTimeline
                        .sort((a: any, b: any) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
@@ -329,7 +329,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
                            {entry.isCurrent ? (
                              <div className="absolute left-4 -translate-x-1/2 top-2 flex h-4 w-4 items-center justify-center">
                                <span className="absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-40 animate-ping"></span>
-                               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0169FC] shadow-[0_0_8px_rgba(1,105,252,0.4)]"></span>
+                               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#1597A2] shadow-[0_0_8px_rgba(21,151,162,0.4)]"></span>
                              </div>
                            ) : (
                              <div className="absolute left-4 -translate-x-1/2 top-2.5 w-3 h-3 rounded-full border border-slate-300 bg-white shadow-2xs" />
@@ -337,7 +337,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
                            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1">
                              <div>
                                <p className="font-semibold text-slate-900">{entry.title}</p>
-                               <p className="text-[#0169FC] text-sm font-medium">{entry.company}</p>
+                               <p className="text-[#1597A2] text-sm font-medium">{entry.company}</p>
                                {entry.location && <p className="text-xs text-slate-400 mt-0.5"><MapPin size={10} className="inline mr-1" />{entry.location}</p>}
                              </div>
                              <div className="text-right flex-shrink-0">
@@ -366,15 +366,15 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
 
             {/* Education */}
             {educationHistory?.length > 0 && (
-              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
-                  <GraduationCap size={18} className="text-[#0169FC]" /> Education
+                  <GraduationCap size={18} className="text-[#1597A2]" /> Education
                 </h2>
                 <div className="space-y-5">
                   {educationHistory.map((edu: any, i: number) => (
                     <div key={i} className="flex gap-4">
                       <div className="w-10 h-10 rounded-xl bg-blue-50/50 flex items-center justify-center flex-shrink-0">
-                        <GraduationCap size={18} className="text-[#0169FC]" />
+                        <GraduationCap size={18} className="text-[#1597A2]" />
                       </div>
                       <div className="flex-1">
                         <p className="font-semibold text-slate-900">{edu.degree} in {edu.field}</p>
@@ -392,7 +392,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
 
             {/* Projects & Portfolio for Students */}
             {!isAlumni && profile.projects?.length > 0 && (
-              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
                   <Rocket size={18} className="text-brand-500" /> Projects & Portfolio
                 </h2>
@@ -419,7 +419,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
                             </a>
                           )}
                           {project.url && (
-                            <a href={project.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-[#0169FC] transition-colors">
+                            <a href={project.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-[#1597A2] transition-colors">
                               <ExternalLink size={12} /> Live Demo
                             </a>
                           )}
@@ -433,7 +433,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
 
             {/* Achievements */}
             {achievements?.length > 0 && (
-              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
                   <Award size={18} className="text-gold-500" /> Achievements
                 </h2>
@@ -454,17 +454,17 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
 
             {/* Publications */}
             {publications?.length > 0 && (
-              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h2 className="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
-                  <BookOpen size={18} className="text-[#0169FC]" /> Research & Publications
+                  <BookOpen size={18} className="text-[#1597A2]" /> Research & Publications
                 </h2>
                 <div className="space-y-4">
                   {publications.map((pub: any, i: number) => (
-                    <div key={i} className="p-4 rounded-xl bg-slate-50/50 border border-slate-100 hover:border-[#0169FC]/20 transition-all duration-200 shadow-2xs">
+                    <div key={i} className="p-4 rounded-xl bg-slate-50/50 border border-slate-100 hover:border-[#1597A2]/20 transition-all duration-200 shadow-2xs">
                       <p className="font-medium text-slate-900 text-sm">{pub.title}</p>
                       <p className="text-xs text-slate-500 mt-1">{pub.journal} · {pub.year}</p>
                       {pub.url && (
-                        <a href={pub.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-[#0169FC] hover:underline mt-1.5 font-medium">
+                        <a href={pub.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-[#1597A2] hover:underline mt-1.5 font-medium">
                           <ExternalLink size={11} /> View Publication
                         </a>
                       )}
@@ -476,7 +476,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
 
             {/* Startup */}
             {isAlumni && profile.startup?.name && (
-              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="card p-6 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h2 className="font-bold text-slate-900 text-lg mb-4 flex items-center gap-2">
                   <Rocket size={18} className="text-orange-500" /> Startup Venture
                 </h2>
@@ -497,7 +497,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
                     </div>
                     <p className="text-sm text-slate-600 mt-2 leading-relaxed">{profile.startup.description}</p>
                     {profile.startup.website && (
-                      <a href={profile.startup.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-[#0169FC] hover:underline mt-2 font-medium">
+                      <a href={profile.startup.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-[#1597A2] hover:underline mt-2 font-medium">
                         <Globe size={12} /> Visit Website
                       </a>
                     )}
@@ -511,11 +511,11 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
           <div className="space-y-5">
             {/* Skills */}
             {allSkills.length > 0 && (
-              <div className="card p-5 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="card p-5 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h3 className="font-bold text-slate-900 text-sm mb-3">Skills & Expertise</h3>
                 <div className="flex flex-wrap gap-1.5">
                   {allSkills.map((skill: string) => (
-                    <span key={skill} className="text-xs px-2.5 py-1 bg-slate-50 border border-slate-200/60 text-slate-600 hover:text-[#0169FC] hover:border-[#0169FC]/30 hover:bg-blue-50/50 rounded-full transition-all duration-200 font-medium">{skill}</span>
+                    <span key={skill} className="text-xs px-2.5 py-1 bg-slate-50 border border-slate-200/60 text-slate-600 hover:text-[#1597A2] hover:border-[#1597A2]/30 hover:bg-blue-50/50 rounded-full transition-all duration-200 font-medium">{skill}</span>
                   ))}
                 </div>
                 {isAlumni && profile.expertise?.length > 0 && (
@@ -523,7 +523,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
                     <p className="text-xs font-semibold text-slate-500 mt-4 mb-2">Areas of Expertise</p>
                     <div className="flex flex-wrap gap-1.5">
                       {profile.expertise.map((exp: string) => (
-                        <span key={exp} className="text-xs px-2.5 py-1 bg-blue-50/50 border border-blue-100 text-[#0169FC] rounded-full font-medium">{exp}</span>
+                        <span key={exp} className="text-xs px-2.5 py-1 bg-blue-50/50 border border-blue-100 text-[#1597A2] rounded-full font-medium">{exp}</span>
                       ))}
                     </div>
                   </>
@@ -543,7 +543,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
 
             {/* Mentor Info */}
             {isAlumni && profile.isMentor && (
-              <div className="card p-5 border border-slate-100/80 border-l-4 border-l-gold-400 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="card p-5 border border-slate-100/80 border-l-4 border-l-gold-400 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <div className="flex items-center gap-2 mb-3">
                   <Star size={16} className="text-gold-500" />
                   <h3 className="font-bold text-slate-900 text-sm">Available to Mentor</h3>
@@ -572,9 +572,9 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
 
             {/* Higher Studies */}
             {isAlumni && profile.higherStudies?.institution && (
-              <div className="card p-5 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="card p-5 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h3 className="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
-                  <GraduationCap size={15} className="text-[#0169FC]" /> Higher Studies
+                  <GraduationCap size={15} className="text-[#1597A2]" /> Higher Studies
                 </h3>
                 <p className="font-semibold text-slate-800 text-sm">{profile.higherStudies.degree} in {profile.higherStudies.field}</p>
                 <p className="text-sm text-slate-600">{profile.higherStudies.institution}</p>
@@ -584,7 +584,7 @@ export default function AlumniProfilePage({ userId: propUserId }: { userId?: str
 
             {/* Awards */}
             {isAlumni && profile.awards?.length > 0 && (
-              <div className="card p-5 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(1,105,252,0.05)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="card p-5 border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(21,151,162,0.05)] hover:-translate-y-1.5 transition-all duration-300">
                 <h3 className="font-bold text-slate-900 text-sm mb-3">Awards & Recognition</h3>
                 <div className="space-y-3">
                   {profile.awards.map((award: any, i: number) => (

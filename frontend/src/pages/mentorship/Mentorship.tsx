@@ -63,10 +63,10 @@ export default function MentorshipPage() {
                 ].map(({ icon: Icon, step, title, desc }) => (
                   <div key={step} className="flex items-start gap-3">
                     <div className="w-9 h-9 rounded-lg bg-blue-50/70 border border-blue-100 flex items-center justify-center flex-shrink-0 shadow-2xs">
-                      <Icon size={16} className="text-[#0169FC]" />
+                      <Icon size={16} className="text-[#1597A2]" />
                     </div>
                     <div>
-                      <span className="text-[10px] font-bold text-[#0169FC] uppercase tracking-wide">{step}</span>
+                      <span className="text-[10px] font-bold text-[#1597A2] uppercase tracking-wide">{step}</span>
                       <p className="font-bold text-slate-900 text-xs mt-0.5">{title}</p>
                       <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed font-semibold">{desc}</p>
                     </div>
