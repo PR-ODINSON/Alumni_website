@@ -401,26 +401,26 @@ function BackCard({ data }: { data: ICardData }) {
       >
         {/* 1. TOP-LEFT ALUMNI RELATIONS BANNER */}
         <AlumniBanner
-          width={540}
-          height={90}
-          style={{ left: '0px', top: '0px' }}
+          width={515}
+          height={84}
+          style={{ left: '25px', top: '18px' }}
         />
 
-        {/* 2. LEFT VERTICAL LIGHT-BLUE PILL (2-LINE TEXT) */}
+        {/* 2. LEFT VERTICAL LIGHT-BLUE CAPSULE PILL (2-LINE TEXT) */}
         <div style={{
           position: 'absolute',
-          left: '0px',
-          top: '90px',
-          width: '65px',
-          height: '510px',
-          borderRadius: '0 30px 0 0',
-          background: '#E0F2F5',
+          left: '25px',
+          top: '110px',
+          width: '66px',
+          height: '455px',
+          borderRadius: '33px',
+          background: '#DFF3F5',
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
           gap: '4px',
-          padding: '4px 0',
+          padding: '16px 0',
           boxSizing: 'border-box',
           overflow: 'hidden',
           zIndex: 2,
@@ -428,10 +428,10 @@ function BackCard({ data }: { data: ICardData }) {
           <span style={{
             writingMode: 'vertical-rl',
             transform: 'rotate(180deg)',
-            fontSize: '13.5px',
+            fontSize: '13px',
             fontWeight: 800,
             color: '#073F7C',
-            letterSpacing: '1px',
+            letterSpacing: '0.8px',
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
             userSelect: 'none',
@@ -441,10 +441,10 @@ function BackCard({ data }: { data: ICardData }) {
           <span style={{
             writingMode: 'vertical-rl',
             transform: 'rotate(180deg)',
-            fontSize: '13.5px',
+            fontSize: '13px',
             fontWeight: 800,
             color: '#073F7C',
-            letterSpacing: '1px',
+            letterSpacing: '0.8px',
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
             userSelect: 'none',
@@ -456,7 +456,7 @@ function BackCard({ data }: { data: ICardData }) {
         {/* 3. FADED IITRAM WATERMARK LOGO */}
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '112px',
           top: '130px',
           width: '390px',
           height: '390px',
@@ -474,7 +474,7 @@ function BackCard({ data }: { data: ICardData }) {
         {/* 4. STUDENT INFORMATION FIELDS */}
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '112px',
           top: '135px',
           fontSize: '24px',
           color: '#000000',
@@ -487,10 +487,10 @@ function BackCard({ data }: { data: ICardData }) {
 
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '112px',
           top: '220px',
-          width: '420px',
-          maxWidth: '420px',
+          width: '415px',
+          maxWidth: '415px',
           fontSize: (data.email || '').length > 32 ? '18px' : (data.email || '').length > 25 ? '20px' : '24px',
           color: '#000000',
           lineHeight: '1.25',
@@ -503,7 +503,7 @@ function BackCard({ data }: { data: ICardData }) {
 
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '112px',
           top: '305px',
           fontSize: '24px',
           color: '#000000',
@@ -516,7 +516,7 @@ function BackCard({ data }: { data: ICardData }) {
 
         <div style={{
           position: 'absolute',
-          left: '105px',
+          left: '112px',
           top: '382px',
           width: '410px',
           fontSize: '21px',
@@ -533,8 +533,8 @@ function BackCard({ data }: { data: ICardData }) {
         {/* 5. DISCLAIMER TEXT */}
         <div style={{
           position: 'absolute',
-          left: '105px',
-          bottom: '12px',
+          left: '112px',
+          bottom: '32px',
           width: '420px',
           fontSize: '13px',
           color: '#333333',
@@ -802,29 +802,29 @@ export async function renderCardToPngDataUrl(
     ]);
 
     // 1. Top-Left Alumni Relations Banner
-    drawBanner(ctx, 0, 0, 540, 90, 'ALUMNI RELATIONS, IITRAM');
+    drawBanner(ctx, 25, 18, 515, 84, 'ALUMNI RELATIONS, IITRAM');
 
-    // 2. Left Vertical Light-Blue Pill
+    // 2. Left Vertical Light-Blue Pill (Capsule rounded with space from left & bottom)
     ctx.save();
     ctx.beginPath();
-    ctx.roundRect(0, 90, 65, 510, [0, 30, 0, 0]);
-    ctx.fillStyle = '#E0F2F5';
+    ctx.roundRect(25, 110, 66, 455, 33);
+    ctx.fillStyle = '#DFF3F5';
     ctx.fill();
     ctx.clip();
 
     ctx.fillStyle = '#073F7C';
-    ctx.font = '800 13.5px Arial, Helvetica, sans-serif';
+    ctx.font = '800 12.5px Arial, Helvetica, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
     ctx.save();
-    ctx.translate(23, 90 + 255);
+    ctx.translate(25 + 23, 110 + 227.5);
     ctx.rotate(-Math.PI / 2);
     ctx.fillText('INSTITUTE OF INFRASTRUCTURE, TECHNOLOGY,', 0, 0);
     ctx.restore();
 
     ctx.save();
-    ctx.translate(43, 90 + 255);
+    ctx.translate(25 + 43, 110 + 227.5);
     ctx.rotate(-Math.PI / 2);
     ctx.fillText('RESEARCH AND MANAGEMENT', 0, 0);
     ctx.restore();
@@ -834,18 +834,18 @@ export async function renderCardToPngDataUrl(
     if (watermarkLogo) {
       ctx.save();
       ctx.globalAlpha = 0.16;
-      drawContain(ctx, watermarkLogo, 105, 130, 390, 390);
+      drawContain(ctx, watermarkLogo, 115, 125, 390, 390);
       ctx.restore();
     }
 
     // 4. Student Information Fields
-    drawBoldLabelValue(ctx, 'Enrollment Number :', enr, 105, 135, 24, '800');
+    drawBoldLabelValue(ctx, 'Enrollment Number :', enr, 112, 130, 24, '800');
 
     const emailStr = data.email || `${enr}@iitram.ac.in`;
     const emailFontSize = emailStr.length > 32 ? 18 : emailStr.length > 25 ? 20 : 24;
-    drawBoldLabelValue(ctx, 'Email Id :', emailStr, 105, 220, emailFontSize, '800');
+    drawBoldLabelValue(ctx, 'Email Id :', emailStr, 112, 215, emailFontSize, '800');
 
-    drawBoldLabelValue(ctx, 'Contact No :', data.phone || '+91 98765 43210', 105, 305, 24, '800');
+    drawBoldLabelValue(ctx, 'Contact No :', data.phone || '+91 98765 43210', 112, 300, 24, '800');
 
     // Permanent Address (supports multi-line)
     ctx.save();
@@ -854,7 +854,7 @@ export async function renderCardToPngDataUrl(
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     const addrLabel = 'Permanent Address: ';
-    ctx.fillText(addrLabel, 105, 382);
+    ctx.fillText(addrLabel, 112, 377);
     const addrLabelW = ctx.measureText(addrLabel).width;
     ctx.font = '500 21px Arial, Helvetica, sans-serif';
     const rawAddr = data.address ? data.address : 'Ahmedabad,\nGujarat - 380026';
@@ -870,12 +870,12 @@ export async function renderCardToPngDataUrl(
           line2 = (line2 ? line2 + ' ' : '') + w;
         }
       }
-      ctx.fillText(line1, 105 + addrLabelW, 382);
-      if (line2) ctx.fillText(line2, 105, 408);
+      ctx.fillText(line1, 112 + addrLabelW, 377);
+      if (line2) ctx.fillText(line2, 112, 403);
     } else {
-      ctx.fillText(addrLines[0] || '', 105 + addrLabelW, 382);
+      ctx.fillText(addrLines[0] || '', 112 + addrLabelW, 377);
       for (let i = 1; i < addrLines.length; i++) {
-        ctx.fillText(addrLines[i], 105, 382 + i * 26);
+        ctx.fillText(addrLines[i], 112, 377 + i * 26);
       }
     }
     ctx.restore();
@@ -886,8 +886,8 @@ export async function renderCardToPngDataUrl(
     ctx.fillStyle = '#333333';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    ctx.fillText('*Report the loss of this card to Security Office, IITRAM', 105, 552);
-    ctx.fillText('*This Card is not transferable', 105, 570);
+    ctx.fillText('*Report the loss of this card to Security Office, IITRAM', 112, 540);
+    ctx.fillText('*This Card is not transferable', 112, 558);
     ctx.restore();
 
     // 6. Right Building Image with Exact SVG Clip-Path Boundary
